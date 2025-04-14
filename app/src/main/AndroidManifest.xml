@@ -7,14 +7,15 @@
     <!--android:roundIcon="@mipmap/ic_launcher_round"-->
     <application
         android:allowBackup="true"
+        android:theme="@style/Theme.MobileApp"
         android:name=".CakerApp"
         android:label="@string/app_name"
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MobileApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

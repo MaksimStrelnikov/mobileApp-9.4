@@ -1,7 +1,18 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -19,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,20 +41,20 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import dev.tp_94.mobileapp.core.models.Cake
-import dev.tp_94.mobileapp.core.themes.Colors
+import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.Fonts
-import dev.tp_94.mobileapp.core.themes.darken
-import javax.inject.Inject
+import dev.tp_94.mobileapp.core.darken
+import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.DiscardButton
 
 @Composable
-fun SelfMadeCakeScreen (viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
+fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Colors.BACKGROUND
+                colorResource(R.color.background)
             )
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -66,8 +78,18 @@ fun SelfMadeCakeScreen (viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
         }
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(onClick = { viewModel.openColorPicker() }) {
-            Text("Выбрать цвет")
+        ActiveButton(
+            onClick = { viewModel.openColorPicker() },
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                "Выбрать цвет",
+                fontFamily = Fonts.robotoSlab,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
+                letterSpacing = 0.20.sp,
+                lineHeight = 24.sp
+            )
         }
 
         when {
@@ -96,7 +118,7 @@ fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
                 .wrapContentSize()
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Colors.BACKGROUND)
+            colors = CardDefaults.cardColors(containerColor = colorResource(R.color.background))
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -168,17 +190,33 @@ fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    TextButton(
+                    DiscardButton(
                         onClick = { onDismissRequest() },
-                        modifier = Modifier.padding(8.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.padding(8.dp)
                     ) {
-                        Text("Отмена")
+                        Text(
+                            "Отмена",
+                            fontFamily = Fonts.robotoSlab,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp,
+                            letterSpacing = 0.20.sp,
+                            lineHeight = 24.sp
+                        )
                     }
-                    Button(
+                    ActiveButton(
                         onClick = { onConfirmation(color.value) },
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("ОК")
+                        Text(
+                            "ОК",
+                            fontFamily = Fonts.robotoSlab,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp,
+                            letterSpacing = 0.20.sp,
+                            lineHeight = 24.sp
+                        )
                     }
                 }
             }

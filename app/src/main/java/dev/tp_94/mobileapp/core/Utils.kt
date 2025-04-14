@@ -1,10 +1,6 @@
-package dev.tp_94.mobileapp.core.themes
+package dev.tp_94.mobileapp.core
 
 import androidx.compose.ui.graphics.Color
-
-object Colors{
-    val BACKGROUND = Color(255, 251, 239, 255)
-}
 
 fun Color.darken(factor: Float = 0.75f): Color {
     return Color(
