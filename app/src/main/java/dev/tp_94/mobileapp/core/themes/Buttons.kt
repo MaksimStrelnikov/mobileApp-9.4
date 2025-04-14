@@ -26,7 +26,7 @@ fun ActiveButton(onClick: () -> Unit,
                  interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
                  content: @Composable () -> Unit = {}) {
     val buttonColors = ButtonColors(
-        colorResource(id = R.color.accent2),
+        colorResource(id = R.color.dark_accent),
         colorResource(id = R.color.light_background),
         colorResource(id = R.color.dark_background),
         colorResource(id = R.color.middle_text)

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#FFFBEF</color>
     <color name="light_background">#FFFEFA</color>
+    <color name="background">#FFFBEF</color>
     <color name="dark_background">#FFDCB5</color>
-    <color name="accent2">#B40101</color>
+
+    <color name="light_accent">#FF4646</color>
+    <color name="accent">#E10000</color>
+    <color name="dark_accent">#B40101</color>
+
+    <color name="light_text">#926060</color>
     <color name="middle_text">#5E2929</color>
+    <color name="dark_text">#4B1010</color>
 </resources>

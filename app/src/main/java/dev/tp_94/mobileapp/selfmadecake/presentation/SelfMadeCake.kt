@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
@@ -44,8 +47,12 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.Fonts
 import dev.tp_94.mobileapp.core.darken
+import dev.tp_94.mobileapp.core.themes.AccentSlider
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
+import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.pow
 
 @Composable
 fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
@@ -65,7 +72,7 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
                 .size(360.dp)
                 .background(
                     state.cake.color.darken(),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -91,6 +98,80 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
                 lineHeight = 24.sp
             )
         }
+        Spacer(modifier = Modifier.height(24.dp))
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(R.color.light_background),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .width(360.dp)
+                .wrapContentHeight()
+                .padding(19.dp, 17.dp)
+        ) {
+            Column {
+                Text(
+                    "Диаметр торта",
+                    fontFamily = Fonts.robotoSlab,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 20.sp,
+                    letterSpacing = 0.sp,
+                    color = colorResource(R.color.dark_text)
+                )
+                AccentSlider(
+                    state.cake.diameter,
+                    { viewModel.setDiameter(it) },
+                    valueRange = 10f..40f,
+                    steps = (40 - 10) / 5 - 1,
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(23.dp, 0.dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(30.dp, 0.dp)
+                ) {
+
+                    Row {
+                        Text(
+                            String.format(
+                                Locale.ROOT,
+                                "%d см",
+                                state.cake.diameter.fastRoundToInt()
+                            ),
+                            fontFamily = Fonts.robotoSlab,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 14.sp,
+                            letterSpacing = 0.sp,
+                            color = colorResource(R.color.dark_text)
+                        )
+
+                        Text(
+                            String.format(
+                                Locale.ROOT,
+                                String.format(
+                                    Locale.ROOT,
+                                    "~%d-%d кг",
+                                    (state.cake.diameter.pow(2) * 2 / 400).fastRoundToInt(),
+                                    ceil(state.cake.diameter.pow(2) * 2.5 / 400).fastRoundToInt()
+                                ),
+                                state.cake.diameter.fastRoundToInt()
+                            ),
+                            fontFamily = Fonts.robotoSlab,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 14.sp,
+                            letterSpacing = 0.sp,
+                            color = colorResource(R.color.light_text),
+                            modifier = Modifier
+                                .padding(15.dp, 0.dp)
+                        )
+                    }
+                }
+            }
+        }
 
         when {
             state.colorPickerOpen -> {
@@ -107,8 +188,12 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
-    val color = remember { mutableStateOf(Color(255, 255, 255)) }
+fun HsvDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: (Color) -> Unit,
+    initialColor: Color = Color(255, 255, 255)
+) {
+    val color = remember { mutableStateOf(initialColor) }
     val colorPickerController = ColorPickerController()
     colorPickerController.enabled = true
     Dialog(onDismissRequest) {
@@ -125,27 +210,29 @@ fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(24.dp),
+                        .padding(0.dp, 24.dp, 0.dp, 0.dp),
                     text = "Выбор цвета",
                     fontFamily = Fonts.robotoSlab,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
+                    color = colorResource(R.color.dark_text)
                 )
                 HsvColorPicker(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(350.dp)
-                        .padding(10.dp),
+                        .padding(10.dp, 0.dp, 10.dp, 0.dp),
                     controller = colorPickerController,
                     onColorChanged = { colorEnvelope: ColorEnvelope ->
                         color.value = colorEnvelope.color
-                    }
+                    },
+                    initialColor = initialColor
                 )
                 BrightnessSlider(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .height(50.dp)
-                        .padding(5.dp),
+                        .height(40.dp)
+                        .padding(5.dp, 0.dp, 5.dp, 5.dp),
                     borderColor = color.value.darken(),
                     controller = colorPickerController
                 )
@@ -153,7 +240,6 @@ fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -162,7 +248,8 @@ fun HsvDialog(onDismissRequest: () -> Unit, onConfirmation: (Color) -> Unit) {
                         text = "Выбраный цвет:",
                         fontFamily = Fonts.robotoSlab,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = colorResource(R.color.dark_text)
                     )
                     Spacer(Modifier.width(8.dp))
                     Box(

@@ -7,6 +7,7 @@ import dev.tp_94.mobileapp.R
 
 object Fonts {
     val robotoSlab = FontFamily(
-        Font(R.font.roboto_slab_semibold, FontWeight.SemiBold)
+        Font(R.font.roboto_slab_semibold, FontWeight.SemiBold),
+        Font(R.font.roboto_slab_regular, FontWeight.Normal)
     )
 }

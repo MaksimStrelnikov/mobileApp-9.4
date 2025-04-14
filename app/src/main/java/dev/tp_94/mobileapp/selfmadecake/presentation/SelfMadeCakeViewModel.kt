@@ -22,6 +22,10 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
         _state.value = _state.value.copy(cake = _state.value.cake.copy(color = color))
     }
 
+    fun setDiameter(diameter: Float) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(diameter = diameter))
+    }
+
     private val _state = MutableStateFlow(ScreenState(
         colorPickerOpen = false,
         cake = Cake(Color.Cyan, 10f)
