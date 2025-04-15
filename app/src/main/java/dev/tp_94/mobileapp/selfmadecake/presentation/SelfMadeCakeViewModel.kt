@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,14 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
 
     fun setDiameter(diameter: Float) {
         _state.value = _state.value.copy(cake = _state.value.cake.copy(diameter = diameter))
+    }
+
+    fun updateText(text: String) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(text = text))
+    }
+
+    fun updateTextOffset(textOffset: Offset) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(textOffset = textOffset))
     }
 
     private val _state = MutableStateFlow(ScreenState(
