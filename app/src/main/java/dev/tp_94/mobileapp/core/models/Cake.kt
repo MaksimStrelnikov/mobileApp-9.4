@@ -10,5 +10,6 @@ data class Cake(
     val text: String = "",
     val textOffset: Offset = Offset.Zero,
     val imageUri: Uri? = null,
-    val imageOffset: Offset = Offset.Zero
+    val imageOffset: Offset = Offset.Zero,
+    val comment: String = ""
 )

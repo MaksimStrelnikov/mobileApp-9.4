@@ -44,6 +44,10 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
         _state.value = _state.value.copy(cake = _state.value.cake.copy(imageUri = imageUri))
     }
 
+    fun updateComment(comment: String) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(comment = comment))
+    }
+
     private val _state = MutableStateFlow(ScreenState(
         colorPickerOpen = false,
         cake = Cake(Color.Cyan, 10f)

@@ -32,7 +32,7 @@ import dev.tp_94.mobileapp.core.themes.Fonts
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun TextEditor(onChange: (String) -> Unit, text: String) {
+fun TextEditor(onChange: (String) -> Unit, text: String, header: String) {
     Box(
         modifier = Modifier
             .background(
@@ -45,7 +45,7 @@ fun TextEditor(onChange: (String) -> Unit, text: String) {
     ) {
         Column {
             Text(
-                "Редактировать текст",
+                header,
                 fontFamily = Fonts.robotoSlab,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
