@@ -12,6 +12,7 @@
         android:name=".CakerApp"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

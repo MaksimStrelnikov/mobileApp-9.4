@@ -25,7 +25,7 @@ import kotlin.math.ceil
 import kotlin.math.pow
 
 @Composable
-fun DiameterSlider(onChange: (Float) -> Unit, diameter: Float) {
+fun DiameterSlider(onChange: (Float) -> Unit, diameter: Float, valueRange: ClosedFloatingPointRange<Float>) {
     val diameterState by rememberUpdatedState(diameter)
     Box(
         modifier = Modifier
@@ -33,7 +33,7 @@ fun DiameterSlider(onChange: (Float) -> Unit, diameter: Float) {
                 colorResource(R.color.light_background),
                 shape = RoundedCornerShape(8.dp)
             )
-            .width(360.dp)
+            .fillMaxWidth()
             .wrapContentHeight()
             .padding(19.dp, 17.dp)
     ) {
@@ -45,8 +45,8 @@ fun DiameterSlider(onChange: (Float) -> Unit, diameter: Float) {
             AccentSlider(
                 diameterState,
                 onChange,
-                valueRange = 10f..40f,
-                steps = (40 - 10) / 5 - 1,
+                valueRange = valueRange,
+                steps = ceil((valueRange.endInclusive - valueRange.start) / 5).toInt() - 1,
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .padding(23.dp, 0.dp)

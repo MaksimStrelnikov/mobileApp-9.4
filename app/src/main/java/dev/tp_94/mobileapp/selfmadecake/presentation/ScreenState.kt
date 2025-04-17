@@ -4,5 +4,6 @@ import dev.tp_94.mobileapp.core.models.Cake
 
 data class ScreenState(
     var colorPickerOpen: Boolean = false,
+    var textImageEditor: Editor = Editor.IMAGE,
     val cake: Cake
 )

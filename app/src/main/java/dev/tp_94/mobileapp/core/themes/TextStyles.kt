@@ -26,6 +26,18 @@ object TextStyles {
         }
     }
 
+    @Composable
+    fun regularNoColor(): TextStyle {
+        return TextStyle(
+            fontFamily = Fonts.robotoSlab,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = 0.sp,
+            fontSize = 14.sp,
+            lineHeight = 14.sp
+        )
+
+    }
+
     private val headerColorCache = mutableMapOf<Color, TextStyle>()
 
     @Composable

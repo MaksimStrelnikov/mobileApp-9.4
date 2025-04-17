@@ -1,14 +1,17 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.darken
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.DualButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.DiameterSlider
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.HsvDialog
@@ -44,7 +48,7 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
                 colorResource(R.color.background)
             )
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(26.dp, 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(8.dp))
@@ -101,12 +105,48 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
         DiameterSlider(
             onChange = { viewModel.setDiameter(it) },
             diameter = state.cake.diameter,
+            valueRange = 10f..40f
         )
         Spacer(modifier = Modifier.height(9.dp))
-        TextEditor({ viewModel.updateText(it) }, state.cake.text, "Редактировать текст")
-        ImageAddition( { viewModel.updateImage(it) })
+        Box(
+            modifier = Modifier
+                .background(
+                    color = colorResource(R.color.light_background),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(14.dp, 17.dp, 14.dp, 0.dp)
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                DualButton(
+                    firstTitle = "Изображение",
+                    onFirstClick = { viewModel.setTextImageEditor(Editor.IMAGE) },
+                    secondTitle = "Текст",
+                    onSecondClick = { viewModel.setTextImageEditor(Editor.TEXT) },
+                    isFirstActive = state.textImageEditor == Editor.IMAGE,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                )
+                when (state.textImageEditor) {
+                    Editor.IMAGE -> {
+                        ImageAddition(onAdd = { viewModel.updateImage(it) }, state.cake.imageUri)
+                    }
+                    Editor.TEXT -> {
+                        TextEditor(
+                            { viewModel.updateText(it) },
+                            state.cake.text,
+                            "Редактировать текст"
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(9.dp))
         TextEditor({ viewModel.updateComment(it) }, state.cake.comment, "Комментарий кондитеру")
-
         when {
             state.colorPickerOpen -> {
                 HsvDialog(
