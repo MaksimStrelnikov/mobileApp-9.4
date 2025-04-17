@@ -1,6 +1,11 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
@@ -58,6 +67,8 @@ import dev.tp_94.mobileapp.core.themes.AccentSlider
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.selfmadecake.presentation.components.ImageAddition
+import dev.tp_94.mobileapp.selfmadecake.presentation.components.InteractableImage
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.InteractableText
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.TextEditor
 import java.util.Locale
@@ -73,29 +84,47 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
             .background(
                 colorResource(R.color.background)
             )
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(8.dp))
         Box(
             modifier = Modifier
-                .size(360.dp)
+                .width(360.dp)
+                .height(460.dp)
                 .background(
                     state.cake.color.darken(),
                     shape = RoundedCornerShape(8.dp)
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(270.dp)
-                    .clip(CircleShape)
-                    .background(state.cake.color)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(270.dp)
+                        .clip(CircleShape)
+                        .background(state.cake.color)
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Box(
+                    modifier = Modifier
+                        .width(250.dp)
+                        .height(70.dp)
+                        .background(state.cake.color)
+                )
+            }
+            InteractableImage(
+                imageUri = state.cake.imageUri,
+                imageOffset = state.cake.imageOffset,
+                onOffsetChanged = { viewModel.updateImageOffset(it) }
             )
             InteractableText(
                 text = state.cake.text,
                 textOffset = state.cake.textOffset,
-                onOffsetChanged = { viewModel.updateTextOffset(it) })
+                textStyle = TextStyles.header(colorResource(R.color.dark_accent)),
+                onOffsetChanged = { viewModel.updateTextOffset(it) }
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -187,7 +216,8 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
             }
         }
         Spacer(modifier = Modifier.height(9.dp))
-        TextEditor(viewModel, state)
+        TextEditor({ viewModel.updateText(it) }, state.cake.text)
+        ImageAddition( { viewModel.updateImage(it) })
 
         when {
             state.colorPickerOpen -> {
@@ -196,7 +226,8 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
                     {
                         viewModel.setColor(it)
                         viewModel.closeColorPicker()
-                    }
+                    },
+                    state.cake.color
                 )
             }
         }

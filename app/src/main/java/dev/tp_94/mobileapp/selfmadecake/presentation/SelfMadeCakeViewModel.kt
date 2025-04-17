@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
+import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,14 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
 
     fun updateTextOffset(textOffset: Offset) {
         _state.value = _state.value.copy(cake = _state.value.cake.copy(textOffset = textOffset))
+    }
+
+    fun updateImageOffset(imageOffset: Offset) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(imageOffset = imageOffset))
+    }
+
+    fun updateImage(imageUri: Uri?) {
+        _state.value = _state.value.copy(cake = _state.value.cake.copy(imageUri = imageUri))
     }
 
     private val _state = MutableStateFlow(ScreenState(

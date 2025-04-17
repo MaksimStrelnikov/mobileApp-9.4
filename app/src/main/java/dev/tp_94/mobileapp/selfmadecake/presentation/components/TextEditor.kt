@@ -1,13 +1,11 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation.components
 
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.AlbumsTab.value
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -18,14 +16,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -33,11 +30,9 @@ import androidx.compose.ui.unit.sp
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.Fonts
 import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.selfmadecake.presentation.ScreenState
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeViewModel
 
 @Composable
-fun TextEditor(viewModel: SelfMadeCakeViewModel, state: ScreenState) {
+fun TextEditor(onChange: (String) -> Unit, text: String) {
     Box(
         modifier = Modifier
             .background(
@@ -60,8 +55,8 @@ fun TextEditor(viewModel: SelfMadeCakeViewModel, state: ScreenState) {
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
             )
             BasicTextField(
-                state.cake.text,
-                { viewModel.updateText(it) },
+                text,
+                onChange,
                 enabled = true,
                 modifier = Modifier
                     .background(
@@ -85,7 +80,7 @@ fun TextEditor(viewModel: SelfMadeCakeViewModel, state: ScreenState) {
                             .fillMaxWidth()
                             .padding(4.dp)
                     ) {
-                        if (state.cake.text.isEmpty()) {
+                        if (text.isEmpty()) {
                             Text(
                                 "Введите текст...",
                                 style = TextStyles.regular(colorResource(R.color.light_text))
@@ -103,12 +98,14 @@ fun TextEditor(viewModel: SelfMadeCakeViewModel, state: ScreenState) {
 fun InteractableText(
     text: String,
     textOffset: Offset,
+    textStyle: TextStyle,
     onOffsetChanged: (Offset) -> Unit
 ) {
     val currentOffset by rememberUpdatedState(textOffset)
 
     Text(
         text = text,
+        style = textStyle,
         modifier = Modifier
             .offset { IntOffset(currentOffset.x.toInt(), currentOffset.y.toInt()) }
             .pointerInput(Unit) {
@@ -116,7 +113,6 @@ fun InteractableText(
                     change.consume()
                     onOffsetChanged(currentOffset + dragAmount)
                 }
-            },
-        color = Color.Black
+            }
     )
 }

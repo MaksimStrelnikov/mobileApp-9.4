@@ -4,6 +4,7 @@
 
     <!--android:icon="@mipmap/ic_launcher"-->
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <!--android:roundIcon="@mipmap/ic_launcher_round"-->
     <application
         android:allowBackup="true"
@@ -23,5 +24,6 @@
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>
