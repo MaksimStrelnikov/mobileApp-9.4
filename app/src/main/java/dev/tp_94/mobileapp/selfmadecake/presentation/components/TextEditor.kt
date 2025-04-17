@@ -23,12 +23,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.themes.Fonts
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
@@ -36,8 +33,7 @@ fun TextEditor(onChange: (String) -> Unit, text: String, header: String) {
     Box(
         modifier = Modifier
             .background(
-                colorResource(R.color.light_background),
-                shape = RoundedCornerShape(8.dp)
+                colorResource(R.color.light_background), shape = RoundedCornerShape(8.dp)
             )
             .width(360.dp)
             .wrapContentHeight()
@@ -46,29 +42,20 @@ fun TextEditor(onChange: (String) -> Unit, text: String, header: String) {
         Column {
             Text(
                 header,
-                fontFamily = Fonts.robotoSlab,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                lineHeight = 20.sp,
-                letterSpacing = 0.sp,
-                color = colorResource(R.color.dark_text),
+                style = TextStyles.header(colorResource(R.color.dark_text)),
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
             )
-            BasicTextField(
-                text,
+            BasicTextField(text,
                 onChange,
                 enabled = true,
                 modifier = Modifier
                     .background(
-                        colorResource(R.color.background),
-                        shape = RoundedCornerShape(8.dp)
+                        colorResource(R.color.background), shape = RoundedCornerShape(8.dp)
                     )
                     .border(
                         BorderStroke(
-                            color = colorResource(R.color.dark_background),
-                            width = 4.dp
-                        ),
-                        shape = RoundedCornerShape(8.dp)
+                            color = colorResource(R.color.dark_background), width = 4.dp
+                        ), shape = RoundedCornerShape(8.dp)
                     )
                     .padding(9.dp, 8.dp)
                     .fillMaxWidth()
@@ -88,23 +75,18 @@ fun TextEditor(onChange: (String) -> Unit, text: String, header: String) {
                         }
                         innerTextField()
                     }
-                }
-            )
+                })
         }
     }
 }
 
 @Composable
 fun InteractableText(
-    text: String,
-    textOffset: Offset,
-    textStyle: TextStyle,
-    onOffsetChanged: (Offset) -> Unit
+    text: String, textOffset: Offset, textStyle: TextStyle, onOffsetChanged: (Offset) -> Unit
 ) {
     val currentOffset by rememberUpdatedState(textOffset)
 
-    Text(
-        text = text,
+    Text(text = text,
         style = textStyle,
         modifier = Modifier
             .offset { IntOffset(currentOffset.x.toInt(), currentOffset.y.toInt()) }
@@ -113,6 +95,5 @@ fun InteractableText(
                     change.consume()
                     onOffsetChanged(currentOffset + dragAmount)
                 }
-            }
-    )
+            })
 }
