@@ -1,7 +1,6 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -93,6 +92,8 @@ fun SelfMadeCakeScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
         }
         Spacer(modifier = Modifier.height(24.dp))
         ActiveButton(
+            modifier = Modifier
+            .fillMaxWidth(),
             onClick = { viewModel.openColorPicker() },
             shape = RoundedCornerShape(12.dp)
         ) {

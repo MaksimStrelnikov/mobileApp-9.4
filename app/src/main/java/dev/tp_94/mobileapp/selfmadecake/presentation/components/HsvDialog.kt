@@ -51,8 +51,7 @@ fun HsvDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentSize()
-                .padding(16.dp),
+                .wrapContentSize(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(R.color.background))
         ) {
@@ -69,7 +68,7 @@ fun HsvDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(350.dp)
-                        .padding(10.dp, 0.dp, 10.dp, 0.dp),
+                        .padding(20.dp, 0.dp),
                     controller = colorPickerController,
                     onColorChanged = { colorEnvelope: ColorEnvelope ->
                         color.value = colorEnvelope.color
