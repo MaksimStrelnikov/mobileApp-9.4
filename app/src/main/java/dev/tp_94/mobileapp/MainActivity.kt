@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tp_94.mobileapp.login.presentation.LoginScreen
 import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeScreen
 import kotlinx.coroutines.delay
 
@@ -33,7 +34,8 @@ class MainActivity : ComponentActivity() {
             }
 
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "main") {
+            NavHost(navController, startDestination = "login") {
+                composable("login") { LoginScreen() }
                 composable("main") { SelfMadeCakeScreen() }
             }
         }

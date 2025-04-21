@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -80,13 +80,14 @@ dependencies {
     implementation(libs.androidx.runtime.rxjava2)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.splashscreen)
-}
 
-kapt {
-    correctErrorTypes = true
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+
+    ksp(libs.moshi.kotlin.codegen)
 }
