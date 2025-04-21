@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.login.presentation
+package dev.tp_94.mobileapp.signup.presenatation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,11 +27,12 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.login.presentation.LoginViewModel
 import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit) {
+fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
     Column(
         modifier = Modifier
@@ -51,7 +52,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
         )
         Spacer(Modifier.height(111.dp))
         Text(
-            text = "Вход",
+            text = "Регистрация",
             style = TextStyles.header(colorResource(R.color.dark_text), fontSize = 32.sp),
             modifier = Modifier
                 .padding(0.dp)
@@ -72,25 +73,22 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
             { viewModel.updatePassword(it) },
             text = state.password,
         )
+        Spacer(Modifier.height(9.dp))
+        PasswordTextEditor(
+            { viewModel.updatePassword(it) },
+            text = state.password,
+        )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
-            onClick = { viewModel.login() },
+            onClick = {  },
             modifier = Modifier
                 .width(218.dp)
                 .height(48.dp),
             shape = RoundedCornerShape(12.dp),
-            enabled = !state.isLoading
+            enabled = false
         ) {
             Text(
                 if (!state.isLoading) "Далее" else "Входим..."
-            )
-        }
-        ActiveButton(
-            onClick = onSignUp
-        ) {
-            Text(
-                "Зарегистрироваться",
-                style = TextStyles.button(color = colorResource(R.color.light_background))
             )
         }
     }
