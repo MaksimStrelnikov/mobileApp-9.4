@@ -24,15 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.login.presentation.LoginViewModel
 import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
+import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
+import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
+fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: (User) -> Unit) {
     val state by viewModel.state.collectAsState()
     Column(
         modifier = Modifier
@@ -73,22 +74,25 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             { viewModel.updatePassword(it) },
             text = state.password,
         )
+        NameEditor(
+            onChange = {viewModel.updateName(it)},
+            text = state.name
+        )
         Spacer(Modifier.height(9.dp))
-        PasswordTextEditor(
-            { viewModel.updatePassword(it) },
+        EmailEditor(
+            { viewModel.updateEmail(it) },
             text = state.password,
         )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
-            onClick = {  },
+            onClick = { viewModel.signUp(onSuccess) },
             modifier = Modifier
                 .width(218.dp)
                 .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            enabled = false
+            shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                if (!state.isLoading) "Далее" else "Входим..."
+                if (!state.isLoading) "Зарегистрироваться" else "Регистрируем..."
             )
         }
     }

@@ -1,11 +1,15 @@
 package dev.tp_94.mobileapp.data
 
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.ConfectionerPassword
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.CustomerPassword
 import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.core.models.UserPassword
 
 class MockDB {
     val database: ArrayList<UserPassword> = ArrayList()
+    var current_index = 2
 
     init {
         database.add(
@@ -47,30 +51,31 @@ class MockDB {
         }
         throw Exception("Пользователя не существует")
     }
-}
 
-data class CustomerPassword(
-    override val id: Int,
-    override val name: String,
-    override val phoneNumber: String,
-    override val email: String,
-    override val password: String
-) : UserPassword()
-
-data class ConfectionerPassword(
-    override val id: Int,
-    override val name: String,
-    override val phoneNumber: String,
-    override val email: String,
-    val description: String,
-    val address: String,
-    override val password: String
-) : UserPassword()
-
-sealed class UserPassword {
-    abstract val id: Int
-    abstract val password: String
-    abstract val name: String
-    abstract val phoneNumber: String
-    abstract val email: String
+    fun add(user: UserPassword): User {
+        if (database.filter { it.phoneNumber == user.phoneNumber }.isNotEmpty()) throw Exception("Пользователь с таким номером телефона уже зарегистрирован")
+        val temp: UserPassword
+        if (user is CustomerPassword) {
+            temp = user.copy(id = current_index++)
+            database.add(temp)
+            return Customer(
+                id = temp.id,
+                name = temp.name,
+                phoneNumber = temp.phoneNumber,
+                email = temp.email
+            )
+        } else if (user is ConfectionerPassword){
+            temp = user.copy(id = current_index++)
+            database.add(temp)
+            return Confectioner(
+                id = temp.id,
+                name = temp.name,
+                phoneNumber = temp.phoneNumber,
+                email = temp.email,
+                description = temp.description,
+                address = temp.address
+            )
+        }
+        throw Exception("Непредвиденная ошибка при добавлении пользователя")
+    }
 }

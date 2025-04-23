@@ -29,3 +29,29 @@ data class Customer(
     override val phoneNumber: String,
     override val email: String
 ) : User()
+
+data class CustomerPassword(
+    override val id: Int,
+    override val name: String,
+    override val phoneNumber: String,
+    override val email: String,
+    override val password: String
+) : UserPassword()
+
+data class ConfectionerPassword(
+    override val id: Int,
+    override val name: String,
+    override val phoneNumber: String,
+    override val email: String,
+    val description: String,
+    val address: String,
+    override val password: String
+) : UserPassword()
+
+sealed class UserPassword {
+    abstract val id: Int
+    abstract val password: String
+    abstract val name: String
+    abstract val phoneNumber: String
+    abstract val email: String
+}

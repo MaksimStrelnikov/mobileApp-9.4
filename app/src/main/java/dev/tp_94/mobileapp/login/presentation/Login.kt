@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
+import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -31,7 +32,7 @@ import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccess: (User) -> Unit) {
     val state by viewModel.state.collectAsState()
     Column(
         modifier = Modifier
@@ -74,7 +75,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
         )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
-            onClick = { viewModel.login() },
+            onClick = { viewModel.login(onSuccess) },
             modifier = Modifier
                 .width(218.dp)
                 .height(48.dp),
@@ -82,7 +83,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
             enabled = !state.isLoading
         ) {
             Text(
-                if (!state.isLoading) "Далее" else "Входим..."
+                if (!state.isLoading) "Войти" else "Входим..."
             )
         }
         ActiveButton(

@@ -38,9 +38,20 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "login") {
                 composable("login") {
-                    LoginScreen(onSignUp = { navController.navigate("signup") })
+                    LoginScreen(onSignUp = { navController.navigate("signup") },
+                        onSuccess = {
+                            navController.navigate("main") {
+                                popUpTo(0)
+                            }
+                        })
                 }
-                composable("signup") { SignUpScreen() }
+                composable("signup") {
+                    SignUpScreen(onSuccess = {
+                        navController.navigate("main") {
+                            popUpTo(0)
+                        }
+                    })
+                }
                 composable("main") { SelfMadeCakeScreen() }
             }
         }
