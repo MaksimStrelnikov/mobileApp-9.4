@@ -80,8 +80,12 @@ class MockDB {
     }
 
     fun update(user: User): User {
-        val filtered = database.filter { it.id == user.id }
+        var filtered = database.filter { it.phoneNumber == user.phoneNumber && it.id != user.id}
+        if (filtered.isNotEmpty()) throw Exception("На этот номер телефона зарегистрирован другой аккаунт")
+
+        filtered = database.filter { it.id == user.id}
         if (filtered.isEmpty()) throw Exception("Пользователя не существует")
+
         val deleted = filtered.last()
         database.remove(filtered.last())
         if (deleted is CustomerPassword) {
