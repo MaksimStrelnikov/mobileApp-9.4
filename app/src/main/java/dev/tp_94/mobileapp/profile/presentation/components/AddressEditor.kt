@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.signup.presenatation.components
+package dev.tp_94.mobileapp.profile.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,28 +24,25 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun EmailEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
-    var email by remember { mutableStateOf(text) }
+fun AddressEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
+    var name by remember { mutableStateOf(text) }
     var error by remember { mutableStateOf("") }
     Text(
         error,
-        style = TextStyles.regular(colorResource(R.color.dark_accent))
+        style = TextStyles.regular(colorResource(R.color.accent))
     )
     BasicTextField(
-        value = email,
+        value = name,
         onValueChange = {
-            email = it
+            name = it
             onChange(it)
-            error = if (it.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email)
-                    .matches()
-            ) {
-                "Некорректный вид адресса"
-
+            error = if (it.isEmpty()) {
+                "Адрес не может быть пустым"
             } else {
                 ""
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         singleLine = true,
         modifier = Modifier
             .background(
@@ -60,9 +57,9 @@ fun EmailEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color
                 Modifier.fillMaxWidth().padding(22.dp, 0.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
-                if (email.isEmpty()) {
+                if (name.isEmpty()) {
                     Text(
-                        "Электронная почта",
+                        "Имя",
                         style = TextStyles.regular(colorResource(R.color.light_text)),
                     )
                 }

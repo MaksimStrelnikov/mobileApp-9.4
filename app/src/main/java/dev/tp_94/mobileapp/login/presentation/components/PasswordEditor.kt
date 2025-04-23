@@ -14,7 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -23,7 +25,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun PasswordTextEditor(onChange: (String) -> Unit, text: String) {
+fun PasswordTextEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
     var password by remember { mutableStateOf(text) }
     BasicTextField(
         value = password,
@@ -36,7 +38,7 @@ fun PasswordTextEditor(onChange: (String) -> Unit, text: String) {
         singleLine = true,
         modifier = Modifier
             .background(
-                colorResource(R.color.light_background),
+                backgroundColor,
                 shape = RoundedCornerShape(8.dp)
             )
             .fillMaxWidth()
@@ -44,7 +46,8 @@ fun PasswordTextEditor(onChange: (String) -> Unit, text: String) {
         textStyle = TextStyles.regular(colorResource(R.color.middle_text)),
         decorationBox = { innerTextField ->
             Box(
-                Modifier.fillMaxWidth().padding(33.dp, 17.dp, 33.dp, 0.dp)
+                Modifier.fillMaxWidth().padding(22.dp, 0.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 if (password.isEmpty()) {
                     Text(

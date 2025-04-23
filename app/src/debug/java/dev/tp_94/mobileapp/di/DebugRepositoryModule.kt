@@ -4,8 +4,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.data.MockDB
 import dev.tp_94.mobileapp.data.MockUserRepository
+import dev.tp_94.mobileapp.data.SessionCacheMock
 import dev.tp_94.mobileapp.login.domain.UserRepository
 
 @Module
@@ -13,7 +15,7 @@ import dev.tp_94.mobileapp.login.domain.UserRepository
 object DebugRepositoryModule {
 
     @Provides
-    fun provideUserRepository(db: MockDB): UserRepository {
-        return MockUserRepository(db)
+    fun provideUserRepository(sessionCache: SessionCache, db: MockDB): UserRepository {
+        return MockUserRepository(sessionCache, db)
     }
 }

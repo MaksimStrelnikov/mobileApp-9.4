@@ -78,4 +78,43 @@ class MockDB {
         }
         throw Exception("Непредвиденная ошибка при добавлении пользователя")
     }
+
+    fun update(user: User): User {
+        val filtered = database.filter { it.id == user.id }
+        if (filtered.isEmpty()) throw Exception("Пользователя не существует")
+        val deleted = filtered.last()
+        database.remove(filtered.last())
+        if (deleted is CustomerPassword) {
+            if (user is Customer) {
+                database.add(
+                    CustomerPassword(
+                        id = deleted.id,
+                        name = user.name,
+                        phoneNumber = user.phoneNumber,
+                        email = user.email,
+                        password = deleted.password
+                    )
+                )
+            } else {
+                throw AssertionError("User type does not match with one in database")
+            }
+        } else if (deleted is ConfectionerPassword){
+            if (user is Confectioner) {
+                database.add(
+                    ConfectionerPassword(
+                        id = deleted.id,
+                        name = user.name,
+                        phoneNumber = user.phoneNumber,
+                        email = user.email,
+                        description = user.description,
+                        address = user.address,
+                        password = deleted.password
+                    )
+                )
+            } else {
+                throw AssertionError("User type does not match with one in database")
+            }
+        }
+        return user
+    }
 }

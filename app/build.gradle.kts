@@ -88,6 +88,7 @@ dependencies {
 
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.adapters)
 
     ksp(libs.moshi.kotlin.codegen)
 }

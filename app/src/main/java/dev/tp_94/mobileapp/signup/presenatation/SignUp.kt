@@ -75,13 +75,13 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: (User)
             text = state.password,
         )
         NameEditor(
-            onChange = {viewModel.updateName(it)},
+            onChange = { viewModel.updateName(it) },
             text = state.name
         )
         Spacer(Modifier.height(9.dp))
         EmailEditor(
-            { viewModel.updateEmail(it) },
-            text = state.password,
+            onChange = { viewModel.updateEmail(it) },
+            text = state.email,
         )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
