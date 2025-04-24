@@ -6,14 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.profile.domain.ProfileConfectionerChangeUseCase
 import dev.tp_94.mobileapp.profile.domain.ProfileCustomerChangeUseCase
-import dev.tp_94.mobileapp.signup.presenatation.SignUpState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.annotation.meta.TypeQualifier
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,7 +66,7 @@ class ProfileCustomerViewModel @Inject constructor(
 
         val user = session.user
         if (user !is Customer) {
-            throw IllegalStateException("Expected Confectioner user, got ${user::class.simpleName}")
+            throw IllegalStateException("Expected Customer user, got ${user::class.simpleName}")
         }
 
         _state = MutableStateFlow(
