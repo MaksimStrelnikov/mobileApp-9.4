@@ -12,19 +12,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -32,8 +33,25 @@ import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccess: (User) -> Unit) {
-    val state by viewModel.state.collectAsState()
+fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccess: () -> Unit) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    LoginStatelessScreen(
+        state = state,
+        onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
+        onPasswordChange = { viewModel.updatePassword(it) },
+        onSignUp = onSignUp,
+        onLogin = { viewModel.login(onSuccess) }
+    )
+}
+
+@Composable
+fun LoginStatelessScreen(
+    state: LoginState,
+    onPhoneNumberChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSignUp: () -> Unit,
+    onLogin: () -> Unit
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,23 +77,23 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
         )
         if (!(state.error == null || state.error == "")) {
             Text(
-                state.error!!,
+                state.error,
                 style = TextStyles.regular(colorResource(R.color.dark_accent))
             )
         }
         Spacer(Modifier.height(26.dp))
         PhoneTextEditor(
-            { viewModel.updatePhoneNumber(it) },
+            onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )
         Spacer(Modifier.height(9.dp))
         PasswordTextEditor(
-            { viewModel.updatePassword(it) },
+            onChange = onPasswordChange,
             text = state.password,
         )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
-            onClick = { viewModel.login(onSuccess) },
+            onClick = onLogin,
             modifier = Modifier
                 .width(218.dp)
                 .height(48.dp),
@@ -86,13 +104,29 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Uni
                 if (!state.isLoading) "Войти" else "Входим..."
             )
         }
+        Spacer(Modifier.height(18.dp))
         ActiveButton(
-            onClick = onSignUp
+            onClick = onSignUp,
+            shape = RoundedCornerShape(12.dp)
         ) {
             Text(
                 "Зарегистрироваться",
                 style = TextStyles.button(color = colorResource(R.color.light_background))
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoginStatelessScreen() {
+    MaterialTheme {
+        LoginStatelessScreen(
+            state = LoginState(),
+            onPhoneNumberChange = {  },
+            onPasswordChange = {  },
+            onSignUp = {  },
+            onLogin = {  }
+        )
     }
 }

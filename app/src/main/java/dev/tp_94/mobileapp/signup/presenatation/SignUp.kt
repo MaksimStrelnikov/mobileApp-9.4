@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,8 +34,27 @@ import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: (User) -> Unit) {
+fun SignUpStatefulScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: () -> Unit) {
     val state by viewModel.state.collectAsState()
+    SignUpStatelessScreen(
+        state = state,
+        onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
+        onEmailChange = { viewModel.updateEmail(it) },
+        onPasswordChange = { viewModel.updatePassword(it) },
+        onNameChange = { viewModel.updateName(it) },
+        onSignUp = { viewModel.signUp(onSuccess) }
+    )
+}
+
+@Composable
+fun SignUpStatelessScreen(
+    state: SignUpState,
+    onPhoneNumberChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onSignUp: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,32 +80,31 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: (User)
         )
         if (!(state.error == null || state.error == "")) {
             Text(
-                state.error!!,
+                state.error,
                 style = TextStyles.regular(colorResource(R.color.dark_accent))
             )
         }
         Spacer(Modifier.height(26.dp))
         PhoneTextEditor(
-            { viewModel.updatePhoneNumber(it) },
+            onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )
-        Spacer(Modifier.height(9.dp))
+        Spacer(Modifier.height(18.dp))
         PasswordTextEditor(
-            { viewModel.updatePassword(it) },
+            onChange = onPasswordChange,
             text = state.password,
         )
         NameEditor(
-            onChange = { viewModel.updateName(it) },
+            onChange = onNameChange,
             text = state.name
         )
-        Spacer(Modifier.height(9.dp))
         EmailEditor(
-            onChange = { viewModel.updateEmail(it) },
+            onChange = onEmailChange,
             text = state.email,
         )
         Spacer(Modifier.height(18.dp))
         DiscardButton(
-            onClick = { viewModel.signUp(onSuccess) },
+            onClick = onSignUp,
             modifier = Modifier
                 .width(218.dp)
                 .height(48.dp),
@@ -96,4 +115,17 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: (User)
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewSignUpStatelessScreen() {
+    SignUpStatelessScreen(
+        state = SignUpState(),
+        onPhoneNumberChange = {  },
+        onEmailChange = {  },
+        onPasswordChange = {  },
+        onNameChange = {  },
+        onSignUp = {  }
+    )
 }

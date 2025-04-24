@@ -3,7 +3,6 @@ package dev.tp_94.mobileapp.login.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.login.domain.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,22 +21,22 @@ class LoginViewModel @Inject constructor(
         _state.value = _state.value.copy(password = password)
     }
 
-    fun login(onSuccess: (User) -> Unit) {
+    fun login(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = loginUseCase.execute(state.value.phoneNumber, state.value.password)
-            if (response is LoginState.Error) _state.value =
+            if (response is LoginResult.Error) _state.value =
                 _state.value.copy(error = response.message)
-            else if (response is LoginState.Success) {
+            else if (response is LoginResult.Success) {
                 _state.value = _state.value.copy(error = "")
-                onSuccess(response.user)
+                onSuccess()
             }
             _state.value = _state.value.copy(isLoading = false)
         }
     }
 
     private val _state = MutableStateFlow(
-        ScreenState()
+        LoginState()
     )
     val state = _state.asStateFlow()
 }

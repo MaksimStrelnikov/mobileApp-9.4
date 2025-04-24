@@ -28,7 +28,7 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
         _state.value = _state.value.copy(name = name)
     }
 
-    fun signUp(onSuccess: (User) -> Unit) {
+    fun signUp(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = signUpUseCase.execute(
@@ -36,18 +36,18 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
                 name = state.value.name,
                 email = state.value.email
             )
-            if (response is SignUpState.Error) _state.value =
+            if (response is SignUpResult.Error) _state.value =
                 _state.value.copy(error = response.message)
-            else if (response is SignUpState.Success) {
+            else if (response is SignUpResult.Success) {
                 _state.value = _state.value.copy(error = "")
-                onSuccess(response.user)
+                onSuccess()
             }
             _state.value = _state.value.copy(isLoading = false)
         }
     }
 
     private val _state = MutableStateFlow(
-        ScreenState()
+        SignUpState()
     )
     val state = _state.asStateFlow()
 }

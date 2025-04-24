@@ -59,7 +59,7 @@ fun AddressEditor(onChange: (String) -> Unit, text: String, backgroundColor: Col
             ) {
                 if (name.isEmpty()) {
                     Text(
-                        "Имя",
+                        "Адрес",
                         style = TextStyles.regular(colorResource(R.color.light_text)),
                     )
                 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -25,7 +26,11 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun DescriptionEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
+fun DescriptionEditor(
+    onChange: (String) -> Unit,
+    text: String,
+    backgroundColor: Color = colorResource(R.color.light_background)
+) {
     var name by remember { mutableStateOf(text) }
     BasicTextField(
         value = name,
@@ -48,7 +53,8 @@ fun DescriptionEditor(onChange: (String) -> Unit, text: String, backgroundColor:
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
+                    .padding(22.dp, 14.dp),
+                contentAlignment = Alignment.TopStart
             ) {
                 if (text.isEmpty()) {
                     Text(

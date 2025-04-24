@@ -69,7 +69,7 @@ fun ProfileStatelessCustomerScreen(
     ) {
 
         NameEditor(
-            onChange = {onNameChange(it)},
+            onChange = { onNameChange(it) },
             text = state.name,
             backgroundColor = colorResource(R.color.dark_background)
         )
@@ -99,7 +99,7 @@ fun ProfileStatelessCustomerScreen(
             Spacer(Modifier.height(18.dp))
         }
         ActiveButton(
-            onClick = onSave ,
+            onClick = onSave,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -119,7 +119,7 @@ fun ProfileStatefulCustomerScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     ProfileStatelessCustomerScreen(
         state.value,
-        onNameChange = {viewModel.updateName(it)},
+        onNameChange = { viewModel.updateName(it) },
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
         onEmailChange = { viewModel.updateEmail(it) },
         onSave = { viewModel.save() },
@@ -163,7 +163,7 @@ fun ProfileStatelessConfectionerScreen(
     ) {
 
         NameEditor(
-            onChange = {onNameChange(it)},
+            onChange = { onNameChange(it) },
             text = state.name,
             backgroundColor = colorResource(R.color.dark_background)
         )
@@ -178,7 +178,6 @@ fun ProfileStatelessConfectionerScreen(
             text = state.phoneNumber,
             backgroundColor = colorResource(R.color.dark_background)
         )
-        Spacer(Modifier.height(9.dp))
         EmailEditor(
             { onEmailChange(it) },
             text = state.email,
@@ -189,6 +188,7 @@ fun ProfileStatelessConfectionerScreen(
             text = state.address,
             backgroundColor = colorResource(R.color.dark_background)
         )
+        Spacer(Modifier.height(18.dp))
         DescriptionEditor(
             { onDescriptionChange(it) },
             text = state.description,
@@ -203,7 +203,7 @@ fun ProfileStatelessConfectionerScreen(
             Spacer(Modifier.height(18.dp))
         }
         ActiveButton(
-            onClick = onSave ,
+            onClick = onSave,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -223,11 +223,25 @@ fun ProfileStatefulConfectionerScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     ProfileStatelessConfectionerScreen(
         state.value,
-        onNameChange = {viewModel.updateName(it)},
+        onNameChange = { viewModel.updateName(it) },
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
         onEmailChange = { viewModel.updateEmail(it) },
         onAddressChange = { viewModel.updateAddress(it) },
         onDescriptionChange = { viewModel.updateDescription(it) },
         onSave = { viewModel.save() },
+    )
+}
+
+@Preview
+@Composable
+fun PreviewProfileStatelessConfectionerScreen() {
+    ProfileStatelessConfectionerScreen(
+        state = ProfileConfectionerState(),
+        onNameChange = {},
+        onPhoneNumberChange = {},
+        onEmailChange = {},
+        onAddressChange = {},
+        onDescriptionChange = {},
+        onSave = {}
     )
 }

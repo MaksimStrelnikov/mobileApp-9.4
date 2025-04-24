@@ -10,10 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tp_94.mobileapp.login.presentation.LoginScreen
+import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileStatefulScreen
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeScreen
-import dev.tp_94.mobileapp.signup.presenatation.SignUpScreen
+import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
+import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "login") {
                 composable("login") {
-                    LoginScreen(onSignUp = { navController.navigate("signup") },
+                    LoginStatefulScreen(onSignUp = { navController.navigate("signup") },
                         onSuccess = {
                             navController.navigate("main") {
                                 popUpTo(0)
@@ -47,13 +47,13 @@ class MainActivity : ComponentActivity() {
                         })
                 }
                 composable("signup") {
-                    SignUpScreen(onSuccess = {
+                    SignUpStatefulScreen(onSuccess = {
                         navController.navigate("changeProfile") {
                             popUpTo(0)
                         }
                     })
                 }
-                composable("main") { SelfMadeCakeScreen() }
+                composable("main") { SelfMadeCakeStatefulScreen() }
                 composable("changeProfile") { ProfileStatefulScreen(onError = { navController.navigate("login") {
                     popUpTo(0)
                 } }) }

@@ -5,7 +5,6 @@ import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.profile.presentation.SaveResult
-import dev.tp_94.mobileapp.signup.presenatation.SignUpState
 import javax.inject.Inject
 
 class ProfileCustomerChangeUseCase @Inject constructor(
