@@ -37,7 +37,6 @@ fun DescriptionEditor(
             onChange(it)
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        singleLine = true,
         modifier = Modifier
             .background(
                 backgroundColor,

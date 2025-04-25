@@ -42,7 +42,7 @@ fun NameEditor(onChange: (String) -> Unit, text: String, defaultText: String = "
                 ""
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         singleLine = true,
         modifier = Modifier
             .background(
