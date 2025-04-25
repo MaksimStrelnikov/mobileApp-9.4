@@ -1,14 +1,22 @@
 package dev.tp_94.mobileapp.signup.domain
 
 import android.util.Patterns
+import dev.tp_94.mobileapp.core.models.ConfectionerPassword
 import dev.tp_94.mobileapp.core.models.CustomerPassword
+import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.signup.presenatation.SignUpResult
 import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(private val userRepository: UserRepository) {
 
-    suspend fun execute(phoneNumber: String, password: String, name: String, email: String): SignUpResult {
+    suspend fun execute(
+        phoneNumber: String,
+        password: String,
+        name: String,
+        email: String,
+        isConfectioner: Boolean
+    ): SignUpResult {
         if (!(phoneNumber.matches(Regex("[0-9]*")) && phoneNumber.length == 10)) {
             return SignUpResult.Error("Некорректный формат номера телефона")
         }
@@ -22,15 +30,30 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
             return SignUpResult.Error("Некорректный формат адреса электронной почты")
         }
         try {
-            val user = userRepository.add(
-                CustomerPassword(
-                    id = 0,
-                    name = name,
-                    phoneNumber = phoneNumber,
-                    email = email,
-                    password = password
+            val user: User
+            if (isConfectioner) {
+                user = userRepository.add(
+                    ConfectionerPassword(
+                        id = 0,
+                        name = name,
+                        phoneNumber = phoneNumber,
+                        email = email,
+                        password = password,
+                        description = "",
+                        address = ""
+                    )
                 )
-            )
+            } else {
+                user = userRepository.add(
+                    CustomerPassword(
+                        id = 0,
+                        name = name,
+                        phoneNumber = phoneNumber,
+                        email = email,
+                        password = password
+                    )
+                )
+            }
             return SignUpResult.Success(user)
         } catch (e: Exception) {
             return SignUpResult.Error(e.message ?: "Возникла непредвиденная ошибка")

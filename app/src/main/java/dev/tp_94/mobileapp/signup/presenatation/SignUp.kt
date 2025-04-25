@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
@@ -42,6 +44,7 @@ fun SignUpStatefulScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess
         onEmailChange = { viewModel.updateEmail(it) },
         onPasswordChange = { viewModel.updatePassword(it) },
         onNameChange = { viewModel.updateName(it) },
+        onConfectioner = { viewModel.updateConfectioner(it) },
         onSignUp = { viewModel.signUp(onSuccess) }
     )
 }
@@ -53,6 +56,7 @@ fun SignUpStatelessScreen(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
+    onConfectioner: (Boolean) -> Unit,
     onSignUp: () -> Unit
 ) {
     Column(
@@ -103,6 +107,33 @@ fun SignUpStatelessScreen(
             text = state.email,
         )
         Spacer(Modifier.height(18.dp))
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Checkbox(
+                checked = state.isConfectioner,
+                onCheckedChange = onConfectioner,
+                colors = CheckboxColors(
+                    checkedCheckmarkColor = colorResource(R.color.background),
+                    uncheckedCheckmarkColor = colorResource(R.color.background),
+                    checkedBoxColor = colorResource(R.color.dark_accent),
+                    uncheckedBoxColor = colorResource(R.color.background),
+                    disabledCheckedBoxColor = colorResource(R.color.middle_text),
+                    disabledUncheckedBoxColor = colorResource(R.color.light_text),
+                    disabledIndeterminateBoxColor = colorResource(R.color.middle_text),
+                    checkedBorderColor = colorResource(R.color.dark_accent),
+                    uncheckedBorderColor = colorResource(R.color.dark_accent),
+                    disabledBorderColor = colorResource(R.color.middle_text),
+                    disabledUncheckedBorderColor = colorResource(R.color.middle_text),
+                    disabledIndeterminateBorderColor = colorResource(R.color.middle_text)
+                )
+            )
+            Text(
+                text = "Я хочу быть кондитером здесь",
+                style = TextStyles.secondHeader(colorResource(R.color.dark_accent))
+            )
+        }
+        Spacer(Modifier.height(18.dp))
         DiscardButton(
             onClick = onSignUp,
             modifier = Modifier
@@ -126,6 +157,7 @@ fun PreviewSignUpStatelessScreen() {
         onEmailChange = {  },
         onPasswordChange = {  },
         onNameChange = {  },
+        onConfectioner = { },
         onSignUp = {  }
     )
 }

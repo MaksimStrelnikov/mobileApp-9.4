@@ -3,7 +3,6 @@ package dev.tp_94.mobileapp.signup.presenatation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.signup.domain.SignUpUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,13 +27,19 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
         _state.value = _state.value.copy(name = name)
     }
 
+    fun updateConfectioner(isConfectioner: Boolean) {
+        _state.value = _state.value.copy(isConfectioner = isConfectioner)
+    }
+
     fun signUp(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = signUpUseCase.execute(
-                state.value.phoneNumber, state.value.password,
+                phoneNumber = state.value.phoneNumber,
+                password = state.value.password,
                 name = state.value.name,
-                email = state.value.email
+                email = state.value.email,
+                isConfectioner = state.value.isConfectioner
             )
             if (response is SignUpResult.Error) _state.value =
                 _state.value.copy(error = response.message)

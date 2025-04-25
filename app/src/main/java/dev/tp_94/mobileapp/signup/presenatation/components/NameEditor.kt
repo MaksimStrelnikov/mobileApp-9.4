@@ -24,7 +24,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun NameEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
+fun NameEditor(onChange: (String) -> Unit, text: String, defaultText: String = "Фамилия Имя", backgroundColor: Color = colorResource(R.color.light_background)) {
     var name by remember { mutableStateOf(text) }
     var error by remember { mutableStateOf("") }
     Text(
@@ -59,7 +59,7 @@ fun NameEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color 
             ) {
                 if (name.isEmpty()) {
                     Text(
-                        "Имя",
+                        defaultText,
                         style = TextStyles.regular(colorResource(R.color.light_text)),
                     )
                 }
