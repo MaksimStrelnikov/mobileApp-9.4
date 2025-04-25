@@ -3,7 +3,6 @@ package dev.tp_94.mobileapp.profileeditor.domain
 import android.util.Patterns
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.profileeditor.presentation.SaveResult
 import javax.inject.Inject
@@ -13,8 +12,8 @@ class ProfileEditorConfectionerChangeUseCase @Inject constructor(
     private val sc: SessionCache
 ) {
     suspend fun execute(name: String, phoneNumber: String, email: String, description: String, address: String): SaveResult {
-        if (sc.getActiveSession() == null || sc.getActiveSession()!!.user !is Customer) {
-            throw Exception("Has No Rights To Change Customer Profile")
+        if (sc.getActiveSession() == null || sc.getActiveSession()!!.user !is Confectioner) {
+            throw Exception("Has No Rights To Change Confectioner Profile")
         }
         if (name.isEmpty()) {
             return SaveResult.Error("Имя не указано")
