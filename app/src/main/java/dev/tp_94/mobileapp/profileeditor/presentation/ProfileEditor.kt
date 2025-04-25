@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
 import dev.tp_94.mobileapp.profileeditor.presentation.components.AddressEditor
 import dev.tp_94.mobileapp.profileeditor.presentation.components.DescriptionEditor
@@ -35,16 +37,18 @@ import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 @Composable
 fun ProfileEditorStatefulScreen(
     viewModel: ProfileEditorViewModel = hiltViewModel(),
-    onError: () -> Unit
+    onError: () -> Unit,
+    onSave: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     if (state.value == null) {
         onError()
     }
     when (state.value!!.user) {
-        is Confectioner -> ProfileEditorStatefulConfectionerScreen()
+        is Confectioner -> ProfileEditorStatefulConfectionerScreen(onSave = onSave, topBar = topBar)
 
-        is Customer -> ProfileEditorStatefulCustomerScreen()
+        is Customer -> ProfileEditorStatefulCustomerScreen(onSave = onSave, topBar = topBar)
     }
 }
 
@@ -54,67 +58,73 @@ fun ProfileEditorStatelessCustomerScreen(
     onNameChange: (String) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                colorResource(R.color.background)
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(44.dp, 52.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        NameEditor(
-            onChange = { onNameChange(it) },
-            text = state.name,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        Text(
-            text = "Контакты",
-            style = TextStyles.secondHeader(colorResource(R.color.dark_text)),
+    Scaffold(topBar = topBar) { internalPadding ->
+        Column(
             modifier = Modifier
-                .padding(0.dp, 23.dp)
-        )
-        PhoneTextEditor(
-            { onPhoneNumberChange(it) },
-            text = state.phoneNumber,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        Spacer(Modifier.height(9.dp))
-        EmailEditor(
-            { onEmailChange(it) },
-            text = state.email,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        if (!(state.error == null || state.error == "")) {
-            Text(
-                state.error,
-                style = TextStyles.regular(colorResource(R.color.dark_accent))
-            )
-        } else {
-            Spacer(Modifier.height(18.dp))
-        }
-        ActiveButton(
-            onClick = onSave,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+                .fillMaxSize()
+                .background(
+                    colorResource(R.color.background)
+                )
+                .verticalScroll(rememberScrollState())
+                .padding(internalPadding)
+                .padding(44.dp, 0.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                if (!state.isLoading) "Cохранить" else "Сохраняем..."
+
+            NameEditor(
+                onChange = { onNameChange(it) },
+                text = state.name,
+                backgroundColor = colorResource(R.color.dark_background)
             )
+            Text(
+                text = "Контакты",
+                style = TextStyles.secondHeader(colorResource(R.color.dark_text)),
+                modifier = Modifier
+                    .padding(0.dp, 23.dp)
+            )
+            PhoneTextEditor(
+                { onPhoneNumberChange(it) },
+                text = state.phoneNumber,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            Spacer(Modifier.height(9.dp))
+            EmailEditor(
+                { onEmailChange(it) },
+                text = state.email,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            } else {
+                Spacer(Modifier.height(18.dp))
+            }
+            ActiveButton(
+                onClick = onSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    if (!state.isLoading) "Cохранить" else "Сохраняем..."
+                )
+            }
         }
     }
 }
 
 @Composable
 fun ProfileEditorStatefulCustomerScreen(
-    viewModel: ProfileEditorCustomerViewModel = hiltViewModel()
+    viewModel: ProfileEditorCustomerViewModel = hiltViewModel(),
+    onSave: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     ProfileEditorStatelessCustomerScreen(
@@ -122,7 +132,10 @@ fun ProfileEditorStatefulCustomerScreen(
         onNameChange = { viewModel.updateName(it) },
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
         onEmailChange = { viewModel.updateEmail(it) },
-        onSave = { viewModel.save() },
+        onSave = {
+            viewModel.save(onSave)
+        },
+        topBar = topBar
     )
 }
 
@@ -135,7 +148,8 @@ fun PreviewProfileEditorStatelessCustomerScreen() {
             onNameChange = {},
             onPhoneNumberChange = {},
             onEmailChange = {},
-            onSave = {}
+            onSave = {},
+            topBar = { TopNameBar("Личные данные") { } }
         )
     }
 }
@@ -148,77 +162,83 @@ fun ProfileEditorStatelessConfectionerScreen(
     onEmailChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                colorResource(R.color.background)
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(44.dp, 52.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        NameEditor(
-            onChange = { onNameChange(it) },
-            text = state.name,
-            defaultText = "Фамилия Имя / Название организации",
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        Text(
-            text = "Контакты",
-            style = TextStyles.secondHeader(colorResource(R.color.dark_text)),
+    Scaffold(topBar = topBar) { internalPadding ->
+        Column(
             modifier = Modifier
-                .padding(0.dp, 23.dp)
-        )
-        PhoneTextEditor(
-            { onPhoneNumberChange(it) },
-            text = state.phoneNumber,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        EmailEditor(
-            { onEmailChange(it) },
-            text = state.email,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        AddressEditor(
-            { onAddressChange(it) },
-            text = state.address,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        Spacer(Modifier.height(18.dp))
-        DescriptionEditor(
-            { onDescriptionChange(it) },
-            text = state.description,
-            backgroundColor = colorResource(R.color.dark_background)
-        )
-        if (!(state.error == null || state.error == "")) {
-            Text(
-                state.error,
-                style = TextStyles.regular(colorResource(R.color.dark_accent))
-            )
-        } else {
-            Spacer(Modifier.height(18.dp))
-        }
-        ActiveButton(
-            onClick = onSave,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+                .fillMaxSize()
+                .background(
+                    colorResource(R.color.background)
+                )
+                .verticalScroll(rememberScrollState())
+                .padding(internalPadding)
+                .padding(44.dp, 0.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                if (!state.isLoading) "Cохранить" else "Сохраняем..."
+            NameEditor(
+                onChange = { onNameChange(it) },
+                text = state.name,
+                defaultText = "Фамилия Имя / Название организации",
+                backgroundColor = colorResource(R.color.dark_background)
             )
+            AddressEditor(
+                { onAddressChange(it) },
+                text = state.address,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            Text(
+                text = "Контакты",
+                style = TextStyles.secondHeader(colorResource(R.color.dark_text)),
+                modifier = Modifier
+                    .padding(0.dp, 23.dp)
+            )
+            PhoneTextEditor(
+                { onPhoneNumberChange(it) },
+                text = state.phoneNumber,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            EmailEditor(
+                { onEmailChange(it) },
+                text = state.email,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            Spacer(Modifier.height(18.dp))
+            DescriptionEditor(
+                { onDescriptionChange(it) },
+                text = state.description,
+                backgroundColor = colorResource(R.color.dark_background)
+            )
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            } else {
+                Spacer(Modifier.height(18.dp))
+            }
+            ActiveButton(
+                onClick = onSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    if (!state.isLoading) "Cохранить" else "Сохраняем..."
+                )
+            }
         }
     }
 }
 
 @Composable
 fun ProfileEditorStatefulConfectionerScreen(
-    viewModel: ProfileEditorConfectionerViewModel = hiltViewModel()
+    viewModel: ProfileEditorConfectionerViewModel = hiltViewModel(),
+    onSave: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     ProfileEditorStatelessConfectionerScreen(
@@ -228,7 +248,10 @@ fun ProfileEditorStatefulConfectionerScreen(
         onEmailChange = { viewModel.updateEmail(it) },
         onAddressChange = { viewModel.updateAddress(it) },
         onDescriptionChange = { viewModel.updateDescription(it) },
-        onSave = { viewModel.save() },
+        onSave = {
+            viewModel.save(onSave)
+        },
+        topBar = topBar
     )
 }
 
@@ -242,6 +265,7 @@ fun PreviewProfileEditorStatelessConfectionerScreen() {
         onEmailChange = {},
         onAddressChange = {},
         onDescriptionChange = {},
-        onSave = {}
+        onSave = {},
+        topBar = { TopNameBar("Личные данные") { } }
     )
 }

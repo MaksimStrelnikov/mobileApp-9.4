@@ -15,7 +15,7 @@ object TextStyles {
     @Composable
     fun regular(
         color: Color = colorResource(R.color.middle_text),
-        fontSize: TextUnit = 14.sp
+        fontSize: TextUnit = 16.sp
     ): TextStyle {
         return TextStyle(
             fontFamily = Fonts.robotoSlab,
@@ -28,7 +28,7 @@ object TextStyles {
     }
 
     @Composable
-    fun regularNoColor(fontSize: TextUnit = 14.sp): TextStyle {
+    fun regularNoColor(fontSize: TextUnit = 16.sp): TextStyle {
         return TextStyle(
             fontFamily = Fonts.robotoSlab,
             fontWeight = FontWeight.Normal,
@@ -43,7 +43,7 @@ object TextStyles {
     @Composable
     fun header(
         color: Color = colorResource(R.color.middle_text),
-        fontSize: TextUnit = 20.sp
+        fontSize: TextUnit = 24.sp
     ): TextStyle {
 
         return TextStyle(
@@ -61,7 +61,7 @@ object TextStyles {
     @Composable
     fun secondHeader(
         color: Color = colorResource(R.color.middle_text),
-        fontSize: TextUnit = 16.sp
+        fontSize: TextUnit = 20.sp
     ): TextStyle {
         return TextStyle(
             fontFamily = Fonts.robotoSlab,
@@ -78,7 +78,7 @@ object TextStyles {
     @Composable
     fun button(
         color: Color = colorResource(R.color.middle_text),
-        fontSize: TextUnit = 13.sp
+        fontSize: TextUnit = 14.sp
     ): TextStyle {
         return TextStyle(
             fontFamily = Fonts.robotoSlab,

@@ -2,7 +2,6 @@ package dev.tp_94.mobileapp.core.themes
 
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -78,6 +78,39 @@ fun DiscardButton(
         enabled,
         shape,
         discardButtonColors,
+        elevation,
+        border,
+        contentPadding,
+        interactionSource
+    ) { content() }
+}
+
+@Composable
+fun TextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = ButtonDefaults.shape,
+    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+    border: BorderStroke? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    textColor: Color = colorResource(id = R.color.light_background),
+    content: @Composable () -> Unit = {}
+) {
+    val buttonColors = ButtonColors(
+        containerColor = Color.Transparent,
+        contentColor = textColor,
+        disabledContainerColor = Color.Transparent,
+        disabledContentColor = colorResource(R.color.light_text)
+    )
+
+    Button(
+        onClick,
+        modifier,
+        enabled,
+        shape,
+        buttonColors,
         elevation,
         border,
         contentPadding,

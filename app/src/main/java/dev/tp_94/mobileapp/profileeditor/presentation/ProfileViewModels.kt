@@ -42,7 +42,7 @@ class ProfileEditorCustomerViewModel @Inject constructor(
         _state.value = _state.value.copy(name = name)
     }
 
-    fun save() {
+    fun save(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = profileEditorCustomerChangeUseCase.execute(
@@ -54,6 +54,7 @@ class ProfileEditorCustomerViewModel @Inject constructor(
                 _state.value.copy(error = response.message)
             else if (response is SaveResult.Success) {
                 _state.value = _state.value.copy(error = "")
+                onSuccess()
             }
             _state.value = _state.value.copy(isLoading = false)
         }
@@ -108,7 +109,7 @@ class ProfileEditorConfectionerViewModel @Inject constructor(
         _state.value = _state.value.copy(description = description)
     }
 
-    fun save() {
+    fun save(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = profileEditorConfectionerChangeUseCase.execute(
@@ -122,6 +123,7 @@ class ProfileEditorConfectionerViewModel @Inject constructor(
                 _state.value.copy(error = response.message)
             else if (response is SaveResult.Success) {
                 _state.value = _state.value.copy(error = "")
+                onSuccess()
             }
             _state.value = _state.value.copy(isLoading = false)
         }
