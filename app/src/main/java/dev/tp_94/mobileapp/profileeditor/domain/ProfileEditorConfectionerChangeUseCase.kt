@@ -1,17 +1,18 @@
-package dev.tp_94.mobileapp.profile.domain
+package dev.tp_94.mobileapp.profileeditor.domain
 
 import android.util.Patterns
 import dev.tp_94.mobileapp.core.SessionCache
+import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.login.domain.UserRepository
-import dev.tp_94.mobileapp.profile.presentation.SaveResult
+import dev.tp_94.mobileapp.profileeditor.presentation.SaveResult
 import javax.inject.Inject
 
-class ProfileCustomerChangeUseCase @Inject constructor(
+class ProfileEditorConfectionerChangeUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val sc: SessionCache
 ) {
-    suspend fun execute(name: String, phoneNumber: String, email: String): SaveResult {
+    suspend fun execute(name: String, phoneNumber: String, email: String, description: String, address: String): SaveResult {
         if (sc.getActiveSession() == null || sc.getActiveSession()!!.user !is Customer) {
             throw Exception("Has No Rights To Change Customer Profile")
         }
@@ -24,13 +25,18 @@ class ProfileCustomerChangeUseCase @Inject constructor(
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return SaveResult.Error("Некорректный формат адреса электронной почты")
         }
+        if (address.isEmpty()) {
+            return SaveResult.Error("Адрес не указано")
+        }
         try {
             val user = userRepository.update(
-                Customer(
+                Confectioner(
                     id = sc.getActiveSession()!!.user.id,
                     name = name,
                     phoneNumber = phoneNumber,
-                    email = email
+                    email = email,
+                    description = description,
+                    address = address,
                 )
             )
             return SaveResult.Success(user)

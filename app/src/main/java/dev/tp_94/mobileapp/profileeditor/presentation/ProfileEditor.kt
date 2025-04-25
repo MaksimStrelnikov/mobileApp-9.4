@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.profile.presentation
+package dev.tp_94.mobileapp.profileeditor.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,14 +27,14 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
-import dev.tp_94.mobileapp.profile.presentation.components.AddressEditor
-import dev.tp_94.mobileapp.profile.presentation.components.DescriptionEditor
+import dev.tp_94.mobileapp.profileeditor.presentation.components.AddressEditor
+import dev.tp_94.mobileapp.profileeditor.presentation.components.DescriptionEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 
 @Composable
-fun ProfileStatefulScreen(
-    viewModel: ProfileViewModel = hiltViewModel(),
+fun ProfileEditorStatefulScreen(
+    viewModel: ProfileEditorViewModel = hiltViewModel(),
     onError: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -42,15 +42,15 @@ fun ProfileStatefulScreen(
         onError()
     }
     when (state.value!!.user) {
-        is Confectioner -> ProfileStatefulConfectionerScreen()
+        is Confectioner -> ProfileEditorStatefulConfectionerScreen()
 
-        is Customer -> ProfileStatefulCustomerScreen()
+        is Customer -> ProfileEditorStatefulCustomerScreen()
     }
 }
 
 @Composable
-fun ProfileStatelessCustomerScreen(
-    state: ProfileCustomerState,
+fun ProfileEditorStatelessCustomerScreen(
+    state: ProfileEditorCustomerState,
     onNameChange: (String) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
@@ -113,11 +113,11 @@ fun ProfileStatelessCustomerScreen(
 }
 
 @Composable
-fun ProfileStatefulCustomerScreen(
-    viewModel: ProfileCustomerViewModel = hiltViewModel()
+fun ProfileEditorStatefulCustomerScreen(
+    viewModel: ProfileEditorCustomerViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    ProfileStatelessCustomerScreen(
+    ProfileEditorStatelessCustomerScreen(
         state.value,
         onNameChange = { viewModel.updateName(it) },
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
@@ -128,10 +128,10 @@ fun ProfileStatefulCustomerScreen(
 
 @Preview
 @Composable
-fun PreviewProfileStatelessCustomerScreen() {
+fun PreviewProfileEditorStatelessCustomerScreen() {
     MaterialTheme {
-        ProfileStatelessCustomerScreen(
-            state = ProfileCustomerState(),
+        ProfileEditorStatelessCustomerScreen(
+            state = ProfileEditorCustomerState(),
             onNameChange = {},
             onPhoneNumberChange = {},
             onEmailChange = {},
@@ -141,8 +141,8 @@ fun PreviewProfileStatelessCustomerScreen() {
 }
 
 @Composable
-fun ProfileStatelessConfectionerScreen(
-    state: ProfileConfectionerState,
+fun ProfileEditorStatelessConfectionerScreen(
+    state: ProfileEditorConfectionerState,
     onNameChange: (String) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
@@ -161,10 +161,10 @@ fun ProfileStatelessConfectionerScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-
         NameEditor(
             onChange = { onNameChange(it) },
             text = state.name,
+            defaultText = "Фамилия Имя / Название организации",
             backgroundColor = colorResource(R.color.dark_background)
         )
         Text(
@@ -217,11 +217,11 @@ fun ProfileStatelessConfectionerScreen(
 }
 
 @Composable
-fun ProfileStatefulConfectionerScreen(
-    viewModel: ProfileConfectionerViewModel = hiltViewModel()
+fun ProfileEditorStatefulConfectionerScreen(
+    viewModel: ProfileEditorConfectionerViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    ProfileStatelessConfectionerScreen(
+    ProfileEditorStatelessConfectionerScreen(
         state.value,
         onNameChange = { viewModel.updateName(it) },
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
@@ -234,9 +234,9 @@ fun ProfileStatefulConfectionerScreen(
 
 @Preview
 @Composable
-fun PreviewProfileStatelessConfectionerScreen() {
-    ProfileStatelessConfectionerScreen(
-        state = ProfileConfectionerState(),
+fun PreviewProfileEditorStatelessConfectionerScreen() {
+    ProfileEditorStatelessConfectionerScreen(
+        state = ProfileEditorConfectionerState(),
         onNameChange = {},
         onPhoneNumberChange = {},
         onEmailChange = {},

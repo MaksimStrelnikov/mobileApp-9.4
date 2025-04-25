@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.profile.presentation
+package dev.tp_94.mobileapp.profileeditor.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,15 +6,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.profile.domain.ProfileConfectionerChangeUseCase
-import dev.tp_94.mobileapp.profile.domain.ProfileCustomerChangeUseCase
+import dev.tp_94.mobileapp.profileeditor.domain.ProfileEditorConfectionerChangeUseCase
+import dev.tp_94.mobileapp.profileeditor.domain.ProfileEditorCustomerChangeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class ProfileEditorViewModel @Inject constructor(
     sessionCache: SessionCache
 ) : ViewModel() {
     private val _state = MutableStateFlow(
@@ -25,9 +25,9 @@ class ProfileViewModel @Inject constructor(
 }
 
 @HiltViewModel
-class ProfileCustomerViewModel @Inject constructor(
+class ProfileEditorCustomerViewModel @Inject constructor(
     sessionCache: SessionCache,
-    private val profileCustomerChangeUseCase: ProfileCustomerChangeUseCase
+    private val profileEditorCustomerChangeUseCase: ProfileEditorCustomerChangeUseCase
 ) : ViewModel() {
 
     fun updatePhoneNumber(phoneNumber: String) {
@@ -45,7 +45,7 @@ class ProfileCustomerViewModel @Inject constructor(
     fun save() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = profileCustomerChangeUseCase.execute(
+            val response = profileEditorCustomerChangeUseCase.execute(
                 phoneNumber = state.value.phoneNumber,
                 name = state.value.name,
                 email = state.value.email
@@ -59,7 +59,7 @@ class ProfileCustomerViewModel @Inject constructor(
         }
     }
 
-    private val _state: MutableStateFlow<ProfileCustomerState>
+    private val _state: MutableStateFlow<ProfileEditorCustomerState>
     init {
         val session = sessionCache.getActiveSession()
             ?: throw IllegalStateException("No active session found")
@@ -70,7 +70,7 @@ class ProfileCustomerViewModel @Inject constructor(
         }
 
         _state = MutableStateFlow(
-            ProfileCustomerState(
+            ProfileEditorCustomerState(
                 isLoading = false,
                 name = sessionCache.getActiveSession()!!.user.name,
                 phoneNumber = sessionCache.getActiveSession()!!.user.phoneNumber,
@@ -83,9 +83,9 @@ class ProfileCustomerViewModel @Inject constructor(
 }
 
 @HiltViewModel
-class ProfileConfectionerViewModel @Inject constructor(
+class ProfileEditorConfectionerViewModel @Inject constructor(
     sessionCache: SessionCache,
-    private val profileConfectionerChangeUseCase: ProfileConfectionerChangeUseCase
+    private val profileEditorConfectionerChangeUseCase: ProfileEditorConfectionerChangeUseCase
 ) : ViewModel() {
 
     fun updatePhoneNumber(phoneNumber: String) {
@@ -111,7 +111,7 @@ class ProfileConfectionerViewModel @Inject constructor(
     fun save() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = profileConfectionerChangeUseCase.execute(
+            val response = profileEditorConfectionerChangeUseCase.execute(
                 phoneNumber = state.value.phoneNumber,
                 name = state.value.name,
                 email = state.value.email,
@@ -127,7 +127,7 @@ class ProfileConfectionerViewModel @Inject constructor(
         }
     }
 
-    private val _state: MutableStateFlow<ProfileConfectionerState>
+    private val _state: MutableStateFlow<ProfileEditorConfectionerState>
     init {
         val session = sessionCache.getActiveSession()
             ?: throw IllegalStateException("No active session found")
@@ -138,7 +138,7 @@ class ProfileConfectionerViewModel @Inject constructor(
         }
 
         _state = MutableStateFlow(
-            ProfileConfectionerState(
+            ProfileEditorConfectionerState(
                 isLoading = false,
                 name = user.name,
                 phoneNumber = user.phoneNumber,

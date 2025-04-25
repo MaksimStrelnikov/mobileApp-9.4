@@ -1,8 +1,6 @@
-package dev.tp_94.mobileapp.profile.presentation
+package dev.tp_94.mobileapp.profileeditor.presentation
 
-import dev.tp_94.mobileapp.core.models.Customer
-
-data class ProfileCustomerState(
+data class ProfileEditorCustomerState(
     val isLoading: Boolean = false,
     val phoneNumber: String = "",
     val name: String = "",
@@ -10,7 +8,7 @@ data class ProfileCustomerState(
     val error: String? = null
 )
 
-data class ProfileConfectionerState(
+data class ProfileEditorConfectionerState(
     val isLoading: Boolean = false,
     val phoneNumber: String = "",
     val name: String = "",

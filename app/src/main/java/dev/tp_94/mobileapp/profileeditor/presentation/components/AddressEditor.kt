@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.profile.presentation.components
+package dev.tp_94.mobileapp.profileeditor.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

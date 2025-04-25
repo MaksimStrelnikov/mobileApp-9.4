@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
-import dev.tp_94.mobileapp.profile.presentation.ProfileStatefulScreen
+import dev.tp_94.mobileapp.profileeditor.presentation.ProfileEditorStatefulScreen
 import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
 import kotlinx.coroutines.delay
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     })
                 }
                 composable("main") { SelfMadeCakeStatefulScreen() }
-                composable("changeProfile") { ProfileStatefulScreen(onError = { navController.navigate("login") {
+                composable("changeProfile") { ProfileEditorStatefulScreen(onError = { navController.navigate("login") {
                     popUpTo(0)
                 } }) }
             }

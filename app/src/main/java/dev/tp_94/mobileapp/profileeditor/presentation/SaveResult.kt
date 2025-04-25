@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.profile.presentation
+package dev.tp_94.mobileapp.profileeditor.presentation
 
 import dev.tp_94.mobileapp.core.models.User
 

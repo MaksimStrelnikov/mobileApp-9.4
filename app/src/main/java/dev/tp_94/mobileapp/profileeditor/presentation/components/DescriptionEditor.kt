@@ -1,8 +1,6 @@
-package dev.tp_94.mobileapp.profile.presentation.components
+package dev.tp_94.mobileapp.profileeditor.presentation.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,7 +56,7 @@ fun DescriptionEditor(
             ) {
                 if (text.isEmpty()) {
                     Text(
-                        "Введите текст...",
+                        "Введите текст описания...",
                         style = TextStyles.regular(colorResource(R.color.light_text))
                     )
                 }
