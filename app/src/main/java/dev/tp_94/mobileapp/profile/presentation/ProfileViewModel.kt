@@ -9,7 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val sessionCache: SessionCache) : ViewModel() {
     fun getUser(): User? {
-        return sessionCache.getActiveSession()?.user
+        return sessionCache.session?.user
     }
 
     fun logout() {

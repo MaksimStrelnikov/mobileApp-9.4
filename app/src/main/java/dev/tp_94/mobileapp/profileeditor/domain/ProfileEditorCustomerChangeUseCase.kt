@@ -12,7 +12,7 @@ class ProfileEditorCustomerChangeUseCase @Inject constructor(
     private val sc: SessionCache
 ) {
     suspend fun execute(name: String, phoneNumber: String, email: String): SaveResult {
-        if (sc.getActiveSession() == null || sc.getActiveSession()!!.user !is Customer) {
+        if (sc.session == null || sc.session!!.user !is Customer) {
             throw Exception("Has No Rights To Change Customer Profile")
         }
         if (name.isEmpty()) {
@@ -27,7 +27,7 @@ class ProfileEditorCustomerChangeUseCase @Inject constructor(
         try {
             val user = userRepository.update(
                 Customer(
-                    id = sc.getActiveSession()!!.user.id,
+                    id = sc.session!!.user.id,
                     name = name,
                     phoneNumber = phoneNumber,
                     email = email

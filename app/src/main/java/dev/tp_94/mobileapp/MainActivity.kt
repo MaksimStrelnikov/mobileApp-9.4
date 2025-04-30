@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -43,85 +44,92 @@ class MainActivity : ComponentActivity() {
                 isLoading.value = false
             }
 
-            val navController = rememberNavController()
-            NavHost(navController, startDestination = "login") {
-                composable("login") {
-                    LoginStatefulScreen(onSignUp = { navController.navigate("signup") },
-                        onSuccess = {
-                            navController.navigate("profile") {
-                                popUpTo(0)
-                            }
-                        })
-                }
-                composable("signup") {
-                    SignUpStatefulScreen(onSuccess = {
-                        navController.navigate("profile") {
-                            popUpTo(0)
-                        }
-                    })
-                }
-                composable("main") { SelfMadeCakeStatefulScreen() }
-                composable("profile") {
-                    Log.println(Log.INFO, "Log", "Profile")
-                    ProfileScreen(
-                        confectionerRoutes = ProfileConfectionerRoutes(
-                            onChangePersonalData = { navController.navigate("changeProfile") },
-                            onViewOrders = { },
-                            onChangeCustomCake = { }
-                        ),
-                        customerRoutes = ProfileCustomerRoutes(
-                            onChangePersonalData = { navController.navigate("changeProfile") },
-                            onViewOrders = { }
-                        ),
-                        onError = {
-                            Log.println(Log.INFO, "Log", "Error")
-                            Log.println(Log.INFO, "Log", navController.graph.nodes.toString())
-                            navController.navigate("login") {
-                                popUpTo(0)
-                            }
-                        },
-                        topBar = {
-                            TopNameBar(
-                                name = "Профиль",
-                                onBackClick = { navController.popBackStack() },
-                            )
-                        },
-                        bottomBar = {
-                            BottomNavBar(
-                                onMainClick = { },
-                                onOrdersClick = { },
-                                onProfileClick = { },
+            MainNavGraph()
+        }
+    }
+}
 
-                                currentScreen = Screen.PROFILE
-                            )
-                        },
-                        onLogout = {
-                            navController.navigate("login") {
-                                popUpTo(0)
-                            }
-                            Log.println(Log.INFO, "Log", "Exit")
-                        }
+@Composable
+fun MainNavGraph() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "login") {
+        composable("login") {
+            Log.println(Log.INFO, "Log", "Login")
+            LoginStatefulScreen(onSignUp = { navController.navigate("signup") },
+                onSuccess = {
+                    navController.navigate("profile") {
+                        popUpTo(0)
+                        Log.println(Log.INFO, "Log", "Navigate to profile")
+                    }
+                })
+        }
+        composable("signup") {
+            SignUpStatefulScreen(onSuccess = {
+                navController.navigate("profile") {
+                    popUpTo(0)
+                }
+            })
+        }
+        composable("main") { SelfMadeCakeStatefulScreen() }
+        composable("profile") {
+            Log.println(Log.INFO, "Log", "Profile")
+            ProfileScreen(
+                confectionerRoutes = ProfileConfectionerRoutes(
+                    onChangePersonalData = { navController.navigate("changeProfile") },
+                    onViewOrders = { },
+                    onChangeCustomCake = { }
+                ),
+                customerRoutes = ProfileCustomerRoutes(
+                    onChangePersonalData = { navController.navigate("changeProfile") },
+                    onViewOrders = { }
+                ),
+                onError = {
+                    Log.println(Log.INFO, "Log", "Error")
+                    Log.println(Log.INFO, "Log", navController.graph.nodes.toString())
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Профиль",
+                        onBackClick = { navController.popBackStack() },
+                    )
+                },
+                bottomBar = {
+                    BottomNavBar(
+                        onMainClick = { },
+                        onOrdersClick = { },
+                        onProfileClick = { },
+                        onBusketClick = { },
+                        currentScreen = Screen.PROFILE
+                    )
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                    Log.println(Log.INFO, "Log", "Exit")
+                }
+            )
+        }
+        composable("changeProfile") {
+            ProfileEditorStatefulScreen(
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                onSave = {
+                    navController.popBackStack()
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Личные данные",
+                        onBackClick = { navController.popBackStack() }
                     )
                 }
-                composable("changeProfile") {
-                    ProfileEditorStatefulScreen(
-                        onError = {
-                            navController.navigate("login") {
-                                popUpTo(0)
-                            }
-                        },
-                        onSave = {
-                            navController.popBackStack()
-                        },
-                        topBar = {
-                            TopNameBar(
-                                name = "Личные данные",
-                                onBackClick = { navController.popBackStack() }
-                            )
-                        }
-                    )
-                }
-            }
+            )
         }
     }
 }

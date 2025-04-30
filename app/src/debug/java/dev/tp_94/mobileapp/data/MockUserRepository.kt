@@ -21,7 +21,7 @@ class MockUserRepository @Inject constructor(
                 token = "235453"
             )
         )
-        return sessionCache.getActiveSession()!!.user
+        return sessionCache.session!!.user
     }
 
     override suspend fun add(user: UserPassword): User {
@@ -32,7 +32,7 @@ class MockUserRepository @Inject constructor(
                 token = "235453"
             )
         )
-        return sessionCache.getActiveSession()!!.user
+        return sessionCache.session!!.user
     }
 
     override suspend fun update(user: User): User {
@@ -43,6 +43,6 @@ class MockUserRepository @Inject constructor(
                 token = "235453"
             )
         )
-        return sessionCache.getActiveSession()!!.user
+        return sessionCache.session!!.user
     }
 }

@@ -12,7 +12,7 @@ class ProfileEditorConfectionerChangeUseCase @Inject constructor(
     private val sc: SessionCache
 ) {
     suspend fun execute(name: String, phoneNumber: String, email: String, description: String, address: String): SaveResult {
-        if (sc.getActiveSession() == null || sc.getActiveSession()!!.user !is Confectioner) {
+        if (sc.session == null || sc.session!!.user !is Confectioner) {
             throw Exception("Has No Rights To Change Confectioner Profile")
         }
         if (name.isEmpty()) {
@@ -30,7 +30,7 @@ class ProfileEditorConfectionerChangeUseCase @Inject constructor(
         try {
             val user = userRepository.update(
                 Confectioner(
-                    id = sc.getActiveSession()!!.user.id,
+                    id = sc.session!!.user.id,
                     name = name,
                     phoneNumber = phoneNumber,
                     email = email,

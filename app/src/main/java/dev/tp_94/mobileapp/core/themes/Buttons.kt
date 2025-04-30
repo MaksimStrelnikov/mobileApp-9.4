@@ -1,24 +1,35 @@
 package dev.tp_94.mobileapp.core.themes
 
 
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 
 @Composable
@@ -119,6 +130,94 @@ fun TextButton(
 }
 
 @Composable
+fun BuyButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = ButtonDefaults.shape,
+    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+    border: BorderStroke? = null,
+    contentPadding: PaddingValues = PaddingValues(4.dp),
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    backgroundColor: Color = colorResource(id = R.color.dark_background),
+    textColor: Color = colorResource(id = R.color.middle_text),
+    content: @Composable () -> Unit = {}
+) {
+    val buttonColors = ButtonColors(
+        backgroundColor,
+        contentColor = textColor,
+        backgroundColor,
+        disabledContentColor = textColor
+    )
+
+    Button(
+        onClick,
+        modifier,
+        enabled,
+        shape,
+        buttonColors,
+        elevation,
+        border,
+        contentPadding,
+        interactionSource
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.busket),
+                contentDescription = null,
+                tint = colorResource(R.color.dark_text),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewBuyButton() {
+    BuyButton(
+        {},
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text("от 1000 р")
+    }
+}
+
+@Composable
+fun BlockButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = ButtonDefaults.shape,
+    contentAlignment: Alignment = Alignment.TopStart,
+    containerColor: Color = colorResource(id = R.color.light_background),
+    content: @Composable () -> Unit = {}
+) {
+    Box(
+        modifier = modifier
+            .clickable { onClick() }
+            .background(
+                color = containerColor,
+                shape = shape
+            ),
+        contentAlignment = contentAlignment
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun DualButton(
     firstTitle: String,
     onFirstClick: () -> Unit,
@@ -128,10 +227,10 @@ fun DualButton(
     modifier: Modifier = Modifier
 ) {
     val activeColors = ButtonColors(
-    colorResource(R.color.dark_text),
-    colorResource(R.color.light_background),
-    colorResource(R.color.dark_text),
-    colorResource(R.color.light_background)
+        colorResource(R.color.dark_text),
+        colorResource(R.color.light_background),
+        colorResource(R.color.dark_text),
+        colorResource(R.color.light_background)
     )
     val nonActiveColors = ButtonColors(
         colorResource(R.color.dark_background),

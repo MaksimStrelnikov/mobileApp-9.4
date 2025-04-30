@@ -22,6 +22,7 @@ import dev.tp_94.mobileapp.R
 fun BottomNavBar(
     onMainClick: () -> Unit,
     onOrdersClick: () -> Unit,
+    onBusketClick: () -> Unit,
     onProfileClick: () -> Unit,
     currentScreen: Screen
 ) {
@@ -72,6 +73,21 @@ fun BottomNavBar(
                 )
             }
             IconButton(
+                    onClick = onMainClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(size)
+                .weight(0.33f)
+            ) {
+            Icon(
+                painter = painterResource(R.drawable.basket_icon),
+                contentDescription = "Корзина",
+                tint = if (currentScreen == Screen.BUSKET) colorResource(R.color.dark_accent) else colorResource(
+                    R.color.dark_text
+                )
+            )
+        }
+            IconButton(
                 onClick = onProfileClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,7 +109,8 @@ fun BottomNavBar(
 enum class Screen {
     MAIN,
     ORDERS,
-    PROFILE
+    PROFILE,
+    BUSKET
 }
 
 @Preview
@@ -102,6 +119,7 @@ fun PreviewBottomNavBar() {
     BottomNavBar(
         onMainClick = {   },
         onOrdersClick = {   },
+        onBusketClick = {   },
         onProfileClick = {   },
         currentScreen = Screen.MAIN
     )

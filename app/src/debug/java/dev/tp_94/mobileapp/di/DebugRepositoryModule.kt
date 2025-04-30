@@ -7,7 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.data.MockDB
 import dev.tp_94.mobileapp.data.MockUserRepository
-import dev.tp_94.mobileapp.data.SessionCacheMock
 import dev.tp_94.mobileapp.login.domain.UserRepository
 
 @Module

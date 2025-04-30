@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.data.MockDB
-import dev.tp_94.mobileapp.data.SessionCacheMock
+import dev.tp_94.mobileapp.core.SessionCacheImpl
 import javax.inject.Singleton
 
 @Module
@@ -21,6 +21,6 @@ object MockModule {
     @Provides
     @Singleton
     fun provideSessionCache(sharedPreferences: SharedPreferences): SessionCache {
-        return SessionCacheMock(sharedPreferences)
+        return SessionCacheImpl(sharedPreferences)
     }
 }

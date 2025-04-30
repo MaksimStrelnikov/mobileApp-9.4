@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,12 +27,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.themes.BlockButton
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TextButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.profile.presentation.components.ProfileButton
 
 @Composable
 fun ProfileScreen(
@@ -80,9 +81,12 @@ fun ProfileScreen(
         )
 
         null -> {
-            Box(Modifier
-                .fillMaxSize()
-                .background(colorResource(R.color.background)))
+            Surface(
+                {},
+                Modifier
+                    .fillMaxSize(),
+                color = colorResource(R.color.background)
+            ) { }
         }
     }
 }
@@ -143,7 +147,7 @@ fun ProfileCustomerStatelessScreen(
                     }
                 }
             }
-            ProfileButton(
+            BlockButton(
                 onClick = onViewOrders,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,6 +207,7 @@ fun PreviewProfileCustomerStatelessScreen() {
                 onMainClick = { },
                 onOrdersClick = { },
                 onProfileClick = { },
+                onBusketClick = { },
                 currentScreen = Screen.PROFILE
             )
         },
@@ -265,7 +270,7 @@ fun ProfileConfectionerStatelessScreen(
                     }
                 }
             }
-            ProfileButton(
+            BlockButton(
                 onClick = onChangeCustomCake,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,7 +295,7 @@ fun ProfileConfectionerStatelessScreen(
                     )
                 }
             }
-            ProfileButton(
+            BlockButton(
                 onClick = onViewOrders,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -354,6 +359,7 @@ fun PreviewProfileConfectionerStatelessScreen() {
                 onMainClick = { },
                 onOrdersClick = { },
                 onProfileClick = { },
+                onBusketClick = { },
                 currentScreen = Screen.PROFILE
             )
         }

@@ -41,11 +41,12 @@ fun ProfileEditorStatefulScreen(
     onSave: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
+    //TODO: rewrite onError logic
     val state = viewModel.state.collectAsStateWithLifecycle()
     if (state.value == null) {
         onError()
     }
-    when (state.value!!.user) {
+    when (state.value!!) {
         is Confectioner -> ProfileEditorStatefulConfectionerScreen(onSave = onSave, topBar = topBar)
 
         is Customer -> ProfileEditorStatefulCustomerScreen(onSave = onSave, topBar = topBar)

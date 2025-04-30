@@ -1,19 +1,20 @@
-package dev.tp_94.mobileapp.data
+package dev.tp_94.mobileapp.core
 
 import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Session
 import dev.tp_94.mobileapp.core.models.User
 import javax.inject.Inject
 
-class SessionCacheMock @Inject constructor(
+class SessionCacheImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : SessionCache {
+
+    override var session: Session? = null
 
     private val moshi = Moshi.Builder()
         .add(
@@ -25,18 +26,22 @@ class SessionCacheMock @Inject constructor(
         .build()
     private val adapter = moshi.adapter(Session::class.java)
 
+    init {
+        val json = sharedPreferences.getString("session", null)
+        session = json?.let { adapter.fromJson(it) }
+    }
+
+
     override fun saveSession(session: Session) {
         sharedPreferences.edit()
             .putString("session", adapter.toJson(session))
             .apply()
+        this.session = session
     }
 
-    override fun getActiveSession(): Session? {
-        val json = sharedPreferences.getString("session", null) ?: return null
-        return adapter.fromJson(json)
-    }
 
     override fun clearSession() {
         sharedPreferences.edit().remove("session").apply()
+        this.session = null
     }
 }

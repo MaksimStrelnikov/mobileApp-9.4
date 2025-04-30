@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.selfmadecake.presentation
 
-import android.content.res.Resources
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.darken
-import dev.tp_94.mobileapp.core.models.Cake
+import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DualButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -97,7 +96,7 @@ fun SelfMadeCakeStatelessScreen(
                 .width(360.dp)
                 .height(460.dp)
                 .background(
-                    state.cake.color.darken(),
+                    state.cakeCustom.color.darken(),
                     shape = RoundedCornerShape(8.dp)
                 ),
             contentAlignment = Alignment.Center,
@@ -107,17 +106,17 @@ fun SelfMadeCakeStatelessScreen(
                     modifier = Modifier
                         .size(270.dp)
                         .clip(CircleShape)
-                        .background(state.cake.color),
+                        .background(state.cakeCustom.color),
                     contentAlignment = Alignment.Center
                 ) {
                     InteractableImage(
-                        imageUri = state.cake.imageUri,
-                        imageOffset = state.cake.imageOffset,
+                        imageUri = state.cakeCustom.imageUri,
+                        imageOffset = state.cakeCustom.imageOffset,
                         onOffsetChanged = onImageDrag
                     )
                     InteractableText(
-                        text = state.cake.text,
-                        textOffset = state.cake.textOffset,
+                        text = state.cakeCustom.text,
+                        textOffset = state.cakeCustom.textOffset,
                         textStyle = TextStyles.header(colorResource(R.color.dark_text)),
                         onOffsetChanged = onTextDrag
                     )
@@ -127,7 +126,7 @@ fun SelfMadeCakeStatelessScreen(
                     modifier = Modifier
                         .width(250.dp)
                         .height(70.dp)
-                        .background(state.cake.color)
+                        .background(state.cakeCustom.color)
                 )
             }
         }
@@ -146,7 +145,7 @@ fun SelfMadeCakeStatelessScreen(
         Spacer(modifier = Modifier.height(24.dp))
         DiameterSlider(
             onChange = onDiameterChange,
-            diameter = state.cake.diameter,
+            diameter = state.cakeCustom.diameter,
             valueRange = 10f..40f
         )
         Spacer(modifier = Modifier.height(9.dp))
@@ -175,13 +174,13 @@ fun SelfMadeCakeStatelessScreen(
                 )
                 when (state.textImageEditor) {
                     Editor.IMAGE -> {
-                        ImageAddition(onAdd = onImageChange, imageUri = state.cake.imageUri)
+                        ImageAddition(onAdd = onImageChange, imageUri = state.cakeCustom.imageUri)
                     }
 
                     Editor.TEXT -> {
                         TextEditor(
                             onChange = onTextChange,
-                            text = state.cake.text,
+                            text = state.cakeCustom.text,
                             header = "Редактировать текст"
                         )
                     }
@@ -191,7 +190,7 @@ fun SelfMadeCakeStatelessScreen(
         Spacer(modifier = Modifier.height(9.dp))
         TextEditor(
             onChange = onCommentChange,
-            text = state.cake.comment,
+            text = state.cakeCustom.description,
             header = "Комментарий кондитеру"
         )
         when {
@@ -199,7 +198,7 @@ fun SelfMadeCakeStatelessScreen(
                 HsvDialog(
                     onDismissRequest = onColorChangeDialogDismiss,
                     onConfirmation = onColorChangeDialogSave,
-                    initialColor = state.cake.color
+                    initialColor = state.cakeCustom.color
                 )
             }
         }
@@ -211,7 +210,7 @@ fun SelfMadeCakeStatelessScreen(
 fun PreviewSelfMadeCakeStatelessScreen() {
     MaterialTheme {
         SelfMadeCakeStatelessScreen(
-            state = SelfMadeCakeState(cake = Cake(Color.Cyan, 10f)),
+            state = SelfMadeCakeState(cakeCustom = CakeCustom(Color.Cyan, 10f)),
             onImageDrag = {},
             onTextDrag = {},
             onColorChangeDialogOpen = {},
