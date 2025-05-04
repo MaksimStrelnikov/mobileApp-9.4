@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.customersfeed.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
@@ -41,9 +42,11 @@ fun CustomersFeedStatefulScreen(
     onBackClick: () -> Unit,
     onError: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        if (viewModel.getUser() is Confectioner) {
+    val user = viewModel.getUser()
+    LaunchedEffect(user) {
+        if (user == null || user !is Customer) {
             onError()
+            viewModel.exit()
         }
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -52,7 +55,6 @@ fun CustomersFeedStatefulScreen(
         onSearchTextChange = { viewModel.updateSearchText(it) },
         onSearch = { viewModel.search() },
         onNavigate = onNavigate,
-        isLoading = state.isLoading,
         onLoadMore = { viewModel.loadMore() },
         topBar = {
             TopNameBar(
@@ -60,8 +62,9 @@ fun CustomersFeedStatefulScreen(
                 onBackClick = onBackClick
             )
         },
-        onSortSelected = { viewModel.selectSort(it) }
-    ) { }
+        onSortSelected = { viewModel.selectSort(it) },
+        bottomBar = { },
+    )
 }
 
 @Composable
@@ -71,20 +74,24 @@ fun CustomersFeedStatelessScreen(
     onSearch: () -> Unit,
     onNavigate: (Confectioner) -> Unit,
     onSortSelected: (Sorting) -> Unit,
-    isLoading: Boolean,
     onLoadMore: () -> Unit,
     topBar: @Composable () -> Unit,
     bottomBar: @Composable () -> Unit,
 ) {
     val listState = rememberLazyListState()
+    /* TODO: fix endless searching
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                val lastVisibleItemIndex = visibleItems.lastOrNull()?.index ?: return@collect
-                if (lastVisibleItemIndex >= state.feed.size - 3 && !isLoading) {
-                    onLoadMore()
-                }
+    snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+        .collect { visibleItems ->
+            val lastVisibleItemIndex = visibleItems.lastOrNull()?.index ?: return@collect
+            if (lastVisibleItemIndex >= state.feed.size && !state.isLoading) {
+                onLoadMore()
             }
+        }
+    }*/
+
+    LaunchedEffect(state.isLoading) {
+        Log.println(Log.INFO, "Log", "isLoading changed: ${state.isLoading}")
     }
 
     Scaffold(
@@ -128,7 +135,7 @@ fun CustomersFeedStatelessScreen(
                             onClick = { onNavigate(item) },
                         )
                     }
-                    if (isLoading) {
+                    if (state.isLoading) {
                         item {
                             Box(
                                 modifier = Modifier
@@ -136,7 +143,7 @@ fun CustomersFeedStatelessScreen(
                                     .padding(16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                CircularProgressIndicator()
+                                CircularProgressIndicator(color = colorResource(R.color.light_text))
                             }
                         }
                     }
@@ -168,8 +175,7 @@ fun PreviewCustomersFeedStatelessScreen() {
         onNavigate = {},
         onSearchTextChange = {},
         onSearch = {},
-        isLoading = true,
         onLoadMore = {},
-        onSortSelected = {  },
+        onSortSelected = { },
     )
 }

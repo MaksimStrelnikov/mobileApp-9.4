@@ -17,12 +17,20 @@ class CustomersFeedViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val loadMoreConfectionersUseCase: LoadMoreConfectionersUseCase,
     private val searchForConfectionersUseCase: SearchForConfectionersUseCase
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow((CustomersFeedState()))
     val state = _state.asStateFlow()
 
+    init {
+        search()
+    }
+
     fun getUser(): User? {
         return sessionCache.session?.user
+    }
+
+    fun exit() {
+        sessionCache.clearSession()
     }
 
     fun updateSearchText(text: String) {
@@ -32,17 +40,23 @@ class CustomersFeedViewModel @Inject constructor(
     fun search() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            searchForConfectionersUseCase.execute(state.value.searchText)
+            val result = searchForConfectionersUseCase.execute(state.value.searchText)
+            if (result is FeedResult.Success) {
+                _state.value = _state.value.copy(feed = result.confectioners)
+            }
+            _state.value = _state.value.copy(isLoading = false)
         }
-        _state.value = _state.value.copy(isLoading = false)
     }
 
     fun loadMore() {
-        _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            loadMoreConfectionersUseCase
+            _state.value = _state.value.copy(isLoading = true)
+            val result = loadMoreConfectionersUseCase.execute(state.value.searchText)
+            if (result is FeedResult.Success) {
+                _state.value = _state.value.copy(feed = _state.value.feed + result.confectioners)
+            }
+            _state.value = _state.value.copy(isLoading = false)
         }
-        _state.value = _state.value.copy(isLoading = false)
     }
 
     fun selectSort(sorting: Sorting) {

@@ -8,23 +8,34 @@ import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
 
 class MockDB {
-    val database: ArrayList<UserPassword> = ArrayList()
+    val usersDatabase: ArrayList<UserPassword> = ArrayList()
     var current_index = 2
 
     init {
-        database.add(
+        usersDatabase.add(
             CustomerPassword(
-            id = 1,
-            name = "Елена Жужпожуж",
-            phoneNumber = "8005553535",
-            password = "123456789",
-            email = "lenochka.devochka@gigamail.com"
+                id = 1,
+                name = "Елена Жужпожуж",
+                phoneNumber = "8005553535",
+                password = "123456789",
+                email = "lenochka.devochka@gigamail.com"
+            )
         )
+        usersDatabase.add(
+            ConfectionerPassword(
+                id = 2,
+                name = "Тортодел",
+                phoneNumber = "9876543210",
+                password = "123456789",
+                email = "cake.make@gigamail.com",
+                description = "Просто делаем просто торты",
+                address = "г. Воронеж, Университетская площадь, 1"
+            )
         )
     }
 
     fun login(username: String, password: String): User {
-        for (temp in database) {
+        for (temp in usersDatabase) {
             if (temp.phoneNumber == username) {
                 if (temp.password == password) {
                     if (temp is CustomerPassword) {
@@ -34,8 +45,7 @@ class MockDB {
                             temp.phoneNumber,
                             temp.email
                         )
-                    }
-                    else if (temp is ConfectionerPassword){
+                    } else if (temp is ConfectionerPassword) {
                         return Confectioner(
                             temp.id,
                             temp.name,
@@ -53,20 +63,21 @@ class MockDB {
     }
 
     fun add(user: UserPassword): User {
-        if (database.filter { it.phoneNumber == user.phoneNumber }.isNotEmpty()) throw Exception("Пользователь с таким номером телефона уже зарегистрирован")
+        if (usersDatabase.filter { it.phoneNumber == user.phoneNumber }
+                .isNotEmpty()) throw Exception("Пользователь с таким номером телефона уже зарегистрирован")
         val temp: UserPassword
         if (user is CustomerPassword) {
             temp = user.copy(id = current_index++)
-            database.add(temp)
+            usersDatabase.add(temp)
             return Customer(
                 id = temp.id,
                 name = temp.name,
                 phoneNumber = temp.phoneNumber,
                 email = temp.email
             )
-        } else if (user is ConfectionerPassword){
+        } else if (user is ConfectionerPassword) {
             temp = user.copy(id = current_index++)
-            database.add(temp)
+            usersDatabase.add(temp)
             return Confectioner(
                 id = temp.id,
                 name = temp.name,
@@ -80,17 +91,18 @@ class MockDB {
     }
 
     fun update(user: User): User {
-        var filtered = database.filter { it.phoneNumber == user.phoneNumber && it.id != user.id}
+        var filtered =
+            usersDatabase.filter { it.phoneNumber == user.phoneNumber && it.id != user.id }
         if (filtered.isNotEmpty()) throw Exception("На этот номер телефона зарегистрирован другой аккаунт")
 
-        filtered = database.filter { it.id == user.id}
+        filtered = usersDatabase.filter { it.id == user.id }
         if (filtered.isEmpty()) throw Exception("Пользователя не существует")
 
         val deleted = filtered.last()
-        database.remove(filtered.last())
+        usersDatabase.remove(filtered.last())
         if (deleted is CustomerPassword) {
             if (user is Customer) {
-                database.add(
+                usersDatabase.add(
                     CustomerPassword(
                         id = deleted.id,
                         name = user.name,
@@ -102,9 +114,9 @@ class MockDB {
             } else {
                 throw AssertionError("User type does not match with one in database")
             }
-        } else if (deleted is ConfectionerPassword){
+        } else if (deleted is ConfectionerPassword) {
             if (user is Confectioner) {
-                database.add(
+                usersDatabase.add(
                     ConfectionerPassword(
                         id = deleted.id,
                         name = user.name,
@@ -120,5 +132,40 @@ class MockDB {
             }
         }
         return user
+    }
+
+    fun getAllConfectioners(): List<Confectioner> {
+        val filtered = ArrayList<Confectioner>()
+        for (temp in usersDatabase.filterIsInstance<ConfectionerPassword>()) {
+            filtered.add(
+                Confectioner(
+                    temp.id,
+                    temp.name,
+                    temp.phoneNumber,
+                    temp.email,
+                    temp.description,
+                    temp.address
+                )
+            )
+        }
+        return filtered
+    }
+
+    fun getAllConfectionersWithName(name: String): List<Confectioner> {
+        val filtered = ArrayList<Confectioner>()
+        for (temp in usersDatabase.filterIsInstance<ConfectionerPassword>()
+            .filter { it.name.contains(name) || name.contains(it.name) }) {
+            filtered.add(
+                Confectioner(
+                    temp.id,
+                    temp.name,
+                    temp.phoneNumber,
+                    temp.email,
+                    temp.description,
+                    temp.address
+                )
+            )
+        }
+        return filtered
     }
 }

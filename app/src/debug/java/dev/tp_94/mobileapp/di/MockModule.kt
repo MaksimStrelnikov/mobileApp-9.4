@@ -17,10 +17,4 @@ object MockModule {
     @Provides
     @Singleton
     fun provideMockDB(): MockDB = MockDB()
-
-    @Provides
-    @Singleton
-    fun provideSessionCache(sharedPreferences: SharedPreferences): SessionCache {
-        return SessionCacheImpl(sharedPreferences)
-    }
 }
