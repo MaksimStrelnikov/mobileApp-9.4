@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 
 sealed interface Cake {
+    val name: String
+    val preparation: Int
     val diameter: Float
     val description: String
 }
@@ -18,14 +20,17 @@ data class CakeCustom(
     val imageUri: Uri? = null,
     val imageOffset: Offset = Offset.Zero,
     val fillings: List<String> = arrayListOf(),
-    val days: Int = 3,
-    override val description: String = ""
+    override val preparation: Int = 3,
+    override val description: String = "",
+    override val name: String = "Индивидуальный торт"
 ) : Cake
 
 @Serializable
 data class SerializableColor(val value: Long)
+
 @Serializable
 data class SerializableOffset(val x: Float, val y: Float)
+
 @Serializable
 data class SerializableUri(val uri: String?)
 
@@ -40,6 +45,7 @@ fun SerializableUri.toUri() = this.uri?.let { Uri.parse(it) }
 
 @Serializable
 data class CakeCustomSerializable(
+    val name: String,
     val color: SerializableColor,
     val diameter: Float,
     val text: String = "",
@@ -47,12 +53,13 @@ data class CakeCustomSerializable(
     val imageUri: SerializableUri? = null,
     val imageOffset: SerializableOffset = SerializableOffset(0f, 0f),
     val fillings: List<String> = arrayListOf(),
-    val days: Int = 3,
+    val preparation: Int = 3,
     val description: String = ""
 )
 
 fun CakeCustomSerializable.toOriginal(): CakeCustom {
     return CakeCustom(
+        name = this.name,
         color = this.color.toColor(),
         diameter = this.diameter,
         text = this.text,
@@ -60,13 +67,14 @@ fun CakeCustomSerializable.toOriginal(): CakeCustom {
         imageUri = this.imageUri?.toUri(),
         imageOffset = this.imageOffset.toOffset(),
         fillings = this.fillings,
-        days = this.days,
+        preparation = this.preparation,
         description = this.description
     )
 }
 
 fun CakeCustom.toSerializable(): CakeCustomSerializable {
     return CakeCustomSerializable(
+        name = this.name,
         color = this.color.toSerializable(),
         diameter = this.diameter,
         text = this.text,
@@ -74,7 +82,7 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
         imageUri = this.imageUri.toSerializable(),
         imageOffset = this.imageOffset.toSerializable(),
         fillings = this.fillings,
-        days = this.days,
+        preparation = this.preparation,
         description = this.description
     )
 }
@@ -83,10 +91,10 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
 @Serializable
 data class CakeGeneral(
     val price: Int,
-    val name: String,
+    override val name: String,
     override val description: String,
     override val diameter: Float,
     val weight: Float,
-    val preparationDays: Int,
+    override val preparation: Int,
     val confectioner: Confectioner
 ) : Cake

@@ -36,7 +36,11 @@ import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 
 @Composable
-fun SignUpStatefulScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess: () -> Unit) {
+fun SignUpStatefulScreen(
+    viewModel: SignUpViewModel = hiltViewModel(),
+    onSuccessCustomer: () -> Unit,
+    onSuccessConfectioner: () -> Unit
+) {
     val state by viewModel.state.collectAsState()
     SignUpStatelessScreen(
         state = state,
@@ -45,7 +49,7 @@ fun SignUpStatefulScreen(viewModel: SignUpViewModel = hiltViewModel(), onSuccess
         onPasswordChange = { viewModel.updatePassword(it) },
         onNameChange = { viewModel.updateName(it) },
         onConfectioner = { viewModel.updateConfectioner(it) },
-        onSignUp = { viewModel.signUp(onSuccess) }
+        onSignUp = { viewModel.signUp(onSuccessCustomer, onSuccessConfectioner) }
     )
 }
 
@@ -107,9 +111,9 @@ fun SignUpStatelessScreen(
             text = state.email,
         )
         Spacer(Modifier.height(18.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Checkbox(
                 checked = state.isConfectioner,
                 onCheckedChange = onConfectioner,
@@ -153,11 +157,11 @@ fun SignUpStatelessScreen(
 fun PreviewSignUpStatelessScreen() {
     SignUpStatelessScreen(
         state = SignUpState(),
-        onPhoneNumberChange = {  },
-        onEmailChange = {  },
-        onPasswordChange = {  },
-        onNameChange = {  },
+        onPhoneNumberChange = { },
+        onEmailChange = { },
+        onPasswordChange = { },
+        onNameChange = { },
         onConfectioner = { },
-        onSignUp = {  }
+        onSignUp = { }
     )
 }

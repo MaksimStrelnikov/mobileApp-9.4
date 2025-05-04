@@ -22,6 +22,7 @@ import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScreen
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
+import dev.tp_94.mobileapp.mainconfectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.maincustomer.presentation.MainStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
@@ -66,21 +67,36 @@ fun MainNavGraph() {
     NavHost(navController, startDestination = "login") {
         composable("login") {
             Log.println(Log.INFO, "Log", "Login")
-            LoginStatefulScreen(onSignUp = { navController.navigate("signup") }, onSuccess = {
-                navController.navigate("main") {
+            LoginStatefulScreen(
+                onSignUp = { navController.navigate("signup") },
+                onSuccessCustomer = {
+                    navController.navigate("mainCustomer") {
+                        popUpTo(0)
+                        Log.println(Log.INFO, "Log", "Navigate to profile")
+                    }
+                },
+                onSuccessConfectioner = {
+                    navController.navigate("mainConfectioner") {
+                        popUpTo(0)
+                        Log.println(Log.INFO, "Log", "Navigate to profile")
+                    }
+                }
+            )
+        }
+        composable("signup") {
+            SignUpStatefulScreen(onSuccessCustomer = {
+                navController.navigate("mainCustomer") {
+                    popUpTo(0)
+                }
+            },
+            onSuccessConfectioner = {
+                navController.navigate("mainConfectioner") {
                     popUpTo(0)
                     Log.println(Log.INFO, "Log", "Navigate to profile")
                 }
             })
         }
-        composable("signup") {
-            SignUpStatefulScreen(onSuccess = {
-                navController.navigate("main") {
-                    popUpTo(0)
-                }
-            })
-        }
-        composable("main") {
+        composable("mainCustomer") {
             MainStatefulScreen(onError = {
                 navController.navigate("login") {
                     popUpTo(0)
@@ -110,6 +126,46 @@ fun MainNavGraph() {
                     )
                 })
         }
+
+        composable("mainConfectioner") {
+            MainConfectionerStatefulScreen(
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                onMyProfileClick = {
+                    navController.navigate("profile")
+                },
+                onCustomOrdersClick = {
+                    navController.navigate("confectionerOrders")
+                },
+            )
+        }
+
+        composable(
+            "makecake/{confectionerJson}",
+            arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
+        ) {
+            val viewModel: SelfMadeCakeViewModel = hiltViewModel()
+            SelfMadeCakeStatefulScreen(
+                viewModel = viewModel,
+                onDone = {
+                    navController.popBackStack()
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {TopNameBar(
+                    name = "Редактор торта",
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                ) },
+            )
+        }
         composable(
             "confectionerpage/{confectionerJson}",
             arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
@@ -134,29 +190,7 @@ fun MainNavGraph() {
                 },
             )
         }
-        composable(
-            "makecake/{confectionerJson}",
-            arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
-        ) {
-            val viewModel: SelfMadeCakeViewModel = hiltViewModel()
-            SelfMadeCakeStatefulScreen(
-                viewModel = viewModel,
-                onDone = {
-                    navController.popBackStack()
-                },
-                onError = {
-                    navController.navigate("login") {
-                        popUpTo(0)
-                    }
-                },
-                topBar = {TopNameBar(
-                    name = "Редактор торта",
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                ) },
-            )
-        }
+
         composable("customerfeed") {
             CustomersFeedStatefulScreen(onNavigateToConfectioner = {
                 val json = Json.encodeToString(it)

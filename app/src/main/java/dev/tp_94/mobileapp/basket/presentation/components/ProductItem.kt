@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,13 +16,10 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -100,8 +96,8 @@ fun ProductItem(
                         style = TextStyles.secondHeader(colorResource(R.color.dark_text))
                     )
                     Text(
-                        text = "${cake.weight} кг/ от ${cake.preparationDays} " +
-                                if (cake.preparationDays == 1) "дня" else "дней",
+                        text = "${cake.weight} кг/ от ${cake.preparation} " +
+                                if (cake.preparation == 1) "дня" else "дней",
                         style = TextStyles.regular(colorResource(R.color.light_text))
                     )
                 }
@@ -148,7 +144,7 @@ fun PreviewProductItem() {
             description = "TODO()",
             diameter = 3f,
             weight = 3f,
-            preparationDays = 3,
+            preparation = 3,
             confectioner = Confectioner(
                 id = 1,
                 name = "TODO()",

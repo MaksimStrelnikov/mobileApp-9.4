@@ -63,7 +63,7 @@ fun PreviewTotalCostSummary() {
                 description = "TODO()",
                 diameter = 3f,
                 weight = 3f,
-                preparationDays = 3,
+                preparation = 3,
                 confectioner = Confectioner(
                     id = 1,
                     name = "TODO()",
@@ -79,7 +79,7 @@ fun PreviewTotalCostSummary() {
                 description = "TODO()",
                 diameter = 3f,
                 weight = 3f,
-                preparationDays = 3,
+                preparation = 3,
                 confectioner = Confectioner(
                     id = 1,
                     name = "TODO()",
