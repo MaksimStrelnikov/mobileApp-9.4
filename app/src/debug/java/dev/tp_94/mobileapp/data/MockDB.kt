@@ -1,14 +1,24 @@
 package dev.tp_94.mobileapp.data
 
+import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.ConfectionerPassword
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.CustomerPassword
+import dev.tp_94.mobileapp.core.models.Order
+import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
+import dev.tp_94.mobileapp.selfmadecake.domain.Restrictions
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import java.util.TreeMap
 
 class MockDB {
     val usersDatabase: ArrayList<UserPassword> = ArrayList()
+    val orderDatabase: ArrayList<Order> = ArrayList()
+    val restrictionsDatabase: TreeMap<Confectioner, Restrictions> = TreeMap()
     var current_index = 2
 
     init {
@@ -31,6 +41,13 @@ class MockDB {
                 description = "Просто делаем просто торты",
                 address = "г. Воронеж, Университетская площадь, 1"
             )
+        )
+        restrictionsDatabase[login("9876543210", "123456789") as Confectioner] = Restrictions(
+            minDiameter = 10f,
+            maxDiameter = 30f,
+            minPreparationDays = 3,
+            maxPreparationDays = 7,
+            fillings = arrayListOf("Клубника", "Вишня", "Ананас")
         )
     }
 
@@ -63,8 +80,7 @@ class MockDB {
     }
 
     fun add(user: UserPassword): User {
-        if (usersDatabase.filter { it.phoneNumber == user.phoneNumber }
-                .isNotEmpty()) throw Exception("Пользователь с таким номером телефона уже зарегистрирован")
+        if (usersDatabase.any { it.phoneNumber == user.phoneNumber }) throw Exception("Пользователь с таким номером телефона уже зарегистрирован")
         val temp: UserPassword
         if (user is CustomerPassword) {
             temp = user.copy(id = current_index++)
@@ -167,5 +183,37 @@ class MockDB {
             )
         }
         return filtered
+    }
+
+    fun addNewOrder(cake: CakeCustom, customer: Customer, confectioner: Confectioner) {
+        orderDatabase.add(
+            Order(
+                cake = cake,
+                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+                orderStatus = OrderStatus.PENDING_APPROVAL,
+                price = 0,
+                customer = customer,
+                confectioner = confectioner,
+            )
+        )
+    }
+
+    fun getAllOrders(user: User?): List<Order> {
+        if (user == null || user !is Confectioner) {
+            throw Exception("User is not confectioner")
+        }
+        val filtered = orderDatabase.filter { it.confectioner == user }
+        return filtered
+    }
+
+    fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
+        if (user == null || user !is Confectioner) {
+            throw Exception("User is not confectioner")
+        }
+        val filtered = orderDatabase.filter { it == order && it.confectioner == user }
+        if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
+        val deleted = filtered.last()
+        orderDatabase.remove(deleted)
+        orderDatabase.add(deleted.copy(orderStatus = status))
     }
 }

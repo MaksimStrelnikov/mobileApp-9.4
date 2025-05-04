@@ -3,15 +3,30 @@ package dev.tp_94.mobileapp.selfmadecake.presentation
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.selfmadecake.domain.SendCustomCakeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import java.net.URLDecoder
 import javax.inject.Inject
 
 @HiltViewModel
-class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
+class SelfMadeCakeViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val sessionCache: SessionCache,
+    private val sendCustomCakeUseCase: SendCustomCakeUseCase
+) : ViewModel() {
     fun openColorPicker() {
         _state.value = _state.value.copy(colorPickerOpen = true)
     }
@@ -25,7 +40,8 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setDiameter(diameter: Float) {
-        _state.value = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter))
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter))
     }
 
     fun updateText(text: String) {
@@ -33,28 +49,53 @@ class SelfMadeCakeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun updateTextOffset(textOffset: Offset) {
-        _state.value = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(textOffset = textOffset))
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(textOffset = textOffset))
     }
 
     fun updateImageOffset(imageOffset: Offset) {
-        _state.value = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageOffset = imageOffset))
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageOffset = imageOffset))
     }
 
     fun updateImage(imageUri: Uri?) {
-        _state.value = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUri = imageUri))
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUri = imageUri))
     }
 
     fun updateComment(comment: String) {
-        _state.value = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(description = comment))
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(description = comment))
     }
 
     fun setTextImageEditor(textImageEditor: Editor) {
         _state.value = _state.value.copy(textImageEditor = textImageEditor)
     }
 
+    fun sendCustomCake() {
+        viewModelScope.launch {
+            val result = sendCustomCakeUseCase.execute(_state.value.cakeCustom, (getUser() as Customer), _state.value.confectioner)
+            if (result is SelfMadeCakeResult.Success) {
+                //TODO: add proper error handling
+            }
+        }
+    }
+
+    fun getUser(): User? {
+        return sessionCache.session?.user
+    }
+
+    fun exit() {
+        sessionCache.clearSession()
+    }
+
     private val _state = MutableStateFlow(SelfMadeCakeState(
         colorPickerOpen = false,
-        cakeCustom = CakeCustom(Color.Cyan, 10f)
+        cakeCustom = CakeCustom(Color.Cyan, 10f),
+        confectioner = savedStateHandle.get<String>("confectionerJson")
+            ?.let { URLDecoder.decode(it, "UTF-8") }
+            ?.let { Json.decodeFromString<Confectioner>(it) }
+            ?: error("Confectioner not provided")
     ))
     val state = _state.asStateFlow()
 }

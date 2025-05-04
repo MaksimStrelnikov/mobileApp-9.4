@@ -7,6 +7,8 @@ data class Order(
     val date: LocalDate,
     val orderStatus: OrderStatus,
     val price: Int,
+    val customer: Customer,
+    val confectioner: Confectioner
 )
 
 enum class OrderStatus {

@@ -17,8 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,9 +35,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.darken
 import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DualButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.DiameterSlider
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.HsvDialog
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.ImageAddition
@@ -44,7 +49,19 @@ import dev.tp_94.mobileapp.selfmadecake.presentation.components.InteractableText
 import dev.tp_94.mobileapp.selfmadecake.presentation.components.TextEditor
 
 @Composable
-fun SelfMadeCakeStatefulScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel()) {
+fun SelfMadeCakeStatefulScreen(
+    viewModel: SelfMadeCakeViewModel = hiltViewModel(),
+    onDone: () -> Unit,
+    onError: () -> Unit,
+    topBar: @Composable () -> Unit
+) {
+    val user = viewModel.getUser()
+    LaunchedEffect(user) {
+        if (user == null || user !is Customer) {
+            onError()
+            viewModel.exit()
+        }
+    }
     val state by viewModel.state.collectAsState()
     SelfMadeCakeStatelessScreen(
         state = state,
@@ -62,6 +79,11 @@ fun SelfMadeCakeStatefulScreen(viewModel: SelfMadeCakeViewModel = hiltViewModel(
         onTextChange = { viewModel.updateText(it) },
         onImageChange = { viewModel.updateImage(it) },
         onCommentChange = { viewModel.updateComment(it) },
+        topBar = topBar,
+        onSend = {
+            viewModel.sendCustomCake()
+            onDone()
+        }
     )
 }
 
@@ -79,127 +101,146 @@ fun SelfMadeCakeStatelessScreen(
     onTextChange: (String) -> Unit,
     onImageChange: (Uri?) -> Unit,
     onCommentChange: (String) -> Unit,
+    onSend: () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                colorResource(R.color.background)
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(26.dp, 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(8.dp))
-        Box(
+    Scaffold(
+        topBar = topBar
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .width(360.dp)
-                .height(460.dp)
+                .fillMaxSize()
                 .background(
-                    state.cakeCustom.color.darken(),
-                    shape = RoundedCornerShape(8.dp)
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier = Modifier
-                        .size(270.dp)
-                        .clip(CircleShape)
-                        .background(state.cakeCustom.color),
-                    contentAlignment = Alignment.Center
-                ) {
-                    InteractableImage(
-                        imageUri = state.cakeCustom.imageUri,
-                        imageOffset = state.cakeCustom.imageOffset,
-                        onOffsetChanged = onImageDrag
-                    )
-                    InteractableText(
-                        text = state.cakeCustom.text,
-                        textOffset = state.cakeCustom.textOffset,
-                        textStyle = TextStyles.header(colorResource(R.color.dark_text)),
-                        onOffsetChanged = onTextDrag
-                    )
-                }
-                Spacer(modifier = Modifier.height(30.dp))
-                Box(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .height(70.dp)
-                        .background(state.cakeCustom.color)
+                    colorResource(R.color.background)
                 )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        ActiveButton(
-            modifier = Modifier
-                .fillMaxWidth(),
-            onClick = onColorChangeDialogOpen,
-            shape = RoundedCornerShape(12.dp)
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(26.dp, 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                "Выбрать цвет",
-                style = TextStyles.button(colorResource(R.color.light_background))
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        DiameterSlider(
-            onChange = onDiameterChange,
-            diameter = state.cakeCustom.diameter,
-            valueRange = 10f..40f
-        )
-        Spacer(modifier = Modifier.height(9.dp))
-        Box(
-            modifier = Modifier
-                .background(
-                    color = colorResource(R.color.light_background),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(14.dp, 17.dp, 14.dp, 0.dp)
-                .fillMaxWidth()
-                .wrapContentHeight()
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            Spacer(Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .width(360.dp)
+                    .height(460.dp)
+                    .background(
+                        state.cakeCustom.color.darken(),
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.Center,
             ) {
-                DualButton(
-                    firstTitle = "Изображение",
-                    onFirstClick = onOpenImageChangeClick,
-                    secondTitle = "Текст",
-                    onSecondClick = onOpenTextChangeClick,
-                    isFirstActive = state.textImageEditor == Editor.IMAGE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp)
-                )
-                when (state.textImageEditor) {
-                    Editor.IMAGE -> {
-                        ImageAddition(onAdd = onImageChange, imageUri = state.cakeCustom.imageUri)
-                    }
-
-                    Editor.TEXT -> {
-                        TextEditor(
-                            onChange = onTextChange,
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        modifier = Modifier
+                            .size(270.dp)
+                            .clip(CircleShape)
+                            .background(state.cakeCustom.color),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        InteractableImage(
+                            imageUri = state.cakeCustom.imageUri,
+                            imageOffset = state.cakeCustom.imageOffset,
+                            onOffsetChanged = onImageDrag
+                        )
+                        InteractableText(
                             text = state.cakeCustom.text,
-                            header = "Редактировать текст"
+                            textOffset = state.cakeCustom.textOffset,
+                            textStyle = TextStyles.header(colorResource(R.color.dark_text)),
+                            onOffsetChanged = onTextDrag
                         )
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(250.dp)
+                            .height(70.dp)
+                            .background(state.cakeCustom.color)
+                    )
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(9.dp))
-        TextEditor(
-            onChange = onCommentChange,
-            text = state.cakeCustom.description,
-            header = "Комментарий кондитеру"
-        )
-        when {
-            state.colorPickerOpen -> {
-                HsvDialog(
-                    onDismissRequest = onColorChangeDialogDismiss,
-                    onConfirmation = onColorChangeDialogSave,
-                    initialColor = state.cakeCustom.color
+            Spacer(modifier = Modifier.height(24.dp))
+            ActiveButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = onColorChangeDialogOpen,
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "Выбрать цвет",
+                    style = TextStyles.button(colorResource(R.color.light_background))
                 )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            DiameterSlider(
+                onChange = onDiameterChange,
+                diameter = state.cakeCustom.diameter,
+                valueRange = 10f..40f
+            )
+            Spacer(modifier = Modifier.height(9.dp))
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = colorResource(R.color.light_background),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(14.dp, 17.dp, 14.dp, 0.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    DualButton(
+                        firstTitle = "Изображение",
+                        onFirstClick = onOpenImageChangeClick,
+                        secondTitle = "Текст",
+                        onSecondClick = onOpenTextChangeClick,
+                        isFirstActive = state.textImageEditor == Editor.IMAGE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                    )
+                    when (state.textImageEditor) {
+                        Editor.IMAGE -> {
+                            ImageAddition(
+                                onAdd = onImageChange,
+                                imageUri = state.cakeCustom.imageUri
+                            )
+                        }
+
+                        Editor.TEXT -> {
+                            TextEditor(
+                                onChange = onTextChange,
+                                text = state.cakeCustom.text,
+                                header = "Редактировать текст"
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(9.dp))
+            TextEditor(
+                onChange = onCommentChange,
+                text = state.cakeCustom.description,
+                header = "Комментарий кондитеру"
+            )
+            ActiveButton(
+                onClick = onSend,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Отправить",
+                    style = TextStyles.button(colorResource(R.color.light_background))
+                )
+            }
+            when {
+                state.colorPickerOpen -> {
+                    HsvDialog(
+                        onDismissRequest = onColorChangeDialogDismiss,
+                        onConfirmation = onColorChangeDialogSave,
+                        initialColor = state.cakeCustom.color
+                    )
+                }
             }
         }
     }
@@ -210,7 +251,17 @@ fun SelfMadeCakeStatelessScreen(
 fun PreviewSelfMadeCakeStatelessScreen() {
     MaterialTheme {
         SelfMadeCakeStatelessScreen(
-            state = SelfMadeCakeState(cakeCustom = CakeCustom(Color.Cyan, 10f)),
+            state = SelfMadeCakeState(
+                cakeCustom = CakeCustom(Color.Cyan, 10f),
+                confectioner = Confectioner(
+                    id = 1,
+                    name = "TODO()",
+                    phoneNumber = "TODO()",
+                    email = "TODO()",
+                    description = "TODO()",
+                    address = "TODO()"
+                )
+            ),
             onImageDrag = {},
             onTextDrag = {},
             onColorChangeDialogOpen = {},
@@ -221,7 +272,9 @@ fun PreviewSelfMadeCakeStatelessScreen() {
             onOpenImageChangeClick = {},
             onTextChange = {},
             onImageChange = {},
-            onCommentChange = {}
+            onCommentChange = {},
+            onSend = { },
+            topBar = { TopNameBar("Дизайн торта") { } }
         )
     }
 

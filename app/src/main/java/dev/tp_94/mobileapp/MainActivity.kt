@@ -27,6 +27,8 @@ import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
 import dev.tp_94.mobileapp.profileeditor.presentation.ProfileEditorStatefulScreen
+import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
+import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
 import kotlinx.coroutines.delay
 import kotlinx.serialization.encodeToString
@@ -116,7 +118,9 @@ fun MainNavGraph() {
             ConfectionerPageStatefulScreen(
                 viewModel = viewModel,
                 onCakeCreation = {
-                    navController.navigate("makecake")
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("makecake/$encoded")
                 },
                 onError = {
                     navController.navigate("login") {
@@ -128,6 +132,29 @@ fun MainNavGraph() {
                         navController.popBackStack()
                     }
                 },
+            )
+        }
+        composable(
+            "makecake/{confectionerJson}",
+            arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
+        ) {
+            val viewModel: SelfMadeCakeViewModel = hiltViewModel()
+            SelfMadeCakeStatefulScreen(
+                viewModel = viewModel,
+                onDone = {
+                    navController.popBackStack()
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {TopNameBar(
+                    name = "Редактор торта",
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                ) },
             )
         }
         composable("customerfeed") {
