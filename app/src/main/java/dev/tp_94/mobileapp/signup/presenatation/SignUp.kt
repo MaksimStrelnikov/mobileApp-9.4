@@ -31,7 +31,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
-import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
+import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
 
@@ -89,7 +89,7 @@ fun SignUpStatelessScreen(
             )
         }
         Spacer(Modifier.height(26.dp))
-        PhoneTextEditor(
+        PhoneEditor(
             onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )

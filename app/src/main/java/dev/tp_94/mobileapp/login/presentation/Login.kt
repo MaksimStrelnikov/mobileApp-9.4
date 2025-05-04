@@ -30,7 +30,7 @@ import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
-import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
+import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
 
 @Composable
 fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccess: () -> Unit) {
@@ -82,7 +82,7 @@ fun LoginStatelessScreen(
             )
         }
         Spacer(Modifier.height(26.dp))
-        PhoneTextEditor(
+        PhoneEditor(
             onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customersfeed.presentation.components.ConfectionerFeedItem
 import dev.tp_94.mobileapp.customersfeed.presentation.components.SearchInput
+import dev.tp_94.mobileapp.customersfeed.presentation.components.SortSelector
 
 @Composable
 fun CustomersFeedStatefulScreen(
@@ -57,7 +59,8 @@ fun CustomersFeedStatefulScreen(
                 name = "Поиск кондитеров",
                 onBackClick = onBackClick
             )
-        }
+        },
+        onSortSelected = { viewModel.selectSort(it) }
     ) { }
 }
 
@@ -67,6 +70,7 @@ fun CustomersFeedStatelessScreen(
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
     onNavigate: (Confectioner) -> Unit,
+    onSortSelected: (Sorting) -> Unit,
     isLoading: Boolean,
     onLoadMore: () -> Unit,
     topBar: @Composable () -> Unit,
@@ -104,6 +108,11 @@ fun CustomersFeedStatelessScreen(
                     backgroundColor = colorResource(R.color.dark_background),
                     onChange = onSearchTextChange,
                     onSearch = onSearch
+                )
+                SortSelector(
+                    currentSort = state.currentSorting,
+                    options = Sorting.entries,
+                    onSortSelected = onSortSelected,
                 )
                 Spacer(Modifier.height(30.dp))
                 LazyColumn(
@@ -161,5 +170,6 @@ fun PreviewCustomersFeedStatelessScreen() {
         onSearch = {},
         isLoading = true,
         onLoadMore = {},
+        onSortSelected = {  },
     )
 }

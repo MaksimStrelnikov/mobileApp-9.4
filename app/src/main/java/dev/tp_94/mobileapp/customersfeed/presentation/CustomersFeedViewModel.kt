@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.customersfeed.presentation
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,8 +40,12 @@ class CustomersFeedViewModel @Inject constructor(
     fun loadMore() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-
+            loadMoreConfectionersUseCase
         }
         _state.value = _state.value.copy(isLoading = false)
+    }
+
+    fun selectSort(sorting: Sorting) {
+        _state.value = _state.value.copy(currentSorting = sorting)
     }
 }

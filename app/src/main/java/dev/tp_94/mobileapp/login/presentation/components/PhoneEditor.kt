@@ -29,7 +29,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun PhoneTextEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
+fun PhoneEditor(onChange: (String) -> Unit, text: String, backgroundColor: Color = colorResource(R.color.light_background)) {
     var textFieldValue by remember {
         mutableStateOf(text)
     }

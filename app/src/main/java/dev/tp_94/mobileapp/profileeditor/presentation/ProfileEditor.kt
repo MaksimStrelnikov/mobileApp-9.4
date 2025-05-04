@@ -28,7 +28,7 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.login.presentation.components.PhoneTextEditor
+import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
 import dev.tp_94.mobileapp.profileeditor.presentation.components.AddressEditor
 import dev.tp_94.mobileapp.profileeditor.presentation.components.DescriptionEditor
 import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
@@ -87,7 +87,7 @@ fun ProfileEditorStatelessCustomerScreen(
                 modifier = Modifier
                     .padding(0.dp, 23.dp)
             )
-            PhoneTextEditor(
+            PhoneEditor(
                 { onPhoneNumberChange(it) },
                 text = state.phoneNumber,
                 backgroundColor = colorResource(R.color.dark_background)
@@ -196,7 +196,7 @@ fun ProfileEditorStatelessConfectionerScreen(
                 modifier = Modifier
                     .padding(0.dp, 23.dp)
             )
-            PhoneTextEditor(
+            PhoneEditor(
                 { onPhoneNumberChange(it) },
                 text = state.phoneNumber,
                 backgroundColor = colorResource(R.color.dark_background)

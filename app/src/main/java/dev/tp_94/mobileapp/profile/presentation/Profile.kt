@@ -207,7 +207,7 @@ fun PreviewProfileCustomerStatelessScreen() {
                 onMainClick = { },
                 onOrdersClick = { },
                 onProfileClick = { },
-                onBusketClick = { },
+                onBasketClick = { },
                 currentScreen = Screen.PROFILE
             )
         },
@@ -359,7 +359,7 @@ fun PreviewProfileConfectionerStatelessScreen() {
                 onMainClick = { },
                 onOrdersClick = { },
                 onProfileClick = { },
-                onBusketClick = { },
+                onBasketClick = { },
                 currentScreen = Screen.PROFILE
             )
         }

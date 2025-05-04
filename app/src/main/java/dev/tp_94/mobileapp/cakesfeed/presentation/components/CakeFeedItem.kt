@@ -1,14 +1,18 @@
 package dev.tp_94.mobileapp.cakesfeed.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +38,7 @@ fun CakeFeedItem(
     price: Int,
     onBuy: () -> Unit,
     onOpen: () -> Unit,
-    image: Painter? = painterResource(R.drawable.mock_cake)
+    image: Painter? = null
 ) {
     BlockButton(
         onClick = onOpen,
@@ -49,6 +53,24 @@ fun CakeFeedItem(
             modifier = Modifier
                 .padding(18.dp, 20.dp, 18.dp, 5.dp),
         ) {
+            if (image == null) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = colorResource(R.color.dark_background),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.nocake),
+                        contentDescription = null,
+                        tint = colorResource(R.color.light_text)
+                    )
+                }
+            }
             image?.let {
                 Image(
                     painter = it,
@@ -96,7 +118,6 @@ fun PreviewItem() {
         preparation = 1,
         price = 1,
         onBuy = { },
-        onOpen = { },
-        image = painterResource(R.drawable.mock_cake2)
+        onOpen = { }
     )
 }

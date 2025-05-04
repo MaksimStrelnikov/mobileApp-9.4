@@ -22,7 +22,7 @@ import dev.tp_94.mobileapp.R
 fun BottomNavBar(
     onMainClick: () -> Unit,
     onOrdersClick: () -> Unit,
-    onBusketClick: () -> Unit,
+    onBasketClick: () -> Unit,
     onProfileClick: () -> Unit,
     currentScreen: Screen
 ) {
@@ -73,7 +73,7 @@ fun BottomNavBar(
                 )
             }
             IconButton(
-                    onClick = onMainClick,
+                    onClick = onBasketClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(size)
@@ -119,7 +119,7 @@ fun PreviewBottomNavBar() {
     BottomNavBar(
         onMainClick = {   },
         onOrdersClick = {   },
-        onBusketClick = {   },
+        onBasketClick = {   },
         onProfileClick = {   },
         currentScreen = Screen.MAIN
     )

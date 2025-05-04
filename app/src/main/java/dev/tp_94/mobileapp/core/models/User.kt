@@ -2,7 +2,9 @@ package dev.tp_94.mobileapp.core.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface User {
     val id: Int
     val name: String
@@ -12,6 +14,7 @@ sealed interface User {
 
 @JsonClass(generateAdapter = true)
 @Json(name = "confectioner")
+@Serializable
 data class Confectioner(
     override val id: Int,
     override val name: String,
@@ -23,6 +26,7 @@ data class Confectioner(
 
 @JsonClass(generateAdapter = true)
 @Json(name = "customer")
+@Serializable
 data class Customer(
     override val id: Int,
     override val name: String,

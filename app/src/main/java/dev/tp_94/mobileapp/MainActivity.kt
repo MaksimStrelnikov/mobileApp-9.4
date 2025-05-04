@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScreen
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainNavGraph() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "login") {
+    NavHost(navController, startDestination = "customerfeed") {
         composable("login") {
             Log.println(Log.INFO, "Log", "Login")
             LoginStatefulScreen(onSignUp = { navController.navigate("signup") },
@@ -71,6 +72,11 @@ fun MainNavGraph() {
             })
         }
         composable("main") { SelfMadeCakeStatefulScreen() }
+        composable("customerfeed") { CustomersFeedStatefulScreen(
+            onNavigate = { },
+            onBackClick =  { },
+            onError = { }
+        ) }
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
             ProfileScreen(
@@ -101,7 +107,7 @@ fun MainNavGraph() {
                         onMainClick = { },
                         onOrdersClick = { },
                         onProfileClick = { },
-                        onBusketClick = { },
+                        onBasketClick = { },
                         currentScreen = Screen.PROFILE
                     )
                 },

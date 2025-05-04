@@ -34,6 +34,7 @@ import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customersfeed.presentation.components.SearchInput
+import dev.tp_94.mobileapp.customersfeed.presentation.components.SortSelector
 
 @Composable
 fun CakesFeedStatefulScreen(
@@ -61,8 +62,10 @@ fun CakesFeedStatefulScreen(
                 onBackClick = onBackClick
             )
         },
-        onBuy = { viewModel.buy(it) }
-    ) { }
+        onBuy = { viewModel.buy(it) },
+        onSortSelected = { viewModel.selectSort(it) },
+        bottomBar = { },
+    )
 }
 
 @Composable
@@ -72,6 +75,7 @@ fun CakesFeedStatelessScreen(
     onSearch: () -> Unit,
     onOpen: (Cake) -> Unit,
     onBuy: (Cake) -> Unit,
+    onSortSelected: (Sorting) -> Unit,
     isLoading: Boolean,
     onLoadMore: () -> Unit,
     topBar: @Composable () -> Unit,
@@ -109,6 +113,11 @@ fun CakesFeedStatelessScreen(
                     backgroundColor = colorResource(R.color.dark_background),
                     onChange = onSearchTextChange,
                     onSearch = onSearch
+                )
+                SortSelector(
+                    currentSort = state.currentSorting,
+                    options = Sorting.entries,
+                    onSortSelected = onSortSelected
                 )
                 Spacer(Modifier.height(30.dp))
                 LazyVerticalGrid(
@@ -159,10 +168,17 @@ fun PreviewCakesFeedStatelessScreen() {
                     1,
                     name = "TODO()",
                     description = "sdfhoij",
-                    fillings = ArrayList(),
                     diameter = 10f,
                     weight = 1f,
                     preparationDays = 3,
+                    confectioner = Confectioner(
+                        id = 1,
+                        name = "TODO()",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    ),
                 )
             )
         ),
@@ -172,5 +188,6 @@ fun PreviewCakesFeedStatelessScreen() {
         isLoading = true,
         onLoadMore = {},
         onBuy = {},
+        onSortSelected = {},
     )
 }

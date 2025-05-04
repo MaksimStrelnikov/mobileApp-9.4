@@ -8,9 +8,6 @@ import dev.tp_94.mobileapp.cakesfeed.domain.SearchForCakesUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.customersfeed.domain.LoadMoreConfectionersUseCase
-import dev.tp_94.mobileapp.customersfeed.domain.SearchForConfectionersUseCase
-import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -51,5 +48,9 @@ class CakesFeedViewModel @Inject constructor(
 
     fun buy(cake: Cake) {
         //TODO
+    }
+
+    fun selectSort(sorting: Sorting) {
+        _state.value = _state.value.copy(currentSorting = sorting)
     }
 }

@@ -23,8 +23,8 @@ data class CakeGeneral(
     val price: Int,
     val name: String,
     override val description: String,
-    val fillings: List<String>,
     override val diameter: Float,
     val weight: Float,
-    val preparationDays: Int
+    val preparationDays: Int,
+    val confectioner: Confectioner
 ) : Cake
