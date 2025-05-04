@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -38,7 +37,7 @@ import dev.tp_94.mobileapp.customersfeed.presentation.components.SortSelector
 @Composable
 fun CustomersFeedStatefulScreen(
     viewModel: CustomersFeedViewModel = hiltViewModel(),
-    onNavigate: (Confectioner) -> Unit,
+    onNavigateToConfectioner: (Confectioner) -> Unit,
     onBackClick: () -> Unit,
     onError: () -> Unit
 ) {
@@ -54,7 +53,7 @@ fun CustomersFeedStatefulScreen(
         state = state,
         onSearchTextChange = { viewModel.updateSearchText(it) },
         onSearch = { viewModel.search() },
-        onNavigate = onNavigate,
+        onNavigateToConfectioner = onNavigateToConfectioner,
         onLoadMore = { viewModel.loadMore() },
         topBar = {
             TopNameBar(
@@ -72,7 +71,7 @@ fun CustomersFeedStatelessScreen(
     state: CustomersFeedState,
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
-    onNavigate: (Confectioner) -> Unit,
+    onNavigateToConfectioner: (Confectioner) -> Unit,
     onSortSelected: (Sorting) -> Unit,
     onLoadMore: () -> Unit,
     topBar: @Composable () -> Unit,
@@ -132,7 +131,7 @@ fun CustomersFeedStatelessScreen(
                     items(state.feed) { item ->
                         ConfectionerFeedItem(
                             name = item.name,
-                            onClick = { onNavigate(item) },
+                            onClick = { onNavigateToConfectioner(item) },
                         )
                     }
                     if (state.isLoading) {
@@ -172,7 +171,7 @@ fun PreviewCustomersFeedStatelessScreen() {
             ),
             searchText = ""
         ),
-        onNavigate = {},
+        onNavigateToConfectioner = {},
         onSearchTextChange = {},
         onSearch = {},
         onLoadMore = {},
