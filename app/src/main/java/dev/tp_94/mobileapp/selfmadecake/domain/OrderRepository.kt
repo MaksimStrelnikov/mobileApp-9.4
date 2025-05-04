@@ -11,4 +11,5 @@ interface OrderRepository {
     suspend fun placeCustomCakeOrder(cakeCustom: CakeCustom, customer: Customer, confectioner: Confectioner)
     suspend fun getAllOrders(user: User?): List<Order>
     suspend fun updateOrderStatus(user: User?, order: Order, status: OrderStatus)
+    suspend fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus)
 }

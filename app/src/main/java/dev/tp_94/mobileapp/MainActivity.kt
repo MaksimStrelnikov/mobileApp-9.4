@@ -24,6 +24,7 @@ import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScree
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.mainconfectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.maincustomer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.orders.presentation.OrdersStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
@@ -187,6 +188,24 @@ fun MainNavGraph() {
                     TopNameBar("Страница кондитера") {
                         navController.popBackStack()
                     }
+                },
+            )
+        }
+
+        composable("confectionerOrders") {
+            OrdersStatefulScreen(
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Заказы",
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                    )
                 },
             )
         }

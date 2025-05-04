@@ -31,4 +31,13 @@ class MockOrderRepository @Inject constructor(private val db: MockDB) : OrderRep
     override suspend fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
         db.updateOrderStatus(user, order, status)
     }
+
+    override suspend fun updateOrderStatus(
+        user: User?,
+        order: Order,
+        price: Int,
+        status: OrderStatus
+    ) {
+        db.updateOrderStatus(user, order, price, status)
+    }
 }

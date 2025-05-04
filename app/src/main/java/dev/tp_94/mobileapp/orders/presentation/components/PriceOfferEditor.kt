@@ -25,7 +25,7 @@ import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun PriceOfferEditor(onDismiss: () -> Unit, onClick: () -> Unit) {
+fun PriceOfferEditor(onDismiss: () -> Unit, onClick: (Int) -> Unit) {
     val price = remember { mutableStateOf("") }
     Dialog(
         onDismissRequest = onDismiss
@@ -60,7 +60,7 @@ fun PriceOfferEditor(onDismiss: () -> Unit, onClick: () -> Unit) {
                 )
                 Spacer(Modifier.height(12.dp))
                 ActiveButton(
-                    onClick = onClick,
+                    onClick = { onClick(price.value.toInt()) },
                     modifier = Modifier
                         .height(48.dp)
                         .fillMaxWidth(),

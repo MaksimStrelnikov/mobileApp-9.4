@@ -218,4 +218,15 @@ class MockDB {
         orderDatabase.remove(deleted)
         orderDatabase.add(deleted.copy(orderStatus = status))
     }
+
+    fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus) {
+        if (user == null || user !is Confectioner) {
+            throw Exception("User is not confectioner")
+        }
+        val filtered = orderDatabase.filter { it == order && it.confectioner == user }
+        if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
+        val deleted = filtered.last()
+        orderDatabase.remove(deleted)
+        orderDatabase.add(deleted.copy(orderStatus = status, price = price))
+    }
 }
