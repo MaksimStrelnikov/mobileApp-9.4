@@ -13,12 +13,11 @@ import dev.tp_94.mobileapp.selfmadecake.domain.Restrictions
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.util.TreeMap
 
 class MockDB {
     val usersDatabase: ArrayList<UserPassword> = ArrayList()
     val orderDatabase: ArrayList<Order> = ArrayList()
-    val restrictionsDatabase: TreeMap<Confectioner, Restrictions> = TreeMap()
+    val restrictionsDatabase: ArrayList<Restrictions> = ArrayList()
     var current_index = 2
 
     init {
@@ -42,12 +41,15 @@ class MockDB {
                 address = "г. Воронеж, Университетская площадь, 1"
             )
         )
-        restrictionsDatabase[login("9876543210", "123456789") as Confectioner] = Restrictions(
-            minDiameter = 10f,
-            maxDiameter = 30f,
-            minPreparationDays = 3,
-            maxPreparationDays = 7,
-            fillings = arrayListOf("Клубника", "Вишня", "Ананас")
+        restrictionsDatabase.add(
+            Restrictions(
+                minDiameter = 10f,
+                maxDiameter = 30f,
+                minPreparationDays = 3,
+                maxPreparationDays = 7,
+                fillings = arrayListOf("Клубника", "Вишня", "Ананас"),
+                confectioner = login("9876543210", "123456789") as Confectioner
+            )
         )
     }
 

@@ -33,14 +33,14 @@ import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
 import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
 
 @Composable
-fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccess: () -> Unit) {
+fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LoginStatelessScreen(
         state = state,
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
         onPasswordChange = { viewModel.updatePassword(it) },
         onSignUp = onSignUp,
-        onLogin = { viewModel.login(onSuccess) }
+        onLogin = { viewModel.login(onSuccessCustomer, onSuccessConfectioner) }
     )
 }
 

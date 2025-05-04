@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
@@ -27,7 +28,9 @@ fun ConfectionerCard(
     name: String,
     address: String,
     description: String,
+    onMyProfileClick: (() -> Unit)? = null,
     onButtonClick: () -> Unit,
+    customOrdersText: String = "Индивидуальный заказ"
 ) {
     Box(
         modifier = Modifier
@@ -62,12 +65,25 @@ fun ConfectionerCard(
                         tint = colorResource(R.color.dark_text)
                     )
                 }
-                Text(
-                    text = name,
-                    style = TextStyles.header(colorResource(R.color.dark_text)),
+                Column(
                     modifier = Modifier
                         .padding(16.dp)
-                )
+                ) {
+                    Text(
+                        text = name,
+                        style = TextStyles.header(colorResource(R.color.dark_text)),
+                    )
+                    if (onMyProfileClick != null) {
+                        DiscardButton(
+                            onMyProfileClick
+                        ) {
+                            Text(
+                                text = "Мой профиль",
+                                style = TextStyles.button(colorResource(R.color.dark_text))
+                            )
+                        }
+                    }
+                }
             }
             Text(
                 text = address,
@@ -86,7 +102,7 @@ fun ConfectionerCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Индивидуальный заказ",
+                    text = customOrdersText,
                     style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }

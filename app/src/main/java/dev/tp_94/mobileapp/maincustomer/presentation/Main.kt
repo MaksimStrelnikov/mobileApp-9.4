@@ -200,7 +200,7 @@ fun MainStatelessScreen(
                         CakeFeedItem(
                             name = product.name,
                             weight = product.weight,
-                            preparation = product.preparationDays,
+                            preparation = product.preparation,
                             price = product.price,
                             onBuy = { onProductBuy(product) },
                             onOpen = { onNavigateToProduct(product) },
@@ -251,7 +251,7 @@ fun PreviewMainStatelessScreen() {
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
-                    preparationDays = 1,
+                    preparation = 1,
                     confectioner = Confectioner(
                         id = 1,
                         name = "TODO(1)",
@@ -267,7 +267,7 @@ fun PreviewMainStatelessScreen() {
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
-                    preparationDays = 1,
+                    preparation = 1,
                     confectioner = Confectioner(
                         id = 2,
                         name = "TODO(2)",
@@ -283,7 +283,7 @@ fun PreviewMainStatelessScreen() {
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
-                    preparationDays = 1,
+                    preparation = 1,
                     confectioner = Confectioner(
                         id = 1,
                         name = "TODO(1)",
@@ -299,7 +299,7 @@ fun PreviewMainStatelessScreen() {
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
-                    preparationDays = 1,
+                    preparation = 1,
                     confectioner = Confectioner(
                         id = 2,
                         name = "TODO(2)",

@@ -3,6 +3,7 @@ package dev.tp_94.mobileapp.login.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.login.domain.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ class LoginViewModel @Inject constructor(
         _state.value = _state.value.copy(password = password)
     }
 
-    fun login(onSuccess: () -> Unit) {
+    fun login(onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = loginUseCase.execute(state.value.phoneNumber, state.value.password)
@@ -29,7 +30,11 @@ class LoginViewModel @Inject constructor(
                 _state.value.copy(error = response.message)
             else if (response is LoginResult.Success) {
                 _state.value = _state.value.copy(error = "")
-                onSuccess()
+                if (response.user is Confectioner) {
+                    onSuccessConfectioner()
+                } else {
+                    onSuccessCustomer()
+                }
             }
             _state.value = _state.value.copy(isLoading = false)
         }

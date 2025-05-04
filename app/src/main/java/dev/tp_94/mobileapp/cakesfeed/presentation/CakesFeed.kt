@@ -132,7 +132,7 @@ fun CakesFeedStatelessScreen(
                         CakeFeedItem(
                             name = item.name,
                             weight = item.weight,
-                            preparation = item.preparationDays,
+                            preparation = item.preparation,
                             price = item.price,
                             onBuy = { onBuy(item) },
                             onOpen = { onOpen(item) },
@@ -170,7 +170,7 @@ fun PreviewCakesFeedStatelessScreen() {
                     description = "sdfhoij",
                     diameter = 10f,
                     weight = 1f,
-                    preparationDays = 3,
+                    preparation = 3,
                     confectioner = Confectioner(
                         id = 1,
                         name = "TODO()",
