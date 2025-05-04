@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -56,6 +57,7 @@ fun CakeFeedItem(
             if (image == null) {
                 Box(
                     modifier = Modifier
+                        .padding(bottom = 5.dp)
                         .background(
                             color = colorResource(R.color.dark_background),
                             shape = RoundedCornerShape(8.dp)
@@ -67,7 +69,8 @@ fun CakeFeedItem(
                     Icon(
                         painter = painterResource(R.drawable.nocake),
                         contentDescription = null,
-                        tint = colorResource(R.color.light_text)
+                        tint = colorResource(R.color.light_text),
+                        modifier = Modifier.size(50.dp)
                     )
                 }
             }

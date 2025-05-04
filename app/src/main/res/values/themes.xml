@@ -3,8 +3,8 @@
     <style name="CakerTheme" parent="Theme.Caker.Main">
     </style>
     <style name="Theme.Caker.Main" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/light_background</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
     <style name="Theme.Caker.Splash" parent="Theme.SplashScreen">

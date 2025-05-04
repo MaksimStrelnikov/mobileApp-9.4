@@ -37,7 +37,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 fun SearchInput(
     text: String,
     defaultText: String,
-    backgroundColor: Color,
+    backgroundColor: Color = colorResource(R.color.dark_background),
     onChange: (String) -> Unit,
     onSearch: () -> Unit
 ) {
