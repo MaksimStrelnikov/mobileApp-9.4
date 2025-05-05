@@ -51,7 +51,7 @@ fun LoginStatelessScreen(
     onPasswordChange: (String) -> Unit,
     onSignUp: () -> Unit,
     onLogin: () -> Unit
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

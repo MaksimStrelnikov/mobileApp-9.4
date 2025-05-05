@@ -3,7 +3,9 @@ package dev.tp_94.mobileapp.login.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.login.domain.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val sessionCache: SessionCache,
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
     fun updatePhoneNumber(phoneNumber: String) {
@@ -44,4 +47,8 @@ class LoginViewModel @Inject constructor(
         LoginState()
     )
     val state = _state.asStateFlow()
+
+    fun getUser(): User? {
+        return sessionCache.session?.user
+    }
 }

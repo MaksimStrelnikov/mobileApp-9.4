@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +19,9 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageStatefulScreen
 import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageViewModel
+import dev.tp_94.mobileapp.core.SplashNavigationScreen
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
@@ -34,30 +38,25 @@ import dev.tp_94.mobileapp.profileeditor.presentation.ProfileEditorStatefulScree
 import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
 import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
-import kotlinx.coroutines.delay
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val isLoading = mutableStateOf(true)
+
+    private val isAppInitialized = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                isLoading.value
-            }
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            !isAppInitialized.value
         }
 
-        setContent {
-            LaunchedEffect(Unit) {
-                isLoading.value = false
-            }
+        super.onCreate(savedInstanceState)
 
-            MainNavGraph()
+        setContent {
+            MainNavGraph(isAppInitialized)
         }
     }
 }
@@ -90,10 +89,38 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
 
 
 @Composable
-fun MainNavGraph() {
+fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "login") {
+    NavHost(navController, startDestination = "main") {
+        composable("main") {
+            SplashNavigationScreen(
+                onResult = {
+                    when (it) {
+                        is Customer -> {
+                            navController.navigate("mainCustomer") {
+                                popUpTo(0)
+                            }
+                        }
+
+                        is Confectioner -> {
+                            navController.navigate("mainConfectioner") {
+                                popUpTo(0)
+                            }
+                        }
+
+                        null -> {
+                            navController.navigate("login") {
+                                popUpTo(0)
+                            }
+                        }
+                    }
+                }
+            )
+        }
         composable("login") {
+            LaunchedEffect(Unit) {
+                isAppInitialized.value = true
+            }
             Log.println(Log.INFO, "Log", "Login")
             LoginStatefulScreen(
                 onSignUp = { navController.navigate("signup") },
@@ -125,6 +152,9 @@ fun MainNavGraph() {
                 })
         }
         composable("mainCustomer") {
+            LaunchedEffect(Unit) {
+                isAppInitialized.value = true
+            }
             MainStatefulScreen(onError = {
                 navController.navigate("login") {
                     popUpTo(0)
@@ -153,6 +183,9 @@ fun MainNavGraph() {
         }
 
         composable("mainConfectioner") {
+            LaunchedEffect(Unit) {
+                isAppInitialized.value = true
+            }
             MainConfectionerStatefulScreen(
                 onError = {
                     navController.navigate("login") {
