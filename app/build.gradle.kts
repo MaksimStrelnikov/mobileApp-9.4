@@ -29,12 +29,14 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        create("debugConnection") {
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -73,6 +75,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.squareup.retrofit)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.converter.moshi)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
 
     val composeBom = platform("androidx.compose:compose-bom:2024.03.00")

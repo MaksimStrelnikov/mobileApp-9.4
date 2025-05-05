@@ -5,6 +5,8 @@ agp = "8.8.1"
 coilCompose = "2.2.2"
 colorpicker = "1.0.0"
 colorpickerCompose = "1.1.2"
+converterGson = "2.9.0"
+converterMoshi = "2.9.0"
 coreSplashscreen = "1.0.1"
 hiltAndroid = "2.51.1"
 hiltAndroidCompiler = "2.51.1"
@@ -28,6 +30,7 @@ moshiKotlin = "1.15.0"
 moshiKotlinCodegen = "1.15.0"
 navigationFragmentKtx = "2.8.9"
 navigationUiKtx = "2.8.9"
+squareupRetrofit = "2.9.0"
 
 [libraries]
 adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
@@ -51,6 +54,8 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 colorpicker = { module = "io.mhssn:colorpicker", version.ref = "colorpicker" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpickerCompose" }
+converter-gson = { module = "com.squareup.retrofit2:converter.gson", version.ref = "converterGson" }
+converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -69,6 +74,7 @@ moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshiAdapters" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegen" }
+squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
