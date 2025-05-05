@@ -1,8 +1,7 @@
 package dev.tp_94.mobileapp
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.login.domain.LoginUseCase
 import dev.tp_94.mobileapp.login.presentation.LoginResult
 import dev.tp_94.mobileapp.login.presentation.LoginViewModel
@@ -15,6 +14,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,13 +27,14 @@ class LoginViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val mockSessionCache= mockk<SessionCache>()
     private val mockUseCase = mockk<LoginUseCase>()
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = LoginViewModel(mockUseCase)
+        viewModel = LoginViewModel(mockSessionCache, mockUseCase)
     }
 
     @After
