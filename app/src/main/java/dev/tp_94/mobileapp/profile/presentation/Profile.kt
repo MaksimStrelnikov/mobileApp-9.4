@@ -63,8 +63,7 @@ fun ProfileScreen(
                 viewModel.logout()
                 onLogout()
             },
-            topBar = topBar,
-            bottomBar = bottomBar,
+            topBar = topBar
         )
 
         is Customer -> ProfileCustomerStatelessScreen(
@@ -222,12 +221,10 @@ fun ProfileConfectionerStatelessScreen(
     onViewOrders: () -> Unit,
     onChangeCustomCake: () -> Unit,
     onLogout: () -> Unit,
-    topBar: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit
+    topBar: @Composable () -> Unit
 ) {
     Scaffold(
-        topBar = topBar,
-        bottomBar = bottomBar
+        topBar = topBar
     ) {
         Column(
             modifier = Modifier
@@ -353,15 +350,6 @@ fun PreviewProfileConfectionerStatelessScreen() {
             TopNameBar(
                 name = "Профиль"
             ) { }
-        },
-        bottomBar = {
-            BottomNavBar(
-                onMainClick = { },
-                onOrdersClick = { },
-                onProfileClick = { },
-                onBasketClick = { },
-                currentScreen = Screen.PROFILE
-            )
         }
     )
 }

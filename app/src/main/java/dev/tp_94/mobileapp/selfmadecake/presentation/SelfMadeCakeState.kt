@@ -7,5 +7,6 @@ data class SelfMadeCakeState(
     var colorPickerOpen: Boolean = false,
     var textImageEditor: Editor = Editor.IMAGE,
     val cakeCustom: CakeCustom,
-    val confectioner: Confectioner
+    val confectioner: Confectioner,
+    val isLoading: Boolean = false
 )

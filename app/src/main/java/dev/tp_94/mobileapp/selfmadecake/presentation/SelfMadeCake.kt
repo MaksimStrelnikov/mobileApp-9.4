@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -81,8 +82,7 @@ fun SelfMadeCakeStatefulScreen(
         onCommentChange = { viewModel.updateComment(it) },
         topBar = topBar,
         onSend = {
-            viewModel.sendCustomCake()
-            onDone()
+            viewModel.sendCustomCake(onDone)
         }
     )
 }
@@ -228,10 +228,17 @@ fun SelfMadeCakeStatelessScreen(
                 onClick = onSend,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Отправить",
-                    style = TextStyles.button(colorResource(R.color.light_background))
-                )
+                when(state.isLoading) {
+                    false -> {
+                        Text(
+                            text = "Отправить",
+                            style = TextStyles.button(colorResource(R.color.light_background))
+                        )
+                    }
+                    true -> {
+                        CircularProgressIndicator(color = colorResource(R.color.light_background))
+                    }
+                }
             }
             when {
                 state.colorPickerOpen -> {

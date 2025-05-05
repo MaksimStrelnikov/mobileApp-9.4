@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +25,8 @@ import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScree
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.mainconfectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.maincustomer.presentation.MainStatefulScreen
-import dev.tp_94.mobileapp.orders.presentation.OrdersStatefulScreen
+import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
+import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
@@ -51,9 +53,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            //TODO: make a valid reason to show splash
             LaunchedEffect(Unit) {
-                delay(2000)
                 isLoading.value = false
             }
 
@@ -61,6 +61,33 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun AppBottomBar(currentScreen: Screen, navController: NavController) {
+    BottomNavBar(
+        onMainClick = {
+            if (currentScreen != Screen.MAIN)
+                navController.navigate("mainCustomer") {
+                    popUpTo("mainCustomer") { inclusive = true }
+                }
+        },
+        onOrdersClick = {
+            if (currentScreen != Screen.ORDERS)
+                navController.navigate("customerOrders") {
+                    popUpTo("customerOrders") { inclusive = true }
+                }
+        },
+        onBasketClick = { /* TODO */ },
+        onProfileClick = {
+            if (currentScreen != Screen.PROFILE)
+                navController.navigate("profile") {
+                    popUpTo("profile") { inclusive = true }
+                }
+        },
+        currentScreen = currentScreen
+    )
+}
+
 
 @Composable
 fun MainNavGraph() {
@@ -90,12 +117,12 @@ fun MainNavGraph() {
                     popUpTo(0)
                 }
             },
-            onSuccessConfectioner = {
-                navController.navigate("mainConfectioner") {
-                    popUpTo(0)
-                    Log.println(Log.INFO, "Log", "Navigate to profile")
-                }
-            })
+                onSuccessConfectioner = {
+                    navController.navigate("mainConfectioner") {
+                        popUpTo(0)
+                        Log.println(Log.INFO, "Log", "Navigate to profile")
+                    }
+                })
         }
         composable("mainCustomer") {
             MainStatefulScreen(onError = {
@@ -103,28 +130,25 @@ fun MainNavGraph() {
                     popUpTo(0)
                 }
             },
-                onSearch = { TODO() },
+                onSearch = {
+                    //TODO
+                },
                 onNavigateToConfectioners = {
                     navController.navigate("customerfeed")
                 },
-                onNavigateToProducts = { TODO() },
+                onNavigateToProducts = {
+                    //TODO
+                },
                 onNavigateToConfectioner = {
                     val json = Json.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("confectionerpage/$encoded")
                 },
-                onNavigateToProduct = { TODO() },
+                onNavigateToProduct = {
+                    //TODO
+                },
                 bottomBar = {
-                    BottomNavBar(onMainClick = {
-                        navController.navigate("main")
-                    }, onOrdersClick = {
-                        TODO()
-                    }, onBasketClick = {
-                        TODO()
-                    }, onProfileClick = {
-                        navController.navigate("profile")
-                    }, currentScreen = Screen.MAIN
-                    )
+                    AppBottomBar(currentScreen = Screen.MAIN, navController = navController)
                 })
         }
 
@@ -152,19 +176,23 @@ fun MainNavGraph() {
             SelfMadeCakeStatefulScreen(
                 viewModel = viewModel,
                 onDone = {
-                    navController.popBackStack()
+                    navController.navigate("customerOrders") {
+                        popUpTo("mainCustomer")
+                    }
                 },
                 onError = {
                     navController.navigate("login") {
                         popUpTo(0)
                     }
                 },
-                topBar = {TopNameBar(
-                    name = "Редактор торта",
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                ) },
+                topBar = {
+                    TopNameBar(
+                        name = "Редактор торта",
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                },
             )
         }
         composable(
@@ -193,7 +221,7 @@ fun MainNavGraph() {
         }
 
         composable("confectionerOrders") {
-            OrdersStatefulScreen(
+            ConfectionerOrdersStatefulScreen(
                 onError = {
                     navController.navigate("login") {
                         popUpTo(0)
@@ -210,6 +238,28 @@ fun MainNavGraph() {
             )
         }
 
+        composable("customerOrders") {
+            CustomerOrdersStatefulScreen(
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Заказы",
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                    )
+                },
+                onPay = {/*TODO()*/ },
+                bottomBar = {
+                    AppBottomBar(currentScreen = Screen.ORDERS, navController = navController)
+                }
+            )
+        }
+
         composable("customerfeed") {
             CustomersFeedStatefulScreen(onNavigateToConfectioner = {
                 val json = Json.encodeToString(it)
@@ -223,6 +273,7 @@ fun MainNavGraph() {
                 }
             })
         }
+        //TODO: divide profile
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
             ProfileScreen(confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {
@@ -248,12 +299,7 @@ fun MainNavGraph() {
                     )
                 },
                 bottomBar = {
-                    BottomNavBar(onMainClick = {
-                        navController.navigate("main")
-                    }, onOrdersClick = { TODO() }, onProfileClick = {
-                        navController.navigate("profile")
-                    }, onBasketClick = { TODO() }, currentScreen = Screen.PROFILE
-                    )
+                    AppBottomBar(currentScreen = Screen.PROFILE, navController = navController)
                 },
                 onLogout = {
                     navController.navigate("login") {

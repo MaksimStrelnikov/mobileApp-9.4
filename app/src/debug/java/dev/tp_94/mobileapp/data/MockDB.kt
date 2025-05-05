@@ -201,32 +201,76 @@ class MockDB {
     }
 
     fun getAllOrders(user: User?): List<Order> {
-        if (user == null || user !is Confectioner) {
-            throw Exception("User is not confectioner")
+        if (user == null) {
+            throw Exception("User is null")
         }
-        val filtered = orderDatabase.filter { it.confectioner == user }
-        return filtered
+        when(user) {
+            is Confectioner -> {
+                val filtered = orderDatabase.filter { it.confectioner == user }
+                return filtered
+            }
+
+            is Customer -> {
+                val filtered = orderDatabase.filter { it.customer == user }
+                return filtered
+            }
+        }
     }
 
     fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
-        if (user == null || user !is Confectioner) {
-            throw Exception("User is not confectioner")
+        if (user == null) {
+            throw Exception("User is null")
         }
-        val filtered = orderDatabase.filter { it == order && it.confectioner == user }
-        if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
-        val deleted = filtered.last()
-        orderDatabase.remove(deleted)
-        orderDatabase.add(deleted.copy(orderStatus = status))
+        if (user !is Confectioner && arrayListOf(OrderStatus.PENDING_PAYMENT, OrderStatus.REJECTED, OrderStatus.DONE).contains(status)) {
+            throw Exception("User is not a confectioner")
+        }
+        if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
+            throw Exception("User is not a customer")
+        }
+        when (user) {
+            is Confectioner -> {
+                val filtered = orderDatabase.filter { it == order && it.confectioner == user }
+                if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
+                val deleted = filtered.last()
+                orderDatabase.remove(deleted)
+                orderDatabase.add(deleted.copy(orderStatus = status))
+            }
+            is Customer -> {
+                val filtered = orderDatabase.filter { it == order && it.customer == user }
+                if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
+                val deleted = filtered.last()
+                orderDatabase.remove(deleted)
+                orderDatabase.add(deleted.copy(orderStatus = status))
+            }
+        }
     }
 
     fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus) {
-        if (user == null || user !is Confectioner) {
-            throw Exception("User is not confectioner")
+        if (user == null) {
+            throw Exception("User is null")
         }
-        val filtered = orderDatabase.filter { it == order && it.confectioner == user }
-        if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
-        val deleted = filtered.last()
-        orderDatabase.remove(deleted)
-        orderDatabase.add(deleted.copy(orderStatus = status, price = price))
+        if (user !is Confectioner && arrayListOf(OrderStatus.PENDING_PAYMENT, OrderStatus.REJECTED, OrderStatus.DONE).contains(status)) {
+            throw Exception("User is not a confectioner")
+        }
+        if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
+            throw Exception("User is not a customer")
+        }
+        when (user) {
+            is Confectioner -> {
+                val filtered = orderDatabase.filter { it == order && it.confectioner == user }
+                if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
+                val deleted = filtered.last()
+                orderDatabase.remove(deleted)
+                orderDatabase.add(deleted.copy(orderStatus = status, price = price))
+            }
+            is Customer -> {
+                val filtered = orderDatabase.filter { it == order && it.customer == user }
+                if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
+                val deleted = filtered.last()
+                orderDatabase.remove(deleted)
+                orderDatabase.add(deleted.copy(orderStatus = status))
+            }
+        }
+
     }
 }

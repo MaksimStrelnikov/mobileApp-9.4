@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,14 +20,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.orders.presentation.components.GeneralOrderItem
+import dev.tp_94.mobileapp.orders.presentation.components.ConfectionerOrderItem
+import dev.tp_94.mobileapp.orders.presentation.components.CustomerOrderItem
 import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
 
 @Composable
-fun OrdersStatefulScreen(
+fun ConfectionerOrdersStatefulScreen(
     viewModel: OrdersViewModel = hiltViewModel(),
     onError: () -> Unit,
     topBar: @Composable () -> Unit
@@ -41,7 +42,7 @@ fun OrdersStatefulScreen(
         }
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    OrdersStatelessScreen(
+    ConfectionerOrdersStatelessScreen(
         state = state,
         onDecline = { viewModel.changeStatus(it, OrderStatus.REJECTED) },
         onApprove = { price ->
@@ -58,7 +59,7 @@ fun OrdersStatefulScreen(
 }
 
 @Composable
-fun OrdersStatelessScreen(
+fun ConfectionerOrdersStatelessScreen(
     state: OrdersState,
     onOpenPriceEditor: (Order) -> Unit,
     onClosePriceEditor: () -> Unit,
@@ -78,9 +79,9 @@ fun OrdersStatelessScreen(
         ) {
             LazyColumn {
                 items(state.orders) { order ->
-                    GeneralOrderItem(
+                    ConfectionerOrderItem(
                         cakeName = order.cake.name,
-                        customerName = order.customer.phoneNumber,
+                        customersPhone = order.customer.phoneNumber,
                         orderDate = order.date,
                         preparation = order.cake.preparation,
                         price = order.price,
@@ -111,8 +112,8 @@ fun OrdersStatelessScreen(
 
 @Preview
 @Composable
-fun PreviewOrdersStatelessScreen() {
-    OrdersStatelessScreen(
+fun PreviewConfectionerOrdersStatelessScreen() {
+    ConfectionerOrdersStatelessScreen(
         state = OrdersState(
             orders = arrayListOf()
         ),
@@ -122,5 +123,85 @@ fun PreviewOrdersStatelessScreen() {
         topBar = { TopNameBar("F") { } },
         onOpenPriceEditor = { TODO() },
         onClosePriceEditor = { TODO() }
+    )
+}
+
+@Composable
+fun CustomerOrdersStatefulScreen(
+    viewModel: OrdersViewModel = hiltViewModel(),
+    onError: () -> Unit,
+    onPay: (Order) -> Unit,
+    topBar: @Composable () -> Unit,
+    bottomBar: @Composable () -> Unit
+) {
+    val user = viewModel.getUser()
+    LaunchedEffect(user) {
+        if (user == null || user !is Customer) {
+            onError()
+            viewModel.exit()
+        }
+    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    CustomerOrdersStatelessScreen(
+        state = state,
+        onDecline = { viewModel.changeStatus(it, OrderStatus.CANCELED) },
+        onPay = { onPay(it) },
+        onReceive = { viewModel.changeStatus(it, OrderStatus.RECEIVED) },
+        topBar = topBar,
+        bottomBar = bottomBar
+    )
+}
+
+@Composable
+fun CustomerOrdersStatelessScreen(
+    state: OrdersState,
+    onDecline: (Order) -> Unit,
+    onPay: (Order) -> Unit,
+    onReceive: (Order) -> Unit,
+    topBar: @Composable () -> Unit,
+    bottomBar: @Composable () -> Unit
+) {
+    Scaffold(
+        topBar = topBar,
+        bottomBar = bottomBar
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = colorResource(R.color.background))
+                .padding(innerPadding)
+        ) {
+            LazyColumn {
+                items(state.orders) { order ->
+                    CustomerOrderItem(
+                        cakeName = order.cake.name,
+                        customersPhone = order.confectioner.phoneNumber,
+                        orderDate = order.date,
+                        preparation = order.cake.preparation,
+                        price = order.price,
+                        onDecline = { onDecline(order) },
+                        orderStatus = order.orderStatus,
+                        onPay = { onPay(order) },
+                        onReceive = { onReceive(order) },
+                    )
+                    Spacer(Modifier.height(12.dp))
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCustomerOrdersStatelessScreen() {
+    CustomerOrdersStatelessScreen(
+        state = OrdersState(
+            orders = arrayListOf()
+        ),
+        onDecline = { TODO() },
+        topBar = { TopNameBar("F") { } },
+        onPay = { TODO() },
+        onReceive = { TODO() },
+        bottomBar = { TODO() },
     )
 }

@@ -73,20 +73,20 @@ fun BottomNavBar(
                 )
             }
             IconButton(
-                    onClick = onBasketClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(size)
-                .weight(0.33f)
+                onClick = onBasketClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(size)
+                    .weight(0.33f)
             ) {
-            Icon(
-                painter = painterResource(R.drawable.basket_icon),
-                contentDescription = "Корзина",
-                tint = if (currentScreen == Screen.BUSKET) colorResource(R.color.dark_accent) else colorResource(
-                    R.color.dark_text
+                Icon(
+                    painter = painterResource(R.drawable.basket_icon),
+                    contentDescription = "Корзина",
+                    tint = if (currentScreen == Screen.BASKET) colorResource(R.color.dark_accent) else colorResource(
+                        R.color.dark_text
+                    )
                 )
-            )
-        }
+            }
             IconButton(
                 onClick = onProfileClick,
                 modifier = Modifier
@@ -110,17 +110,17 @@ enum class Screen {
     MAIN,
     ORDERS,
     PROFILE,
-    BUSKET
+    BASKET
 }
 
 @Preview
 @Composable
 fun PreviewBottomNavBar() {
     BottomNavBar(
-        onMainClick = {   },
-        onOrdersClick = {   },
-        onBasketClick = {   },
-        onProfileClick = {   },
+        onMainClick = { },
+        onOrdersClick = { },
+        onBasketClick = { },
+        onProfileClick = { },
         currentScreen = Screen.MAIN
     )
 }
