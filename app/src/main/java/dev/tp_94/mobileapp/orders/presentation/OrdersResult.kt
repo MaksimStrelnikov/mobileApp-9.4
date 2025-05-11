@@ -5,7 +5,7 @@ import dev.tp_94.mobileapp.core.models.Order
 sealed class OrdersResult {
     sealed class Success: OrdersResult(){
         data class SuccessGet(val orders: List<Order>): Success()
-        data class SuccessUpdate(val message: String): Success()
+        data class SuccessUpdate(val order: Order): Success()
     }
     data class Error(val message: String): OrdersResult()
 }

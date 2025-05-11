@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -17,26 +18,29 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageStatefulScreen
-import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageViewModel
+import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageStatefulScreen
+import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageViewModel
 import dev.tp_94.mobileapp.core.SplashNavigationScreen
+import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScreen
+import dev.tp_94.mobileapp.customers_feed.presentation.CustomersFeedStatefulScreen
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
-import dev.tp_94.mobileapp.mainconfectioner.presentation.MainConfectionerStatefulScreen
-import dev.tp_94.mobileapp.maincustomer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
+import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
+import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
-import dev.tp_94.mobileapp.profileeditor.presentation.ProfileEditorStatefulScreen
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeViewModel
+import dev.tp_94.mobileapp.profile_editor.presentation.ProfileEditorStatefulScreen
+import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeStatefulScreen
+import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -253,12 +257,43 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             )
         }
 
+        composable(
+            "orderView/{order}",
+            arguments = listOf(navArgument("order") { type = NavType.StringType })
+        ) {
+            val viewModel = hiltViewModel<OrderViewModel>()
+            OrderViewStatefulScreen(
+                viewModel = viewModel,
+                onConfectionerClick = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("confectionerpage/$encoded")
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar("Заказ") {
+                        navController.popBackStack()
+                    }
+                }
+            )
+        }
+
         composable("confectionerOrders") {
             ConfectionerOrdersStatefulScreen(
                 onError = {
                     navController.navigate("login") {
                         popUpTo(0)
                     }
+                },
+                onNavigate = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderView/$encoded")
                 },
                 topBar = {
                     TopNameBar(
@@ -277,6 +312,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("login") {
                         popUpTo(0)
                     }
+                },
+                onNavigate = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderView/$encoded")
                 },
                 topBar = {
                     TopNameBar(
@@ -306,7 +347,6 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 }
             })
         }
-        //TODO: divide profile
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
             ProfileScreen(confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {

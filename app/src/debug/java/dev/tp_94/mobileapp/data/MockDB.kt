@@ -9,7 +9,7 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
-import dev.tp_94.mobileapp.selfmadecake.domain.Restrictions
+import dev.tp_94.mobileapp.self_made_cake.domain.Restrictions
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -217,7 +217,7 @@ class MockDB {
         }
     }
 
-    fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
+    fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus): Order {
         if (user == null) {
             throw Exception("User is null")
         }
@@ -227,50 +227,25 @@ class MockDB {
         if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
             throw Exception("User is not a customer")
         }
+        val returnOrder: Order
         when (user) {
             is Confectioner -> {
                 val filtered = orderDatabase.filter { it == order && it.confectioner == user }
                 if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
                 val deleted = filtered.last()
                 orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
+                returnOrder = deleted.copy(orderStatus = status, price = price)
+                orderDatabase.add(returnOrder)
             }
             is Customer -> {
                 val filtered = orderDatabase.filter { it == order && it.customer == user }
                 if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
                 val deleted = filtered.last()
                 orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
+                returnOrder = deleted.copy(orderStatus = status, price = price)
+                orderDatabase.add(returnOrder)
             }
         }
-    }
-
-    fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus) {
-        if (user == null) {
-            throw Exception("User is null")
-        }
-        if (user !is Confectioner && arrayListOf(OrderStatus.PENDING_PAYMENT, OrderStatus.REJECTED, OrderStatus.DONE).contains(status)) {
-            throw Exception("User is not a confectioner")
-        }
-        if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
-            throw Exception("User is not a customer")
-        }
-        when (user) {
-            is Confectioner -> {
-                val filtered = orderDatabase.filter { it == order && it.confectioner == user }
-                if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
-                val deleted = filtered.last()
-                orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status, price = price))
-            }
-            is Customer -> {
-                val filtered = orderDatabase.filter { it == order && it.customer == user }
-                if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
-                val deleted = filtered.last()
-                orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
-            }
-        }
-
+        return returnOrder
     }
 }

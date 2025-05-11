@@ -4,9 +4,9 @@ import androidx.compose.ui.graphics.Color
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.selfmadecake.domain.OrderRepository
-import dev.tp_94.mobileapp.selfmadecake.domain.SendCustomCakeUseCase
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeResult
+import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
+import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
+import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeResult
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

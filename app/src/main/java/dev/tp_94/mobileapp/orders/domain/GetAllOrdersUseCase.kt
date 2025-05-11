@@ -1,9 +1,8 @@
 package dev.tp_94.mobileapp.orders.domain
 
-import android.annotation.SuppressLint
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.orders.presentation.OrdersResult
-import dev.tp_94.mobileapp.selfmadecake.domain.OrderRepository
+import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import javax.inject.Inject
 
 class GetAllOrdersUseCase @Inject constructor(private val repository: OrderRepository) {
