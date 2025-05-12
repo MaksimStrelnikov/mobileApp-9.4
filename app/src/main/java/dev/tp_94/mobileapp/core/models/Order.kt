@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Order(
+    val id: Int = 0,
     val cake: Cake,
     val date: LocalDate,
     val orderStatus: OrderStatus,
