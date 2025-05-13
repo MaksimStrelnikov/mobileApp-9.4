@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +55,7 @@ import dev.tp_94.mobileapp.order_view.presentation.components.ConfectionerBubble
 import dev.tp_94.mobileapp.order_view.presentation.components.PhoneText
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPart
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPartWithPairs
+import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddUneditable
 import kotlinx.datetime.LocalDate
 
@@ -76,20 +76,22 @@ fun OrderViewStatefulScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (state.order.cake) {
         is CakeCustom -> CustomOrderViewStatelessScreen(
-            order = state.order,
+            state = state,
             userType = userType,
             onConfectionerClick = onConfectionerClick,
             onReceive = { viewModel.changeStatus(OrderStatus.RECEIVED) },
             onCancel = { viewModel.changeStatus(OrderStatus.CANCELED) },
             onReject = { viewModel.changeStatus(OrderStatus.REJECTED) },
             onPay = { viewModel.changeStatus(OrderStatus.IN_PROGRESS) },
-            onApprove = { viewModel.changeStatus(OrderStatus.PENDING_PAYMENT) },
+            onApprove = { viewModel.changeStatus(it, OrderStatus.PENDING_PAYMENT) },
             onDone = { viewModel.changeStatus(OrderStatus.DONE) },
             topBar = topBar,
+            onClosePriceEditor = { viewModel.onDialogClose() },
+            onOpenPriceEditor = { viewModel.onDialogOpen() },
         )
 
         is CakeGeneral -> GeneralOrderViewStatelessScreen(
-            order = state.order,
+            state = state,
             image = null,
             userType = userType,
             onConfectionerClick = onConfectionerClick,
@@ -106,7 +108,7 @@ fun OrderViewStatefulScreen(
 
 @Composable
 fun GeneralOrderViewStatelessScreen(
-    order: Order,
+    state: OrderState,
     image: Painter? = null,
     userType: OrderUserType,
     onConfectionerClick: (Confectioner) -> Unit,
@@ -114,7 +116,7 @@ fun GeneralOrderViewStatelessScreen(
     onCancel: () -> Unit,
     onReject: () -> Unit,
     onPay: () -> Unit,
-    onApprove: () -> Unit,
+    onApprove: (Int) -> Unit,
     onDone: () -> Unit,
     topBar: @Composable () -> Unit,
 ) {
@@ -170,19 +172,22 @@ fun GeneralOrderViewStatelessScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = order.cake.name,
+                        text = state.order.cake.name,
                         style = TextStyles.header(colorResource(R.color.dark_text))
                     )
                     Spacer(Modifier.height(8.dp))
-                    TextPart("Описание", order.cake.description)
+                    TextPart("Описание", state.order.cake.description)
                     TextPartWithPairs(
                         "Параметры", listOf(
-                            Pair("Диаметр изделия", order.cake.diameter.toString() + " см"),
+                            Pair("Диаметр изделия", state.order.cake.diameter.toString() + " см"),
                             Pair(
                                 "Вес изделия",
-                                (order.cake as CakeGeneral).weight.toString() + " кг"
+                                (state.order.cake as CakeGeneral).weight.toString() + " кг"
                             ),
-                            Pair("Срок изготовления", order.cake.preparation.toString() + " дней")
+                            Pair(
+                                "Срок изготовления",
+                                state.order.cake.preparation.toString() + " дней"
+                            )
                         )
                     )
                     Text(
@@ -197,12 +202,12 @@ fun GeneralOrderViewStatelessScreen(
                         modifier = Modifier.padding(bottom = 11.dp)
                     ) {
                         Text(
-                            text = order.customer.name,
+                            text = state.order.customer.name,
                             style = TextStyles.regular(colorResource(R.color.middle_text)),
                             modifier = Modifier.weight(1f)
                         )
                         PhoneText(
-                            phoneNumber = "+7" + order.customer.phoneNumber,
+                            phoneNumber = "+7" + state.order.customer.phoneNumber,
                             color = colorResource(id = R.color.middle_text)
                         )
                     }
@@ -212,19 +217,23 @@ fun GeneralOrderViewStatelessScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         OrderStatusChangeVertical(
-                            status = order.orderStatus,
+                            status = state.order.orderStatus,
                             userType = userType,
                             onReceive = onReceive,
                             onCancel = onCancel,
                             onReject = onReject,
                             onPay = onPay,
-                            onApprove = onApprove,
+                            onApprove = { onApprove(state.order.price) },
                             onDone = onDone,
                         )
                     }
                     ConfectionerBubble(
-                        name = order.confectioner.name,
-                        onClick = { if (userType == OrderUserType.CUSTOMER) onConfectionerClick(order.confectioner) })
+                        name = state.order.confectioner.name,
+                        onClick = {
+                            if (userType == OrderUserType.CUSTOMER) onConfectionerClick(
+                                state.order.confectioner
+                            )
+                        })
                 }
             }
         }
@@ -242,8 +251,8 @@ fun PreviewGeneralOrderViewStatelessScreen() {
         description = "TODO()",
         address = "TODO()"
     )
-    GeneralOrderViewStatelessScreen(
-        order = Order(
+    var state = OrderState(
+        Order(
             cake = CakeGeneral(
                 price = 1000,
                 name = "Наполеон",
@@ -262,9 +271,13 @@ fun PreviewGeneralOrderViewStatelessScreen() {
                 name = "asd",
                 phoneNumber = "TODO()",
                 email = "TODO()"
-            ),
-            confectioner = confectioner
-        ), image = painterResource(R.drawable.mock_cake), topBar = { TopNameBar("Заказ ы)))") {} },
+            ), confectioner = confectioner
+        ),
+    )
+    GeneralOrderViewStatelessScreen(
+        state = state,
+        image = painterResource(R.drawable.mock_cake),
+        topBar = { TopNameBar("Заказ ы)))") {} },
         onConfectionerClick = {},
         userType = OrderUserType.CUSTOMER,
         onReceive = { TODO() },
@@ -272,13 +285,14 @@ fun PreviewGeneralOrderViewStatelessScreen() {
         onPay = { TODO() },
         onApprove = { TODO() },
         onDone = { TODO() },
-        onReject = { TODO() }
-    )
+        onReject = { TODO() },
+
+        )
 }
 
 @Composable
 fun CustomOrderViewStatelessScreen(
-    order: Order,
+    state: OrderState,
     userType: OrderUserType,
     onConfectionerClick: (Confectioner) -> Unit,
     topBar: @Composable () -> Unit,
@@ -286,8 +300,10 @@ fun CustomOrderViewStatelessScreen(
     onCancel: () -> Unit,
     onReject: () -> Unit,
     onPay: () -> Unit,
-    onApprove: () -> Unit,
-    onDone: () -> Unit
+    onApprove: (Int) -> Unit,
+    onDone: () -> Unit,
+    onOpenPriceEditor: () -> Unit,
+    onClosePriceEditor: () -> Unit
 ) {
     Scaffold(
         topBar = topBar
@@ -314,7 +330,7 @@ fun CustomOrderViewStatelessScreen(
                         .width(360.dp)
                         .height(460.dp)
                         .background(
-                            (order.cake as CakeCustom).color.darken(),
+                            (state.order.cake as CakeCustom).color.darken(),
                             shape = RoundedCornerShape(8.dp)
                         ),
                     contentAlignment = Alignment.Center,
@@ -324,30 +340,30 @@ fun CustomOrderViewStatelessScreen(
                             modifier = Modifier
                                 .size(270.dp)
                                 .clip(CircleShape)
-                                .background(order.cake.color),
+                                .background(state.order.cake.color),
                             contentAlignment = Alignment.Center
                         ) {
-                            order.cake.imageUri?.let { uri ->
+                            state.order.cake.imageUri?.let { uri ->
                                 val painter = rememberAsyncImagePainter(uri)
                                 Image(
                                     painter = painter,
                                     contentDescription = "Выбранное изображение",
                                     modifier = Modifier
                                         .size(200.dp)
-                                        .offset { order.cake.imageOffset.round() }
+                                        .offset { state.order.cake.imageOffset.round() }
                                 )
                             }
-                            Text(text = order.cake.text,
+                            Text(text = state.order.cake.text,
                                 style = TextStyles.header(colorResource(R.color.dark_text)),
                                 modifier = Modifier
-                                    .offset { order.cake.textOffset.round() })
+                                    .offset { state.order.cake.textOffset.round() })
                         }
                         Spacer(modifier = Modifier.height(30.dp))
                         Box(
                             modifier = Modifier
                                 .width(250.dp)
                                 .height(70.dp)
-                                .background(order.cake.color)
+                                .background(state.order.cake.color)
                         )
                     }
                 }
@@ -358,23 +374,40 @@ fun CustomOrderViewStatelessScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = order.cake.name,
+                        text = state.order.cake.name,
                         style = TextStyles.header(colorResource(R.color.dark_text))
                     )
                     Spacer(Modifier.height(8.dp))
-                    TextPart("Комментарий", order.cake.description)
-                    TextPartWithPairs(
-                        "Параметры", listOf(
-                            Pair("Диаметр изделия", order.cake.diameter.toString() + " см"),
-                            Pair("Срок изготовления", order.cake.preparation.toString() + " дней")
+                    TextPart("Комментарий", state.order.cake.description)
+                    if (state.order.price != 0) {
+                        TextPartWithPairs(
+                            "Параметры", listOf(
+                                Pair("Диаметр изделия", state.order.cake.diameter.toString() + " см"),
+                                Pair(
+                                    "Срок изготовления",
+                                    state.order.cake.preparation.toString() + " дней"
+                                ),
+                                Pair("Цена", state.order.price.toString() + " ₽")
+                            )
                         )
-                    )
+                    } else {
+                        TextPartWithPairs(
+                            "Параметры", listOf(
+                                Pair("Диаметр изделия", state.order.cake.diameter.toString() + " см"),
+                                Pair(
+                                    "Срок изготовления",
+                                    state.order.cake.preparation.toString() + " дней"
+                                )
+                            )
+                        )
+                    }
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState())
                     ) {
-                        order.cake.fillings.forEach {
+                        state.order.cake.fillings.forEach {
                             FillingAddUneditable(
                                 text = it
                             )
@@ -394,12 +427,12 @@ fun CustomOrderViewStatelessScreen(
                         modifier = Modifier.padding(bottom = 11.dp)
                     ) {
                         Text(
-                            text = order.customer.name,
+                            text = state.order.customer.name,
                             style = TextStyles.regular(colorResource(R.color.middle_text)),
                             modifier = Modifier.weight(1f)
                         )
                         PhoneText(
-                            phoneNumber = "+7" + order.customer.phoneNumber,
+                            phoneNumber = "+7" + state.order.customer.phoneNumber,
                             color = colorResource(id = R.color.middle_text)
                         )
                     }
@@ -409,20 +442,35 @@ fun CustomOrderViewStatelessScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         OrderStatusChangeVertical(
-                            status = order.orderStatus,
+                            status = state.order.orderStatus,
                             userType = userType,
                             onReceive = onReceive,
                             onCancel = onCancel,
                             onReject = onReject,
                             onPay = onPay,
-                            onApprove = onApprove,
+                            onApprove = onOpenPriceEditor,
                             onDone = onDone,
                         )
                     }
                     ConfectionerBubble(
-                        name = order.confectioner.name,
-                        onClick = { if (userType == OrderUserType.CUSTOMER) onConfectionerClick(order.confectioner) })
+                        name = state.order.confectioner.name,
+                        onClick = {
+                            if (userType == OrderUserType.CUSTOMER) onConfectionerClick(
+                                state.order.confectioner
+                            )
+                        })
                 }
+            }
+        }
+        when {
+            state.dialogOpen -> {
+                PriceOfferEditor(
+                    onDismiss = onClosePriceEditor,
+                    onClick = {
+                        onApprove(it)
+                        onClosePriceEditor()
+                    }
+                )
             }
         }
     }
@@ -439,8 +487,8 @@ fun PreviewCustomOrderViewStatelessScreen() {
         description = "TODO()",
         address = "TODO()"
     )
-    CustomOrderViewStatelessScreen(
-        order = Order(
+    var state = OrderState(
+        Order(
             cake = CakeCustom(
                 name = "Индивидуальный торт",
                 description = "Сделай по красоте от души прошу, реально, чтобы всё чётко было, вкусно, сочно и т.п.",
@@ -454,8 +502,8 @@ fun PreviewCustomOrderViewStatelessScreen() {
                 fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
             ),
             date = LocalDate(2024, 12, 31),
-            orderStatus = OrderStatus.REJECTED,
-            price = 1000,
+            orderStatus = OrderStatus.PENDING_APPROVAL,
+            price = 100000,
             quantity = 2,
             customer = Customer(
                 id = 1,
@@ -464,15 +512,20 @@ fun PreviewCustomOrderViewStatelessScreen() {
                 email = "TODO()"
             ),
             confectioner = confectioner
-        ),
+        )
+    )
+    CustomOrderViewStatelessScreen(
+        state = state,
         onConfectionerClick = {},
-        userType = OrderUserType.CUSTOMER,
+        userType = OrderUserType.CONFECTIONER,
         onReceive = { TODO() },
         onPay = { TODO() },
-        onApprove = { TODO() },
+        onApprove = { state = state.copy(order = state.order.copy(price = it)) },
         onDone = { TODO() },
         topBar = { TopNameBar("Заказ ы)))") {} },
         onCancel = { TODO() },
         onReject = { TODO() },
+        onOpenPriceEditor = { state = state.copy(dialogOpen = true) },
+        onClosePriceEditor = { state = state.copy(dialogOpen = false) },
     )
 }
