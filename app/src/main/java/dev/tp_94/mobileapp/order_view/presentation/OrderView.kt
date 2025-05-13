@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +64,7 @@ import kotlinx.datetime.LocalDate
 fun OrderViewStatefulScreen(
     viewModel: OrderViewModel = hiltViewModel(),
     onConfectionerClick: (Confectioner) -> Unit,
+    onPay: (Order) -> Unit,
     onError: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -82,7 +84,7 @@ fun OrderViewStatefulScreen(
             onReceive = { viewModel.changeStatus(OrderStatus.RECEIVED) },
             onCancel = { viewModel.changeStatus(OrderStatus.CANCELED) },
             onReject = { viewModel.changeStatus(OrderStatus.REJECTED) },
-            onPay = { viewModel.changeStatus(OrderStatus.IN_PROGRESS) },
+            onPay = { onPay(state.order) },
             onApprove = { viewModel.changeStatus(it, OrderStatus.PENDING_PAYMENT) },
             onDone = { viewModel.changeStatus(OrderStatus.DONE) },
             topBar = topBar,
@@ -98,7 +100,7 @@ fun OrderViewStatefulScreen(
             onReceive = { viewModel.changeStatus(OrderStatus.RECEIVED) },
             onCancel = { viewModel.changeStatus(OrderStatus.CANCELED) },
             onReject = { viewModel.changeStatus(OrderStatus.REJECTED) },
-            onPay = { viewModel.changeStatus(OrderStatus.IN_PROGRESS) },
+            onPay = { onPay(state.order) },
             onApprove = { viewModel.changeStatus(OrderStatus.PENDING_PAYMENT) },
             onDone = { viewModel.changeStatus(OrderStatus.DONE) },
             topBar = topBar

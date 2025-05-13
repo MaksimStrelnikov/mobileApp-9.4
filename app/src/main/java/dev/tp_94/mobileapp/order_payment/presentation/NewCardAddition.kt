@@ -12,15 +12,40 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.order_payment.presentation.components.CardInputField
+
+@Composable
+fun NewCardAdditionStatefulScreen(
+    viewModel: OrderPaymentViewModel = hiltViewModel(),
+    onDone: () -> Unit,
+    topBar: @Composable () -> Unit
+) {
+    val state by viewModel.newCardState.collectAsStateWithLifecycle()
+    NewCardAdditionStatelessScreen(
+        state = state,
+        onNumberChange = { viewModel.changeNumber(it) },
+        onExpirationChange = { viewModel.changeExpiration(it) },
+        onCvcCodeChange = { viewModel.changeCvcCode(it) },
+        onDone = {
+            onDone()
+            viewModel.addNewCard()
+        },
+        topBar = topBar
+    )
+}
 
 @Composable
 fun NewCardAdditionStatelessScreen(
@@ -39,7 +64,7 @@ fun NewCardAdditionStatelessScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .padding(12.dp)
             ) {

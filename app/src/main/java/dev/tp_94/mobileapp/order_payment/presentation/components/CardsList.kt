@@ -1,7 +1,9 @@
 package dev.tp_94.mobileapp.order_payment.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +31,7 @@ fun CardsList(
     selected: Card?,
     onSelect: (Card?) -> Unit
 ) {
+    Log.println(Log.INFO, "Log", "Recomposition $selected")
     Column {
         cardList.forEach {
             CardListItem(

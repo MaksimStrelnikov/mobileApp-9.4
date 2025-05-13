@@ -1,23 +1,30 @@
 package dev.tp_94.mobileapp.order_payment.presentation
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
+import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.order_payment.domain.AddCardUseCase
+import dev.tp_94.mobileapp.order_payment.domain.GetAllCardsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderPaymentViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
-    addCardUseCase: AddCardUseCase,
+    private val savedStateHandle: SavedStateHandle,
+    private val addCardUseCase: AddCardUseCase,
+    private val getAllCards: GetAllCardsUseCase,
 ) : ViewModel() {
     private val _mainState = MutableStateFlow(
         OrderPaymentState(
@@ -34,13 +41,57 @@ class OrderPaymentViewModel @Inject constructor(
     val mainState = _mainState.asStateFlow()
 
     private lateinit var _newCardState: MutableStateFlow<NewCardAdditionState>
-    val newCardState = _newCardState.asStateFlow()
+    lateinit var newCardState: StateFlow<NewCardAdditionState>
 
     fun createNewCard() {
         _newCardState = MutableStateFlow(NewCardAdditionState())
+        newCardState = _newCardState.asStateFlow()
     }
 
     fun addNewCard() {
+        lateinit var result: NewCardAdditionResult
+        viewModelScope.launch {
+            result = addCardUseCase.execute(newCardState.value)
+            if (result is NewCardAdditionResult.Success) {
+                getAllCards()
+                _mainState.value =
+                    _mainState.value.copy(selected = (result as NewCardAdditionResult.Success).card)
+            }
+        }
+        //TODO: add error handling
+    }
 
+    private fun getAllCards() {
+        lateinit var result: PaymentMethodsResult
+        viewModelScope.launch {
+            result = getAllCards.execute()
+            if (result is PaymentMethodsResult.Success) {
+                _mainState.value =
+                    _mainState.value.copy(cards = (result as PaymentMethodsResult.Success).cards)
+            }
+        }
+        //TODO: add error handling
+    }
+
+    fun changeNumber(number: String) {
+        _newCardState.value = _newCardState.value.copy(number = number)
+    }
+
+    fun changeExpiration(expiration: String) {
+        _newCardState.value = _newCardState.value.copy(expiration = expiration)
+    }
+
+    fun changeCvcCode(cvcCode: String) {
+        _newCardState.value = _newCardState.value.copy(cvcCode = cvcCode)
+    }
+
+    fun selectCard(card: Card?) {
+        Log.println(Log.INFO, "Log", "Got in selected change $card")
+        _mainState.value = _mainState.value.copy(selected = card)
+        Log.println(Log.INFO, "Log", "Put in selected change ${_mainState.value.selected}")
+    }
+
+    fun initialization() {
+        getAllCards()
     }
 }

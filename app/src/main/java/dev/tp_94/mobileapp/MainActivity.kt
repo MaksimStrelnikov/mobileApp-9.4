@@ -31,6 +31,9 @@ import dev.tp_94.mobileapp.customers_feed.presentation.CustomersFeedStatefulScre
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.order_payment.presentation.NewCardAdditionStatefulScreen
+import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentStatefulScreen
+import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
@@ -278,6 +281,52 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     TopNameBar("Заказ") {
                         navController.popBackStack()
                     }
+                },
+                onPay = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderPayment/$encoded")
+                }
+            )
+        }
+        
+        composable(
+            "orderPayment/{order}",
+            arguments = listOf(navArgument("order") { type = NavType.StringType })
+        ) {backStackEntry ->
+            val viewModel = hiltViewModel<OrderPaymentViewModel>(backStackEntry)
+            viewModel.initialization()
+            OrderPaymentStatefulScreen(
+                viewModel = viewModel,
+                onPay = { card, order -> /*TODO*/ },
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Оформление заказа",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+            )
+        }
+
+        composable("addNewCard") {backStackEntry ->
+            val parentBackStackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry("orderPayment/{order}")
+            }
+            val viewModel = hiltViewModel<OrderPaymentViewModel>(parentBackStackEntry)
+            NewCardAdditionStatefulScreen(
+                viewModel = viewModel,
+                onDone = {
+                    navController.popBackStack()
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Добавление новой карты",
+                        onBackClick = { navController.popBackStack() },
+                    )
                 }
             )
         }
@@ -347,6 +396,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 }
             })
         }
+        
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
             ProfileScreen(confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {

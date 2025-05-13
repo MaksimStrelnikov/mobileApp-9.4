@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.order_payment.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +16,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Card
@@ -36,6 +40,30 @@ import dev.tp_94.mobileapp.order_payment.presentation.components.TotalCost
 import kotlinx.datetime.LocalDate
 
 @Composable
+fun OrderPaymentStatefulScreen(
+    viewModel: OrderPaymentViewModel = hiltViewModel(),
+    onPay: (Card, Order) -> Unit,
+    onAddNewCard: () -> Unit,
+    topBar: @Composable () -> Unit
+) {
+    val state by viewModel.mainState.collectAsStateWithLifecycle()
+    OrderPaymentStatelessScreen(
+        state = state,
+        onSelect = {
+            Log.println(Log.INFO, "Log", "Received $it")
+            viewModel.selectCard(it)
+            Log.println(Log.INFO, "Log", "Put ${state.selected.toString()}")
+        },
+        onPay = onPay,
+        onAddNewCard = {
+            viewModel.createNewCard()
+            onAddNewCard()
+        },
+        topBar = topBar,
+    )
+}
+
+@Composable
 fun OrderPaymentStatelessScreen(
     state: OrderPaymentState,
     onSelect: (Card?) -> Unit,
@@ -47,7 +75,12 @@ fun OrderPaymentStatelessScreen(
         topBar = topBar,
         bottomBar = {
             ActiveButton(
-                onClick = {if (state.selected == null) onAddNewCard() else onPay(state.selected, state.order)},
+                onClick = {
+                    if (state.selected == null) onAddNewCard() else onPay(
+                        state.selected,
+                        state.order
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -90,7 +123,8 @@ fun OrderPaymentStatelessScreen(
                 CardsList(
                     cardList = state.cards,
                     selected = state.selected,
-                    onSelect = onSelect,
+                    onSelect = {onSelect(it)
+                               Log.println(Log.INFO, "Log", "Just selected $it")},
                 )
             }
 
@@ -152,7 +186,7 @@ fun PreviewOrderPaymentStatelessScreen() {
             ),
         ),
         onSelect = { TODO() },
-        onPay = { card, order ->  },
+        onPay = { card, order -> },
         onAddNewCard = { TODO() }
     )
 }

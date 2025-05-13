@@ -1,5 +1,8 @@
 package dev.tp_94.mobileapp.data
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.ConfectionerPassword
@@ -11,6 +14,7 @@ import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
 import dev.tp_94.mobileapp.self_made_cake.domain.Restrictions
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -49,6 +53,41 @@ class MockDB {
                 maxPreparationDays = 7,
                 fillings = arrayListOf("Клубника", "Вишня", "Ананас"),
                 confectioner = login("9876543210", "123456789") as Confectioner
+            )
+        )
+        orderDatabase.add(
+            Order(
+                id = 1,
+                cake = CakeCustom(
+                    color = Color.Cyan,
+                    diameter = 10f,
+                    text = "TODO()",
+                    textOffset = Offset(0f,0f),
+                    imageUri = null,
+                    imageOffset = Offset(0f,0f),
+                    fillings = listOf(),
+                    preparation = 3,
+                    description = "TODO()",
+                    name = "TODO()"
+                ),
+                date = LocalDate(2025, 5, 13),
+                orderStatus = OrderStatus.PENDING_PAYMENT,
+                price = 123126,
+                quantity = 1,
+                customer = Customer(
+                    id = 1,
+                    name = "Елена Жужпожуж",
+                    phoneNumber = "8005553535",
+                    email = "lenochka.devochka@gigamail.com"
+                ),
+                confectioner = Confectioner(
+                    id = 2,
+                    name = "Тортодел",
+                    phoneNumber = "9876543210",
+                    email = "cake.make@gigamail.com",
+                    description = "Просто делаем просто торты",
+                    address = "г. Воронеж, Университетская площадь, 1"
+                ),
             )
         )
     }
