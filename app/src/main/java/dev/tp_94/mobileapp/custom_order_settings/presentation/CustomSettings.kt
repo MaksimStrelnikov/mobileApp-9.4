@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -36,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEditable
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew
 
 @Composable
@@ -65,12 +67,11 @@ private fun LabeledCheckbox(
                 disabledUncheckedBorderColor = colorResource(R.color.middle_text),
                 disabledIndeterminateBorderColor = colorResource(R.color.middle_text),
             ),
-            modifier = modifier.padding(end = 8.dp),
+            modifier = modifier.padding(end = 4.dp),
         )
         Text(
             text = label,
             style = TextStyles.regular(colorResource(R.color.dark_text)),
-
         )
     }
 }
@@ -89,7 +90,6 @@ private fun NumberField(
 
     BasicTextField(
         value = value,
-        //TODO: checking
         onValueChange = { if (it.isEmpty() || it.toIntOrNull() != null) onValueChange(it) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier
@@ -102,7 +102,9 @@ private fun NumberField(
         textStyle = TextStyles.regular(colorResource(R.color.middle_text)),
         decorationBox = { innerTextField ->
             Box(
-                Modifier.fillMaxWidth().padding(8.dp, 0.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp, 0.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (textFieldValue.isEmpty()) {
@@ -125,7 +127,7 @@ private fun FillingField(
     backgroundColor: Color = colorResource(R.color.dark_background),
     modifier: Modifier = Modifier
 ) {
-    var textFieldValue by remember {
+    val textFieldValue by remember {
         mutableStateOf(value)
     }
 
@@ -143,7 +145,9 @@ private fun FillingField(
         textStyle = TextStyles.regular(colorResource(R.color.middle_text)),
         decorationBox = { innerTextField ->
             Box(
-                Modifier.fillMaxWidth().padding(8.dp, 0.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp, 0.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (textFieldValue.isEmpty()) {
@@ -180,6 +184,7 @@ private fun CustomSettingsStatelessScreen(
     onUpdateMaxDiameter: (String) -> Unit,
     onUpdateMinWorkPeriod: (String) -> Unit,
     onUpdateMaxWorkPeriod: (String) -> Unit,
+    onUpdateNewFilling: (String) -> Unit,
     onUpdateFillings: (List<String>) -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -242,9 +247,28 @@ private fun CustomSettingsStatelessScreen(
 
             Row(verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
-                FillingField(value = "", onValueChange = {},
-                    modifier = Modifier.weight(1f).padding(end = 8.dp))
-                FillingNew(onClick = {})
+                FillingField(value = state.newFilling, onValueChange = onUpdateNewFilling,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp))
+                FillingNew(onClick = {
+                    onUpdateFillings(state.fillings + state.newFilling)
+                    onUpdateNewFilling("")
+                })
+            }
+
+            Spacer(Modifier.height(18.dp))
+            LazyRow (
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                items(state.fillings.size) { index ->
+                    val filling = state.fillings[index]
+                    FillingAddEditable(
+                        text = filling,
+                        onDelete = { onUpdateFillings(state.fillings - filling) }
+                    )
+                }
             }
 
             Spacer(Modifier.height(18.dp))
@@ -278,6 +302,7 @@ fun CustomSettingsStatefulScreen(viewModel: CustomSettingsViewModel = hiltViewMo
         onUpdateMaxDiameter = { viewModel.updateMaxDiameter(it) },
         onUpdateMinWorkPeriod = { viewModel.updateMinWorkPeriod(it) },
         onUpdateMaxWorkPeriod = { viewModel.updateMaxWorkPeriod(it) },
+        onUpdateNewFilling = { viewModel.updateNewFilling(it) },
         onUpdateFillings = { viewModel.updateFillings(it) },
         topBar = topBar
     )
@@ -286,17 +311,44 @@ fun CustomSettingsStatefulScreen(viewModel: CustomSettingsViewModel = hiltViewMo
 @Preview(showBackground = true)
 @Composable
 fun CustomSettingsPreview() {
-    val state = remember { mutableStateOf(CustomSettingsState()) }
-    CustomSettingsStatelessScreen(
-            state = state.value,
-            onCustomAccept = {state.value = state.value.copy(isCustomAcceptable = !state.value.isCustomAcceptable)},
-            onImageAccept = {},
-            onShapeAccept = {},
-            onUpdateMinDiameter = {},
-            onUpdateMaxDiameter = {},
-            onUpdateMinWorkPeriod = {},
-            onUpdateMaxWorkPeriod = {},
-            onUpdateFillings = {},
-            topBar = { TopNameBar("Кастомизация ") { } }
+    val testFillings = listOf(
+        "Шоколадная",
+        "Ванильная",
+        "Карамельная",
+        "Ягодная",
+        "Ореховая",
+        "Кокосовая",
+        "Клубничная",
+        "Лимонная"
+    )
+
+    val state = remember {
+        mutableStateOf(
+            CustomSettingsState(
+                isCustomAcceptable = true,
+                isImageAcceptable = false,
+                isShapeAcceptable = true,
+                minDiameter = "15",
+                maxDiameter = "30",
+                minWorkPeriod = "1",
+                maxWorkPeriod = "14",
+                newFilling = "Какао",
+                fillings = testFillings
+            )
         )
+    }
+
+    CustomSettingsStatelessScreen(
+        state = state.value,
+        onCustomAccept = { state.value = state.value.copy(isCustomAcceptable = it) },
+        onImageAccept = { state.value = state.value.copy(isImageAcceptable = it) },
+        onShapeAccept = { state.value = state.value.copy(isShapeAcceptable = it) },
+        onUpdateMinDiameter = { state.value = state.value.copy(minDiameter = it) },
+        onUpdateMaxDiameter = { state.value = state.value.copy(maxDiameter = it) },
+        onUpdateMinWorkPeriod = { state.value = state.value.copy(minWorkPeriod = it) },
+        onUpdateMaxWorkPeriod = { state.value = state.value.copy(maxWorkPeriod = it) },
+        onUpdateNewFilling = { state.value = state.value.copy(newFilling = it) },
+        onUpdateFillings = { state.value = state.value.copy(fillings = it) },
+        topBar = { TopNameBar("Кастомизация") {} }
+    )
 }

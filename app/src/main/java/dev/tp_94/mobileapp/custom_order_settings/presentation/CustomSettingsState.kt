@@ -8,5 +8,6 @@ data class CustomSettingsState(
     val maxDiameter: String = "",
     val minWorkPeriod: String = "",
     val maxWorkPeriod: String = "",
+    val newFilling: String = "",
     val fillings: List<String> = emptyList()
 )
