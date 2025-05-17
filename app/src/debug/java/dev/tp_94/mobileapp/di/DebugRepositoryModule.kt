@@ -28,7 +28,7 @@ object DebugRepositoryModule {
     }
 
     @Provides
-    fun provideOrderRepository(db: MockDB): OrderRepository {
-        return MockOrderRepository(db)
+    fun provideOrderRepository(db: MockDB, sessionCache: SessionCache): OrderRepository {
+        return MockOrderRepository(db, sessionCache)
     }
 }

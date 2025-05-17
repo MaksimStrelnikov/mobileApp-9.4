@@ -1,17 +1,24 @@
 package dev.tp_94.mobileapp
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,10 +41,13 @@ import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
 import dev.tp_94.mobileapp.order_payment.presentation.NewCardAdditionStatefulScreen
 import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentStatefulScreen
 import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
+import dev.tp_94.mobileapp.order_payment.presentation.PaymentResult
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
+import dev.tp_94.mobileapp.payment_result.ErrorPayment
+import dev.tp_94.mobileapp.payment_result.SuccessfulPayment
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
@@ -54,7 +64,9 @@ class MainActivity : ComponentActivity() {
 
     private val isAppInitialized = mutableStateOf(false)
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
             !isAppInitialized.value
@@ -286,20 +298,33 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     val json =
                         Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "paymentResult",
+                        null
+                    )
                     navController.navigate("orderPayment/$encoded")
                 }
             )
         }
-        
+
         composable(
             "orderPayment/{order}",
             arguments = listOf(navArgument("order") { type = NavType.StringType })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val viewModel = hiltViewModel<OrderPaymentViewModel>(backStackEntry)
             viewModel.initialization()
             OrderPaymentStatefulScreen(
                 viewModel = viewModel,
-                onPay = { card, order -> /*TODO*/ },
+                onSuccessfulPay = {
+                    navController.navigate("successfulPayment") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorPay = {
+                    navController.navigate("errorPayment")
+                },
                 onAddNewCard = {
                     navController.navigate("addNewCard")
                 },
@@ -312,7 +337,19 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             )
         }
 
-        composable("addNewCard") {backStackEntry ->
+        composable("successfulPayment") {
+            SuccessfulPayment {
+                navController.popBackStack()
+            }
+        }
+
+        composable("errorPayment") {
+            ErrorPayment {
+                navController.popBackStack()
+            }
+        }
+
+        composable("addNewCard") { backStackEntry ->
             val parentBackStackEntry = remember(backStackEntry) {
                 navController.getBackStackEntry("orderPayment/{order}")
             }
@@ -376,7 +413,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         },
                     )
                 },
-                onPay = {/*TODO()*/ },
+                onPay = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderPayment/$encoded")
+                },
                 bottomBar = {
                     AppBottomBar(currentScreen = Screen.ORDERS, navController = navController)
                 }
@@ -396,14 +438,18 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 }
             })
         }
-        
+
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
-            ProfileScreen(confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {
-                navController.navigate(
-                    "changeProfile"
-                )
-            }, onViewOrders = { }, onChangeCustomCake = { }),
+            ProfileScreen(
+                confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {
+                    navController.navigate(
+                        "changeProfile"
+                    )
+                },
+                    onViewOrders = { },
+                    onChangeCustomCake = { }
+                ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
                 },

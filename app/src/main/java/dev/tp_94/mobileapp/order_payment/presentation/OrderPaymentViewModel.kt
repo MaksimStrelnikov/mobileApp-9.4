@@ -9,8 +9,11 @@ import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Order
+import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.order_payment.domain.AddCardUseCase
 import dev.tp_94.mobileapp.order_payment.domain.GetAllCardsUseCase
+import dev.tp_94.mobileapp.orders.domain.UpdateOrderStatusUseCase
+import dev.tp_94.mobileapp.orders.presentation.OrdersResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class OrderPaymentViewModel @Inject constructor(
@@ -25,6 +29,7 @@ class OrderPaymentViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val addCardUseCase: AddCardUseCase,
     private val getAllCards: GetAllCardsUseCase,
+    private val statusUseCase: UpdateOrderStatusUseCase
 ) : ViewModel() {
     private val _mainState = MutableStateFlow(
         OrderPaymentState(
@@ -73,6 +78,16 @@ class OrderPaymentViewModel @Inject constructor(
         //TODO: add error handling
     }
 
+    fun changeStatus() {
+        viewModelScope.launch {
+            val result = statusUseCase.execute(mainState.value.order, OrderStatus.IN_PROGRESS, mainState.value.order.price)
+            if (result is OrdersResult.Success) {
+                initialization()
+            }
+            //TODO: error handling
+        }
+    }
+
     fun changeNumber(number: String) {
         _newCardState.value = _newCardState.value.copy(number = number)
     }
@@ -93,5 +108,15 @@ class OrderPaymentViewModel @Inject constructor(
 
     fun initialization() {
         getAllCards()
+    }
+
+    fun onPay(card: Card, order: Order, onSuccessfulPay: () -> Unit, onErrorPay: () -> Unit) {
+        //TODO: move mock payment for demonstrating screens to back-end
+        if (Random.nextDouble() > 0.88) {
+            changeStatus()
+            onSuccessfulPay()
+        } else {
+            onErrorPay()
+        }
     }
 }

@@ -42,19 +42,24 @@ import kotlinx.datetime.LocalDate
 @Composable
 fun OrderPaymentStatefulScreen(
     viewModel: OrderPaymentViewModel = hiltViewModel(),
-    onPay: (Card, Order) -> Unit,
+    actionButtonName: String = "Оплатить",
+    onSuccessfulPay: () -> Unit,
+    onErrorPay: () -> Unit,
     onAddNewCard: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
     val state by viewModel.mainState.collectAsStateWithLifecycle()
     OrderPaymentStatelessScreen(
         state = state,
+        actionButtonName = actionButtonName,
         onSelect = {
             Log.println(Log.INFO, "Log", "Received $it")
             viewModel.selectCard(it)
             Log.println(Log.INFO, "Log", "Put ${state.selected.toString()}")
         },
-        onPay = onPay,
+        onPay = { card, order ->
+            viewModel.onPay(card, order, onSuccessfulPay, onErrorPay)
+        },
         onAddNewCard = {
             viewModel.createNewCard()
             onAddNewCard()
@@ -66,6 +71,7 @@ fun OrderPaymentStatefulScreen(
 @Composable
 fun OrderPaymentStatelessScreen(
     state: OrderPaymentState,
+    actionButtonName: String,
     onSelect: (Card?) -> Unit,
     onPay: (Card, Order) -> Unit,
     onAddNewCard: () -> Unit,
@@ -87,7 +93,7 @@ fun OrderPaymentStatelessScreen(
                     .padding(6.dp)
             ) {
                 Text(
-                    text = if (state.selected == null) "Привязать карту" else "Оплатить",
+                    text = if (state.selected == null) "Привязать карту" else actionButtonName,
                     style = TextStyles.button(color = colorResource(R.color.light_background)),
                     modifier = Modifier
                         .padding(12.dp)
@@ -123,8 +129,10 @@ fun OrderPaymentStatelessScreen(
                 CardsList(
                     cardList = state.cards,
                     selected = state.selected,
-                    onSelect = {onSelect(it)
-                               Log.println(Log.INFO, "Log", "Just selected $it")},
+                    onSelect = {
+                        onSelect(it)
+                        Log.println(Log.INFO, "Log", "Just selected $it")
+                    },
                 )
             }
 
@@ -187,6 +195,7 @@ fun PreviewOrderPaymentStatelessScreen() {
         ),
         onSelect = { TODO() },
         onPay = { card, order -> },
-        onAddNewCard = { TODO() }
+        onAddNewCard = { TODO() },
+        actionButtonName = "Оплатить"
     )
 }

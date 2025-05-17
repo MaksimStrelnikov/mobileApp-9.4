@@ -8,10 +8,9 @@ import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import javax.inject.Inject
 
 class UpdateOrderStatusUseCase @Inject constructor(private val repository: OrderRepository) {
-    suspend fun execute(order: Order, status: OrderStatus, price: Int, user: User?): OrdersResult {
-        //TODO: add user permission check
+    suspend fun execute(order: Order, status: OrderStatus, price: Int): OrdersResult {
         return try{
-            OrdersResult.Success.SuccessUpdate(repository.updateOrderStatus(user, order, price, status))
+            OrdersResult.Success.SuccessUpdate(repository.updateOrderStatus(order, price, status))
         } catch (e: Exception) {
             OrdersResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

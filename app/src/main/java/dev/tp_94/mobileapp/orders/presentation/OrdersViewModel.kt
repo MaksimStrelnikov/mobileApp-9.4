@@ -39,7 +39,7 @@ class OrdersViewModel @Inject constructor(
 
     fun changeStatus(price: Int, status: OrderStatus) {
         viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(state.value.currentOrder!!, status, price, getUser())
+            val result = updateOrderStatusUseCase.execute(state.value.currentOrder!!, status, price)
             if (result is OrdersResult.Success.SuccessUpdate) {
                 _state.value =
                     _state.value.copy(orders = _state.value.orders.filter { it != state.value.currentOrder!! } + arrayListOf(
@@ -53,7 +53,7 @@ class OrdersViewModel @Inject constructor(
 
     fun changeStatus(order: Order, status: OrderStatus) {
         viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(order, status, order.price, getUser())
+            val result = updateOrderStatusUseCase.execute(order, status, order.price)
             if (result is OrdersResult.Success.SuccessUpdate) {
                 _state.value =
                     _state.value.copy(orders = _state.value.orders.filter { it != order } + arrayListOf(
