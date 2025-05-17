@@ -1,5 +1,6 @@
-package dev.tp_94.mobileapp.order_payment.presentation
+package dev.tp_94.mobileapp.new_card_addition.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -25,23 +24,23 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.order_payment.presentation.components.CardInputField
+import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
+import dev.tp_94.mobileapp.new_card_addition.presentation.components.CardInputField
 
 @Composable
 fun NewCardAdditionStatefulScreen(
-    viewModel: OrderPaymentViewModel = hiltViewModel(),
+    viewModel: NewCardAdditionViewModel = hiltViewModel(),
     onDone: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    val state by viewModel.newCardState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     NewCardAdditionStatelessScreen(
         state = state,
         onNumberChange = { viewModel.changeNumber(it) },
         onExpirationChange = { viewModel.changeExpiration(it) },
         onCvcCodeChange = { viewModel.changeCvcCode(it) },
         onDone = {
-            onDone()
-            viewModel.addNewCard()
+            viewModel.addNewCard(onDone)
         },
         topBar = topBar
     )
@@ -63,6 +62,9 @@ fun NewCardAdditionStatelessScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .background(
+                    color = colorResource(R.color.background)
+                )
         ) {
             Column(
                 modifier = Modifier

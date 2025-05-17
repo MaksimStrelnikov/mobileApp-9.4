@@ -41,7 +41,7 @@ fun CardsList(
             )
             Spacer(Modifier.height(2.dp))
         }
-        AddCardItem(
+        CardListItem(
             isSelected = selected == null,
             onSelect = { onSelect(null) },
         )
@@ -66,45 +66,7 @@ fun PreviewCardsList() {
 
 @Composable
 fun CardListItem(
-    cardNumber: String,
-    isSelected: Boolean,
-    onSelect: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = colorResource(R.color.light_background), shape = RoundedCornerShape(8.dp)
-            )
-            .border(
-                width = 2.dp,
-                color = if (isSelected) colorResource(R.color.accent) else Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "**" + cardNumber.drop(12),
-            style = TextStyles.regular(colorResource(R.color.dark_text)),
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 6.dp)
-        )
-        RadioButton(
-            selected = isSelected,
-            onClick = onSelect,
-            colors = RadioButtonColors(
-                selectedColor = colorResource(R.color.middle_text),
-                unselectedColor = colorResource(R.color.middle_text),
-                disabledSelectedColor = colorResource(R.color.middle_text),
-                disabledUnselectedColor = colorResource(R.color.middle_text)
-            )
-        )
-    }
-}
-
-@Composable
-fun AddCardItem(
+    cardNumber: String? = null,
     isSelected: Boolean,
     onSelect: () -> Unit,
 ) {
@@ -119,11 +81,17 @@ fun AddCardItem(
                 width = 2.dp,
                 color = if (isSelected) colorResource(R.color.accent) else Color.Transparent,
                 shape = RoundedCornerShape(8.dp)
-            ),
+            )
+            .clickable(onClick = onSelect)
+            .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Добавить новую карту",
+            text = if (cardNumber == null) {
+                "Добавить новую карту"
+            } else {
+                "**" + cardNumber.drop(12)
+            },
             style = TextStyles.regular(colorResource(R.color.dark_text)),
             modifier = Modifier
                 .weight(1f)
@@ -131,7 +99,7 @@ fun AddCardItem(
         )
         RadioButton(
             selected = isSelected,
-            onClick = onSelect,
+            onClick = null,
             colors = RadioButtonColors(
                 selectedColor = colorResource(R.color.middle_text),
                 unselectedColor = colorResource(R.color.middle_text),

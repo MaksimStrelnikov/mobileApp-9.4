@@ -61,7 +61,6 @@ fun OrderPaymentStatefulScreen(
             viewModel.onPay(card, order, onSuccessfulPay, onErrorPay)
         },
         onAddNewCard = {
-            viewModel.createNewCard()
             onAddNewCard()
         },
         topBar = topBar,

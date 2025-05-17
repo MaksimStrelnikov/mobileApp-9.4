@@ -10,12 +10,10 @@ import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
-import dev.tp_94.mobileapp.order_payment.domain.AddCardUseCase
 import dev.tp_94.mobileapp.order_payment.domain.GetAllCardsUseCase
 import dev.tp_94.mobileapp.orders.domain.UpdateOrderStatusUseCase
 import dev.tp_94.mobileapp.orders.presentation.OrdersResult
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -27,7 +25,6 @@ import kotlin.random.Random
 class OrderPaymentViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val savedStateHandle: SavedStateHandle,
-    private val addCardUseCase: AddCardUseCase,
     private val getAllCards: GetAllCardsUseCase,
     private val statusUseCase: UpdateOrderStatusUseCase
 ) : ViewModel() {
@@ -44,27 +41,6 @@ class OrderPaymentViewModel @Inject constructor(
         )
     )
     val mainState = _mainState.asStateFlow()
-
-    private lateinit var _newCardState: MutableStateFlow<NewCardAdditionState>
-    lateinit var newCardState: StateFlow<NewCardAdditionState>
-
-    fun createNewCard() {
-        _newCardState = MutableStateFlow(NewCardAdditionState())
-        newCardState = _newCardState.asStateFlow()
-    }
-
-    fun addNewCard() {
-        lateinit var result: NewCardAdditionResult
-        viewModelScope.launch {
-            result = addCardUseCase.execute(newCardState.value)
-            if (result is NewCardAdditionResult.Success) {
-                getAllCards()
-                _mainState.value =
-                    _mainState.value.copy(selected = (result as NewCardAdditionResult.Success).card)
-            }
-        }
-        //TODO: add error handling
-    }
 
     private fun getAllCards() {
         lateinit var result: PaymentMethodsResult
@@ -88,17 +64,6 @@ class OrderPaymentViewModel @Inject constructor(
         }
     }
 
-    fun changeNumber(number: String) {
-        _newCardState.value = _newCardState.value.copy(number = number)
-    }
-
-    fun changeExpiration(expiration: String) {
-        _newCardState.value = _newCardState.value.copy(expiration = expiration)
-    }
-
-    fun changeCvcCode(cvcCode: String) {
-        _newCardState.value = _newCardState.value.copy(cvcCode = cvcCode)
-    }
 
     fun selectCard(card: Card?) {
         Log.println(Log.INFO, "Log", "Got in selected change $card")
@@ -112,7 +77,7 @@ class OrderPaymentViewModel @Inject constructor(
 
     fun onPay(card: Card, order: Order, onSuccessfulPay: () -> Unit, onErrorPay: () -> Unit) {
         //TODO: move mock payment for demonstrating screens to back-end
-        if (Random.nextDouble() > 0.88) {
+        if (Random.nextDouble() < 0.88) {
             changeStatus()
             onSuccessfulPay()
         } else {

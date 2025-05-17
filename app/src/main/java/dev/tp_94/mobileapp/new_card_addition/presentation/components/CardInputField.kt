@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation.components
+package dev.tp_94.mobileapp.new_card_addition.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,6 +31,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
@@ -125,12 +126,13 @@ fun PreviewCardInputField() {
 
 @Composable
 private fun CardField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     hint: String,
     visualTransformation: VisualTransformation,
     imeAction: ImeAction,
-    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = imeAction),
     focusRequester: FocusRequester
 ) {
     val focusManager = LocalFocusManager.current
@@ -158,11 +160,13 @@ private fun CardField(
         }
         BasicTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                onValueChange(newValue.filter { it.isDigit() })
+            },
             singleLine = true,
             visualTransformation = visualTransformation,
             textStyle = TextStyles.regular(colorResource(R.color.dark_text)),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = imeAction),
+            keyboardOptions = keyboardOptions,
             interactionSource = interactionSource,
             modifier = Modifier.fillMaxWidth(),
             keyboardActions = KeyboardActions(

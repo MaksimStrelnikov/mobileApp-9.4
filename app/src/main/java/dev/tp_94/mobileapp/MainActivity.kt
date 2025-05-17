@@ -6,19 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,10 +33,9 @@ import dev.tp_94.mobileapp.customers_feed.presentation.CustomersFeedStatefulScre
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
-import dev.tp_94.mobileapp.order_payment.presentation.NewCardAdditionStatefulScreen
+import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionStatefulScreen
 import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentStatefulScreen
 import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
-import dev.tp_94.mobileapp.order_payment.presentation.PaymentResult
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
@@ -349,13 +343,8 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             }
         }
 
-        composable("addNewCard") { backStackEntry ->
-            val parentBackStackEntry = remember(backStackEntry) {
-                navController.getBackStackEntry("orderPayment/{order}")
-            }
-            val viewModel = hiltViewModel<OrderPaymentViewModel>(parentBackStackEntry)
+        composable("addNewCard") {
             NewCardAdditionStatefulScreen(
-                viewModel = viewModel,
                 onDone = {
                     navController.popBackStack()
                 },

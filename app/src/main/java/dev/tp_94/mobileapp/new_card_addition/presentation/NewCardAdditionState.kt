@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation
+package dev.tp_94.mobileapp.new_card_addition.presentation
 
 data class NewCardAdditionState(
     val number: String = "",
