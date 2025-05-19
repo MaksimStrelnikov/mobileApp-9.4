@@ -1,9 +1,10 @@
-package dev.tp_94.mobileapp.self_made_cake.domain
-
-import dev.tp_94.mobileapp.core.models.Confectioner
+package dev.tp_94.mobileapp.core.models
 
 
 data class Restrictions(
+    val isCustomAcceptable: Boolean = false,
+    val isImageAcceptable: Boolean = false,
+    val isShapeAcceptable: Boolean = false,
     val minDiameter: Float,
     val maxDiameter: Float,
     val minPreparationDays: Int,

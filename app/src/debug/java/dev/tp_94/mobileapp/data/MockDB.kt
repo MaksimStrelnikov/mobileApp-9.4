@@ -9,7 +9,7 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
-import dev.tp_94.mobileapp.self_made_cake.domain.Restrictions
+import dev.tp_94.mobileapp.core.models.Restrictions
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
