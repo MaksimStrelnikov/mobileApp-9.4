@@ -34,7 +34,7 @@ import kotlinx.datetime.daysUntil
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
-enum class OrderUserType {
+enum class UserType {
     CONFECTIONER, CUSTOMER
 }
 
@@ -48,7 +48,7 @@ fun OrderItem(
     preparation: Int,
     price: Int,
     orderStatus: OrderStatus,
-    userType: OrderUserType,
+    userType: UserType,
     onCancel: () -> Unit,
     onReject: () -> Unit,
     onApprove: () -> Unit = {},
@@ -156,7 +156,7 @@ fun PreviewCustomerOrderItem() {
         preparation = 5,
         price = 10000,
         orderStatus = OrderStatus.PENDING_APPROVAL,
-        userType = OrderUserType.CUSTOMER,
+        userType = UserType.CUSTOMER,
         onCancel = {},
         onReject = {},
         onApprove = { TODO() },
@@ -177,7 +177,7 @@ fun PreviewConfectionerOrderItem() {
         preparation = 5,
         price = 10000,
         orderStatus = OrderStatus.PENDING_APPROVAL,
-        userType = OrderUserType.CONFECTIONER,
+        userType = UserType.CONFECTIONER,
         onCancel = {},
         onReject = {},
         onApprove = { TODO() },

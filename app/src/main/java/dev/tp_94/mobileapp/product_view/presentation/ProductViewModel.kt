@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
@@ -26,9 +27,8 @@ class ProductViewModel @Inject constructor(
         ProductState(
             cake = savedStateHandle.get<String>("cake")
                 ?.let { URLDecoder.decode(it, "UTF-8") }
-                ?.let { json.decodeFromString<Cake>(it) }
-                ?: error("Cake not provided"),
-            price = savedStateHandle.get<Int>("price") ?: 0,
+                ?.let { json.decodeFromString<CakeGeneral>(it) }
+                ?: error("Cake not provided")
         )
     )
     val state = _state.asStateFlow()

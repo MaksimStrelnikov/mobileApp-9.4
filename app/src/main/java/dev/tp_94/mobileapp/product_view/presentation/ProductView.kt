@@ -31,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.models.Cake
-import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
@@ -42,14 +40,15 @@ import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.order_view.presentation.components.ConfectionerBubble
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPart
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPartWithPairs
-import dev.tp_94.mobileapp.orders.presentation.components.OrderUserType
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 
 @Composable
 fun ProductViewStatefulScreen(
     viewModel: ProductViewModel = hiltViewModel(),
     onConfectionerClick: (Confectioner) -> Unit,
     onError: () -> Unit,
-    onBuy: () -> Unit,
+    //TODO: change when basket is ready (maybe move it to viewModel)
+    onBuy: (CakeGeneral) -> Unit,
     topBar: @Composable () -> Unit
 ) {
     val user = viewModel.getUser()
@@ -58,37 +57,25 @@ fun ProductViewStatefulScreen(
             onError()
         }
     }
-    val userType = if (user is Confectioner) OrderUserType.CONFECTIONER else OrderUserType.CUSTOMER
+    val userType = if (user is Confectioner) UserType.CONFECTIONER else UserType.CUSTOMER
     val state by viewModel.state.collectAsStateWithLifecycle()
     GeneralProductViewStatelessScreen(
-        cake = state.cake,
-        price = state.price,
-        //TODO: Исправить ViewModel
-        confectioner = Confectioner(
-            id = 1,
-            name = "Иван Иванов",
-            phoneNumber = "+7 (123) 456-7890",
-            email = "ivan@example.com",
-            description = "Опытный кондитер с 10-летним стажем",
-            address = "Москва, ул. Кондитерская, 15"
-        ),
+        state = state,
         image = null,
         userType = userType,
         onConfectionerClick = onConfectionerClick,
-        onBuy = if (userType == OrderUserType.CUSTOMER) onBuy else null,
+        onBuy = if (userType == UserType.CUSTOMER) onBuy else null,
         topBar = topBar
     )
 }
 
 @Composable
 fun GeneralProductViewStatelessScreen(
-    cake: Cake,
-    price: Int = 0,
-    confectioner: Confectioner,
+    state: ProductState,
     image: Painter? = null,
-    userType: OrderUserType,
+    userType: UserType,
     onConfectionerClick: (Confectioner) -> Unit,
-    onBuy: (() -> Unit)? = null,
+    onBuy: ((CakeGeneral) -> Unit)? = null,
     topBar: @Composable () -> Unit,
 ) {
     Scaffold(
@@ -141,7 +128,7 @@ fun GeneralProductViewStatelessScreen(
 
                 if (onBuy != null) {
                     BuyButton(
-                        onClick = onBuy,
+                        onClick = { onBuy(state.cake) },
                         modifier = Modifier
                             .padding(bottom = 7.dp)
                             .fillMaxWidth()
@@ -150,7 +137,7 @@ fun GeneralProductViewStatelessScreen(
                         shape = RoundedCornerShape(12.dp),
                     ) {
                         Text(
-                            text = "от $price ₽",
+                            text = "от ${state.cake.price} ₽",
                             style = TextStyles.button(colorResource(R.color.dark_text)),
                             textAlign = TextAlign.Center
                         )
@@ -164,39 +151,25 @@ fun GeneralProductViewStatelessScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = cake.name,
+                        text = state.cake.name,
                         style = TextStyles.header(colorResource(R.color.dark_text))
                     )
                     Spacer(Modifier.height(8.dp))
 
-                    TextPart("Описание", cake.description)
+                    TextPart("Описание", state.cake.description)
 
-                    when (cake) {
-                        is CakeGeneral -> {
-                            TextPartWithPairs(
-                                "Параметры", listOf(
-                                    Pair("Диаметр изделия", "${cake.diameter} см"),
-                                    Pair("Вес изделия", "${cake.weight} кг"),
-                                    Pair("Срок изготовления", "${cake.preparation} дней")
-                                )
-                            )
-                        }
-                        is CakeCustom -> {
-                            TextPartWithPairs(
-                                "Параметры", listOf(
-                                    Pair("Диаметр изделия", "${cake.diameter} см"),
-                                    Pair("Срок изготовления", "${cake.preparation} дней"),
-                                    Pair("Цвет", ""),
-                                    Pair("Начинки", cake.fillings.joinToString(", "))
-                                )
-                            )
-                        }
-                    }
+                    TextPartWithPairs(
+                        "Параметры", listOf(
+                            Pair("Диаметр изделия", "${state.cake.diameter} см"),
+                            Pair("Вес изделия", "${state.cake.weight} кг"),
+                            Pair("Срок изготовления", "${state.cake.preparation} дней")
+                        )
+                    )
 
-                    if (userType == OrderUserType.CUSTOMER) {
+                    if (userType == UserType.CUSTOMER) {
                         ConfectionerBubble(
-                            name = "/TODO",
-                            onClick = { onConfectionerClick(confectioner) }
+                            name = state.cake.confectioner.name,
+                            onClick = { onConfectionerClick(state.cake.confectioner) }
                         )
                     }
                 }
@@ -217,22 +190,22 @@ fun PreviewCustomerProductViewStatelessScreen() {
         address = "Москва, ул. Кондитерская, 15"
     )
     GeneralProductViewStatelessScreen(
-        cake = CakeGeneral(
-            price = 1000,
-            name = "Наполеон",
-            description = "Самый французский торт в России. Был изобретён ещё в далёком 1812 году великим полководцем Кутозовым во время поджога столицы",
-            diameter = 10f,
-            weight = 2f,
-            preparation = 2,
-            confectioner = confectioner
+        ProductState(
+            cake = CakeGeneral(
+                price = 1000,
+                name = "Наполеон",
+                description = "Самый французский торт в России. Был изобретён ещё в далёком 1812 году великим полководцем Кутозовым во время поджога столицы",
+                diameter = 10f,
+                weight = 2f,
+                preparation = 2,
+                confectioner = confectioner
+            )
         ),
-        price = 1000,
-        confectioner = confectioner,
         image = painterResource(R.drawable.mock_cake),
         topBar = { TopNameBar("Товар") {} },
         onConfectionerClick = {},
         onBuy = {},
-        userType = OrderUserType.CUSTOMER
+        userType = UserType.CUSTOMER
     )
 }
 
@@ -248,20 +221,20 @@ fun PreviewConfectionerProductViewStatelessScreen() {
         address = "Москва, ул. Кондитерская, 15"
     )
     GeneralProductViewStatelessScreen(
-        cake = CakeGeneral(
-            price = 1000,
-            name = "Наполеон",
-            description = "Самый французский торт в России. Был изобретён ещё в далёком 1812 году великим полководцем Кутозовым во время поджога столицы",
-            diameter = 10f,
-            weight = 2f,
-            preparation = 2,
-            confectioner = confectioner
+        state = ProductState(
+            CakeGeneral(
+                price = 1000,
+                name = "Наполеон",
+                description = "Самый французский торт в России. Был изобретён ещё в далёком 1812 году великим полководцем Кутозовым во время поджога столицы",
+                diameter = 10f,
+                weight = 2f,
+                preparation = 2,
+                confectioner = confectioner
+            )
         ),
-        price = 1000,
-        confectioner = confectioner,
         image = painterResource(R.drawable.mock_cake2),
         onConfectionerClick = {},
-        userType = OrderUserType.CONFECTIONER,
+        userType = UserType.CONFECTIONER,
         topBar = { TopNameBar("Товар") {} },
     )
 }
