@@ -79,6 +79,7 @@ fun OrderPaymentStatelessScreen(
     Scaffold(
         topBar = topBar,
         bottomBar = {
+            //TODO: generalize bottom payment bar
             ActiveButton(
                 onClick = {
                     if (state.selected == null) onAddNewCard() else onPay(

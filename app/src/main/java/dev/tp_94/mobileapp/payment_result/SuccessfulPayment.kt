@@ -22,7 +22,9 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun SuccessfulPayment(
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    mainText: String = "Оплата прошла успешно",
+    description: String = "Не забудьте отслеживать\nстатус заказа"
 ) {
     Box(
         modifier = Modifier
@@ -41,13 +43,13 @@ fun SuccessfulPayment(
                 contentDescription = "Success",
             )
             Text(
-                text = "Оплата прошла успешно",
+                text = mainText,
                 style = TextStyles.header(colorResource(R.color.dark_text)),
                 modifier = Modifier
                     .padding(top = 24.dp)
             )
             Text(
-                text = "Не забудьте отслеживать\nстатус заказа",
+                text = description,
                 style = TextStyles.regular(colorResource(R.color.light_text)),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -71,5 +73,5 @@ fun SuccessfulPayment(
 @Preview
 @Composable
 fun PreviewSuccessfulPayment() {
-    SuccessfulPayment { }
+    SuccessfulPayment(onDismissRequest = {})
 }

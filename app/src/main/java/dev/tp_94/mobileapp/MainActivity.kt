@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -49,6 +48,7 @@ import dev.tp_94.mobileapp.profile_editor.presentation.ProfileEditorStatefulScre
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeStatefulScreen
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
+import dev.tp_94.mobileapp.withdrawal.presentation.WithdrawalStatefulScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -332,15 +332,15 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         }
 
         composable("successfulPayment") {
-            SuccessfulPayment {
+            SuccessfulPayment ({
                 navController.popBackStack()
-            }
+            })
         }
 
         composable("errorPayment") {
-            ErrorPayment {
+            ErrorPayment ({
                 navController.popBackStack()
-            }
+            })
         }
 
         composable("addNewCard") {
@@ -431,13 +431,17 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
             ProfileScreen(
-                confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {
-                    navController.navigate(
-                        "changeProfile"
-                    )
-                },
-                    onViewOrders = { },
-                    onChangeCustomCake = { }
+                confectionerRoutes = ProfileConfectionerRoutes(
+                    onChangePersonalData = {
+                        navController.navigate(
+                            "changeProfile"
+                        )
+                    },
+                    onViewOrders = {
+                        navController.navigate("confectionerOrders")
+                    },
+                    onChangeCustomCake = { /*TODO*/ },
+                    onWithdraw = { navController.navigate("withdraw") }
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
@@ -466,16 +470,61 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     Log.println(Log.INFO, "Log", "Exit")
                 })
         }
-        composable("changeProfile") {
-            ProfileEditorStatefulScreen(onError = {
-                navController.navigate("login") {
-                    popUpTo(0)
+
+        composable("withdraw") {
+            WithdrawalStatefulScreen(
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                onSuccessfulWithdrawal = {
+                    navController.navigate("successfulWithdrawal") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorWithdrawal = {
+                    navController.navigate("errorWithdrawal")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Мои финансы",
+                        onBackClick = { navController.popBackStack() },
+                    )
                 }
-            }, onSave = {
-                navController.popBackStack()
-            }, topBar = {
-                TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
-            })
+            )
         }
+
+        composable("successfulWithdrawal") {
+            SuccessfulPayment(
+                onDismissRequest = {
+                    navController.popBackStack()
+                },
+                mainText = "Все прошло успешно!",
+                description = "Деньги скоро поступят",
+            )
+        }
+
+        composable("errorWithdrawal") {
+            ErrorPayment(
+                onDismissRequest = {
+                    navController.popBackStack()
+                },
+                mainText = "Вывод не прошел!",
+                description = "Деньги всё ещё у вас.\nПожалуйста, смените способ вывода\nили попробуйте позднее",
+            )
+        }
+
+    composable("changeProfile") {
+        ProfileEditorStatefulScreen(onError = {
+            navController.navigate("login") {
+                popUpTo(0)
+            }
+        }, onSave = {
+            navController.popBackStack()
+        }, topBar = {
+            TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
+        })
     }
+}
 }

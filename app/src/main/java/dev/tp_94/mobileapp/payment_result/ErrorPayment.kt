@@ -23,7 +23,9 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun ErrorPayment(
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    mainText: String = "Оплата не прошла",
+    description: String = "Пожалуйста, смените способ оплаты\nили попробуйте позднее"
 ) {
     Box(
         modifier = Modifier
@@ -42,13 +44,13 @@ fun ErrorPayment(
                 contentDescription = "Success",
             )
             Text(
-                text = "Оплата не прошла",
+                text = mainText,
                 style = TextStyles.header(colorResource(R.color.dark_text)),
                 modifier = Modifier
                     .padding(top = 24.dp)
             )
             Text(
-                text = "Пожалуйста, смените способ оплаты\nили попробуйте позднее",
+                text = description,
                 style = TextStyles.regular(colorResource(R.color.light_text)),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -72,5 +74,5 @@ fun ErrorPayment(
 @Preview
 @Composable
 fun PreviewErrorPayment() {
-    ErrorPayment { }
+    ErrorPayment(onDismissRequest = {})
 }

@@ -27,6 +27,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun PriceEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Цена изделия",
@@ -43,7 +44,7 @@ fun PriceEditor(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
-        modifier = Modifier
+        modifier = modifier
             .background(
                 backgroundColor,
                 shape = RoundedCornerShape(8.dp)
