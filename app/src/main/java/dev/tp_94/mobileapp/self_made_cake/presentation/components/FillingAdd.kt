@@ -3,10 +3,12 @@ package dev.tp_94.mobileapp.self_made_cake.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -69,7 +71,7 @@ fun FillingAddEditable(text: String, onDelete: () -> Unit) {
     Box(
         modifier = Modifier
             .height(48.dp)
-            .wrapContentWidth()
+            .width(IntrinsicSize.Min)
             .background(
                 color = colorResource(R.color.light_background), shape = RoundedCornerShape(8.dp)
             )
@@ -87,7 +89,7 @@ fun FillingAddEditable(text: String, onDelete: () -> Unit) {
                 text = text,
                 style = TextStyles.regular(colorResource(R.color.dark_text)),
                 modifier = Modifier
-                    .padding(start = 10.dp, bottom = 3.dp)
+                    .padding(start = 10.dp, bottom = 2.dp)
                     .weight(weight = 1f, fill = false),
                 softWrap = false,
                 overflow = TextOverflow.Ellipsis,
