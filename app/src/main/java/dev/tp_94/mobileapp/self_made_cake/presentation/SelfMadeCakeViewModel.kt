@@ -26,6 +26,12 @@ class SelfMadeCakeViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val sendCustomCakeUseCase: SendCustomCakeUseCase
 ) : ViewModel() {
+
+    fun updateNewFilling(value: String) = _state.value.copy(newFilling = value)
+        .also { _state.value = it }
+    fun updateFillings(value: List<String>) = _state.value
+        .copy(fillings = _state.value.fillings + value).also { _state.value = it }
+
     fun openColorPicker() {
         _state.value = _state.value.copy(colorPickerOpen = true)
     }
