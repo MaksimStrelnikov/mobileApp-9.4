@@ -25,7 +25,7 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.orders.presentation.components.OrderItem
-import dev.tp_94.mobileapp.orders.presentation.components.OrderUserType
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
 
 @Composable
@@ -97,7 +97,7 @@ fun ConfectionerOrdersStatelessScreen(
                         },
                         onDone = { onDone(order) },
                         orderStatus = order.orderStatus,
-                        userType = OrderUserType.CONFECTIONER,
+                        userType = UserType.CONFECTIONER,
                         onPay = {},
                         onReceive = {},
                         onCancel = {},
@@ -201,7 +201,7 @@ fun CustomerOrdersStatelessScreen(
                         orderStatus = order.orderStatus,
                         onPay = { onPay(order) },
                         onReceive = { onReceive(order) },
-                        userType = OrderUserType.CUSTOMER,
+                        userType = UserType.CUSTOMER,
                         onApprove = { },
                         onDone = { },
                         onReject = { },

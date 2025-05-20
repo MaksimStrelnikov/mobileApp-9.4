@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +50,7 @@ import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.orders.presentation.components.OrderStatusChangeVertical
-import dev.tp_94.mobileapp.orders.presentation.components.OrderUserType
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.order_view.presentation.components.ConfectionerBubble
 import dev.tp_94.mobileapp.order_view.presentation.components.PhoneText
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPart
@@ -74,7 +73,7 @@ fun OrderViewStatefulScreen(
             onError()
         }
     }
-    val userType = if (user is Confectioner) OrderUserType.CONFECTIONER else OrderUserType.CUSTOMER
+    val userType = if (user is Confectioner) UserType.CONFECTIONER else UserType.CUSTOMER
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (state.order.cake) {
         is CakeCustom -> CustomOrderViewStatelessScreen(
@@ -112,7 +111,7 @@ fun OrderViewStatefulScreen(
 fun GeneralOrderViewStatelessScreen(
     state: OrderState,
     image: Painter? = null,
-    userType: OrderUserType,
+    userType: UserType,
     onConfectionerClick: (Confectioner) -> Unit,
     onReceive: () -> Unit,
     onCancel: () -> Unit,
@@ -232,7 +231,7 @@ fun GeneralOrderViewStatelessScreen(
                     ConfectionerBubble(
                         name = state.order.confectioner.name,
                         onClick = {
-                            if (userType == OrderUserType.CUSTOMER) onConfectionerClick(
+                            if (userType == UserType.CUSTOMER) onConfectionerClick(
                                 state.order.confectioner
                             )
                         })
@@ -281,7 +280,7 @@ fun PreviewGeneralOrderViewStatelessScreen() {
         image = painterResource(R.drawable.mock_cake),
         topBar = { TopNameBar("Заказ ы)))") {} },
         onConfectionerClick = {},
-        userType = OrderUserType.CUSTOMER,
+        userType = UserType.CUSTOMER,
         onReceive = { TODO() },
         onCancel = { TODO() },
         onPay = { TODO() },
@@ -295,7 +294,7 @@ fun PreviewGeneralOrderViewStatelessScreen() {
 @Composable
 fun CustomOrderViewStatelessScreen(
     state: OrderState,
-    userType: OrderUserType,
+    userType: UserType,
     onConfectionerClick: (Confectioner) -> Unit,
     topBar: @Composable () -> Unit,
     onReceive: () -> Unit,
@@ -455,12 +454,8 @@ fun CustomOrderViewStatelessScreen(
                         )
                     }
                     ConfectionerBubble(
-                        name = state.order.confectioner.name,
-                        onClick = {
-                            if (userType == OrderUserType.CUSTOMER) onConfectionerClick(
-                                state.order.confectioner
-                            )
-                        })
+                        name = order.confectioner.name,
+                        onClick = { if (userType == UserType.CUSTOMER) onConfectionerClick(order.confectioner) })
                 }
             }
         }
@@ -519,7 +514,7 @@ fun PreviewCustomOrderViewStatelessScreen() {
     CustomOrderViewStatelessScreen(
         state = state,
         onConfectionerClick = {},
-        userType = OrderUserType.CONFECTIONER,
+        userType = OrderUserType.CUSTOMER,
         onReceive = { TODO() },
         onPay = { TODO() },
         onApprove = { state = state.copy(order = state.order.copy(price = it)) },

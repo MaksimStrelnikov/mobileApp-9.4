@@ -21,7 +21,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 @Composable
 fun OrderStatusChangeVertical(
     status: OrderStatus,
-    userType: OrderUserType,
+    userType: UserType,
     onReceive: () -> Unit,
     onCancel: () -> Unit,
     onReject: () -> Unit,
@@ -34,7 +34,7 @@ fun OrderStatusChangeVertical(
         OrderStatus.RECEIVED -> StatusText("Заказ получен")
         OrderStatus.REJECTED -> StatusText("Отменён кондитером")
         OrderStatus.DONE -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 StatusText("Ожидает получения")
             } else {
                 StatusText("Готов к получению")
@@ -55,7 +55,7 @@ fun OrderStatusChangeVertical(
 
         OrderStatus.PENDING_PAYMENT -> {
             StatusText("Заказ ожидает оплаты")
-            if (userType == OrderUserType.CUSTOMER) {
+            if (userType == UserType.CUSTOMER) {
                 Column(
                     Modifier
                         .fillMaxWidth()
@@ -87,7 +87,7 @@ fun OrderStatusChangeVertical(
         }
 
         OrderStatus.PENDING_APPROVAL -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 Column(Modifier.fillMaxWidth()) {
                     DiscardButton(
                         onClick = onReject,
@@ -132,7 +132,7 @@ fun OrderStatusChangeVertical(
         }
 
         OrderStatus.IN_PROGRESS -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 ActiveButton(
                     onClick = onDone,
                     modifier = Modifier.fillMaxWidth(),
@@ -156,7 +156,7 @@ fun OrderStatusChangeVertical(
 @Composable
 fun OrderStatusChangeHorizontal(
     status: OrderStatus,
-    userType: OrderUserType,
+    userType: UserType,
     onReceive: () -> Unit,
     onCancel: () -> Unit,
     onReject: () -> Unit,
@@ -169,7 +169,7 @@ fun OrderStatusChangeHorizontal(
         OrderStatus.RECEIVED -> StatusText("Заказ получен")
         OrderStatus.REJECTED -> StatusText("Отменён кондитером")
         OrderStatus.DONE -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 StatusText("Ожидает получения")
             } else {
                 StatusText("Готов к получению")
@@ -190,7 +190,7 @@ fun OrderStatusChangeHorizontal(
 
         OrderStatus.PENDING_PAYMENT -> {
             StatusText("Заказ ожидает оплаты")
-            if (userType == OrderUserType.CUSTOMER) {
+            if (userType == UserType.CUSTOMER) {
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -222,7 +222,7 @@ fun OrderStatusChangeHorizontal(
         }
 
         OrderStatus.PENDING_APPROVAL -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 Row(Modifier.fillMaxWidth()) {
                     DiscardButton(
                         onClick = onReject,
@@ -267,7 +267,7 @@ fun OrderStatusChangeHorizontal(
         }
 
         OrderStatus.IN_PROGRESS -> {
-            if (userType == OrderUserType.CONFECTIONER) {
+            if (userType == UserType.CONFECTIONER) {
                 ActiveButton(
                     onClick = onDone,
                     modifier = Modifier.fillMaxWidth(),
