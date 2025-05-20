@@ -51,6 +51,8 @@ import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.DualButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
+import dev.tp_94.mobileapp.self_made_cake.presentation.components.DatePickerButton
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.DiameterSlider
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEditable
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew
@@ -299,6 +301,11 @@ fun SelfMadeCakeStatelessScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            SectionHeader("Выбор начинки")
+            DatePickerButton(modifier = Modifier.fillMaxWidth().height(48.dp),
+                //TODO: replace with state.confectioner.workPeriod
+                minDaysFromToday = 2)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
