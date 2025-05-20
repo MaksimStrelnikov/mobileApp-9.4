@@ -259,7 +259,7 @@ fun DualButton(
             shape = RoundedCornerShape(100, 0, 0, 100),
         ) {
             Text(firstTitle, textAlign = TextAlign.Center,
-                style = TextStyles.regularNoColor(), softWrap = false)
+                style = TextStyles.button(color = Color.Unspecified), softWrap = false)
         }
         Button(
             {
@@ -272,7 +272,7 @@ fun DualButton(
             shape = RoundedCornerShape(0, 100, 100, 0)
         ) {
             Text(secondTitle, textAlign = TextAlign.Center,
-                style = TextStyles.regularNoColor(), softWrap = false)
+                style = TextStyles.button(color = Color.Unspecified), softWrap = false)
         }
     }
 }
