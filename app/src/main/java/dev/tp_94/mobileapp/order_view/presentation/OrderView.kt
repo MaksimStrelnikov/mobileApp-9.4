@@ -252,7 +252,7 @@ fun PreviewGeneralOrderViewStatelessScreen() {
         description = "TODO()",
         address = "TODO()"
     )
-    var state = OrderState(
+    val state = OrderState(
         Order(
             cake = CakeGeneral(
                 price = 1000,
@@ -454,8 +454,8 @@ fun CustomOrderViewStatelessScreen(
                         )
                     }
                     ConfectionerBubble(
-                        name = order.confectioner.name,
-                        onClick = { if (userType == UserType.CUSTOMER) onConfectionerClick(order.confectioner) })
+                        name = state.order.confectioner.name,
+                        onClick = { if (userType == UserType.CUSTOMER) onConfectionerClick(state.order.confectioner) })
                 }
             }
         }
@@ -514,7 +514,7 @@ fun PreviewCustomOrderViewStatelessScreen() {
     CustomOrderViewStatelessScreen(
         state = state,
         onConfectionerClick = {},
-        userType = OrderUserType.CUSTOMER,
+        userType = UserType.CUSTOMER,
         onReceive = { TODO() },
         onPay = { TODO() },
         onApprove = { state = state.copy(order = state.order.copy(price = it)) },
