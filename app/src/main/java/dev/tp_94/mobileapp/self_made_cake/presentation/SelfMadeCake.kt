@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,8 +95,7 @@ fun SelfMadeCakeStatefulScreen(
         onSend = {
             viewModel.sendCustomCake(onDone)
         },
-        onUpdateFillings = { viewModel.updateFillings(it) },
-        onUpdateNewFilling = { viewModel.updateNewFilling(it) },
+        onUpdateFillings = { viewModel.updateFillings(it) }
     )
 }
 
@@ -111,7 +115,6 @@ fun SelfMadeCakeStatelessScreen(
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
     onUpdateFillings: (List<String>) -> Unit,
-    onUpdateNewFilling: (String) -> Unit,
     topBar: @Composable () -> Unit
 ) {
     Scaffold(
@@ -243,15 +246,46 @@ fun SelfMadeCakeStatelessScreen(
                 valueRange = 10f..40f
             )
             Spacer(modifier = Modifier.height(8.dp))
+            val expandedState = remember { mutableStateOf(false) }
+            val expanded = expandedState.value
+            fun updateExpanded(newValue: Boolean) { expandedState.value = newValue }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                FillingNew(onClick = {
-                    onUpdateFillings(state.fillings + state.newFilling)
-                    onUpdateNewFilling("")
-                })
+                Box(modifier = Modifier.wrapContentWidth()) {
+                    FillingNew(
+                        onClick = { updateExpanded(true) }
+                    )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { updateExpanded(false) },
+                        modifier = Modifier.fillMaxWidth(0.8f)
+                        .background(colorResource(R.color.light_background)),
+                    ) {
+                        //TODO: replace with state.confectioner.fillings
+                        val fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
+                        fillings.subtract(state.fillings).toList().forEach { filling ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = filling,
+                                        style = TextStyles.regular(color = colorResource(R.color.dark_text)),
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                },
+                                onClick = {
+                                    if (!state.fillings.contains(filling)) {
+                                        onUpdateFillings(state.fillings + filling)
+                                    }
+                                    updateExpanded(false)
+                                }
+                            )
+                        }
+                    }
+                }
                 LazyRow (
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -331,8 +365,7 @@ fun PreviewSelfMadeCakeStatelessScreen() {
             onCommentChange = {},
             onSend = { },
             topBar = { TopNameBar("Дизайн торта") { } },
-            onUpdateFillings = {},
-            onUpdateNewFilling = {}
+            onUpdateFillings = {}
         )
     }
 
