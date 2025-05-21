@@ -18,16 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun FillingField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     backgroundColor: Color = colorResource(R.color.dark_background),
-    modifier: Modifier = Modifier
 ) {
     val textFieldValue by remember {
         mutableStateOf(value)
@@ -55,12 +56,21 @@ fun FillingField(
                 if (textFieldValue.isEmpty()) {
                     Text(
                         "Начинка",
-                        style = TextStyles.regular(colorResource(R.color.light_text)),
+                        style = TextStyles.regular(colorResource(R.color.light_text))
                     )
                 }
                 innerTextField()
             }
         },
         singleLine = true
+    )
+}
+
+@Preview
+@Composable
+fun FillingFieldPreview() {
+    FillingField(
+        value = "",
+        onValueChange = {},
     )
 }

@@ -84,7 +84,7 @@ object TextStyles {
     @Composable
     fun button(
         color: Color = colorResource(R.color.middle_text),
-        fontSize: TextUnit = 14.sp,
+        fontSize: TextUnit = 15.sp,
         fontWeight: FontWeight = FontWeight.SemiBold,
         textDecoration: TextDecoration = TextDecoration.None
     ): TextStyle {

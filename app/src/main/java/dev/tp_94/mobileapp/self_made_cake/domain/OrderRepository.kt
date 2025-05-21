@@ -9,6 +9,6 @@ import dev.tp_94.mobileapp.core.models.User
 
 interface OrderRepository {
     suspend fun placeCustomCakeOrder(cakeCustom: CakeCustom, customer: Customer, confectioner: Confectioner)
-    suspend fun getAllOrders(user: User?): List<Order>
-    suspend fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus): Order
+    suspend fun getAllOrders(): List<Order>
+    suspend fun updateOrderStatus(order: Order, price: Int, status: OrderStatus): Order
 }

@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -56,6 +58,7 @@ fun ProfileScreen(
         is Confectioner -> ProfileConfectionerStatelessScreen(
             name = viewModel.getUser()!!.name,
             phoneNumber = viewModel.getUser()!!.phoneNumber,
+            onWithdraw = confectionerRoutes.onWithdraw,
             onChangePersonalData = confectionerRoutes.onChangePersonalData,
             onViewOrders = confectionerRoutes.onViewOrders,
             onChangeCustomCake = confectionerRoutes.onChangeCustomCake,
@@ -110,6 +113,7 @@ fun ProfileCustomerStatelessScreen(
                 .padding(it)
                 .background(color = colorResource(R.color.background))
                 .fillMaxSize()
+                .padding(12.dp)
         ) {
             Box {
                 Row(
@@ -217,6 +221,7 @@ fun PreviewProfileCustomerStatelessScreen() {
 fun ProfileConfectionerStatelessScreen(
     name: String,
     phoneNumber: String,
+    onWithdraw: () -> Unit,
     onChangePersonalData: () -> Unit,
     onViewOrders: () -> Unit,
     onChangeCustomCake: () -> Unit,
@@ -268,10 +273,34 @@ fun ProfileConfectionerStatelessScreen(
                 }
             }
             BlockButton(
+                onClick = onWithdraw,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp, 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Мои финансы",
+                        modifier = Modifier
+                            .weight(1f),
+                        style = TextStyles.regular(color = colorResource(R.color.dark_text))
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.forward),
+                        contentDescription = "Дальше",
+                        tint = colorResource(R.color.dark_text)
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            BlockButton(
                 onClick = onChangeCustomCake,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(6.dp),
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
@@ -292,12 +321,13 @@ fun ProfileConfectionerStatelessScreen(
                     )
                 }
             }
+            Spacer(Modifier.height(8.dp))
             BlockButton(
                 onClick = onViewOrders,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(6.dp),
-                shape = RoundedCornerShape(8.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                padding = PaddingValues(6.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -305,7 +335,7 @@ fun ProfileConfectionerStatelessScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Поиск заказов",
+                        text = "Мои заказы",
                         modifier = Modifier
                             .weight(1f),
                         style = TextStyles.regular(color = colorResource(R.color.dark_text))
@@ -350,6 +380,7 @@ fun PreviewProfileConfectionerStatelessScreen() {
             TopNameBar(
                 name = "Профиль"
             ) { }
-        }
+        },
+        onWithdraw = {}
     )
 }

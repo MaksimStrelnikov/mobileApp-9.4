@@ -9,7 +9,7 @@ class GetAllOrdersUseCase @Inject constructor(private val repository: OrderRepos
     suspend fun execute(user: User?): OrdersResult {
         try {
             if (user == null) return OrdersResult.Error("Пользователь не существует")
-            return OrdersResult.Success.SuccessGet(repository.getAllOrders(user))
+            return OrdersResult.Success.SuccessGet(repository.getAllOrders())
         } catch (e: Exception) {
             return OrdersResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

@@ -89,7 +89,7 @@ fun FillingAddEditable(text: String, onDelete: () -> Unit) {
                 text = text,
                 style = TextStyles.regular(colorResource(R.color.dark_text)),
                 modifier = Modifier
-                    .padding(start = 10.dp, bottom = 3.dp)
+                    .padding(start = 10.dp, bottom = 2.dp)
                     .weight(weight = 1f, fill = false),
                 softWrap = false,
                 overflow = TextOverflow.Ellipsis,

@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.data
 
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
@@ -10,7 +11,7 @@ import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class MockOrderRepository @Inject constructor(private val db: MockDB) : OrderRepository {
+class MockOrderRepository @Inject constructor(private val db: MockDB, private val sessionCache: SessionCache) : OrderRepository {
     override suspend fun placeCustomCakeOrder(
         cakeCustom: CakeCustom,
         customer: Customer,
@@ -24,16 +25,15 @@ class MockOrderRepository @Inject constructor(private val db: MockDB) : OrderRep
         )
     }
 
-    override suspend fun getAllOrders(user: User?): List<Order> {
-        return db.getAllOrders(user)
+    override suspend fun getAllOrders(): List<Order> {
+        return db.getAllOrders(sessionCache.session?.user)
     }
 
     override suspend fun updateOrderStatus(
-        user: User?,
         order: Order,
         price: Int,
         status: OrderStatus
     ): Order {
-        return db.updateOrderStatus(user, order, price, status)
+        return db.updateOrderStatus(sessionCache.session?.user, order, price, status)
     }
 }
