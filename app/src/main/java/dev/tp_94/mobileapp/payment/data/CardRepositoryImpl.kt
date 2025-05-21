@@ -1,8 +1,8 @@
-package dev.tp_94.mobileapp.order_payment.data
+package dev.tp_94.mobileapp.payment.data
 
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.order_payment.domain.CardRepository
+import dev.tp_94.mobileapp.payment.domain.CardRepository
 import javax.inject.Inject
 
 class CardRepositoryImpl @Inject constructor(

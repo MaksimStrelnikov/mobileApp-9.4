@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.data
+package dev.tp_94.mobileapp.payment.data
 
 import androidx.room.Dao
 import androidx.room.Insert

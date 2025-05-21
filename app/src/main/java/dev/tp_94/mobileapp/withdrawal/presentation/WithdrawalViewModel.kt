@@ -6,8 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.order_payment.domain.GetAllCardsUseCase
-import dev.tp_94.mobileapp.order_payment.presentation.PaymentMethodsResult
+import dev.tp_94.mobileapp.payment.domain.GetAllCardsUseCase
+import dev.tp_94.mobileapp.payment.presentation.PaymentMethodsResult
 import dev.tp_94.mobileapp.withdrawal.domain.WithdrawalUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

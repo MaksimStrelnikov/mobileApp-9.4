@@ -16,11 +16,13 @@ data class Order(
 )
 
 enum class OrderStatus {
+    //backend-fronted statuses
     PENDING_APPROVAL,
     PENDING_PAYMENT,
     IN_PROGRESS,
     DONE,
     RECEIVED,
     CANCELED,
-    REJECTED
+    REJECTED,
+    //frontend-only statuses
 }

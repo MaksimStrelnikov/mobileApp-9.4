@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tp_94.mobileapp.basket.presentation.BasketStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageViewModel
 import dev.tp_94.mobileapp.core.SplashNavigationScreen
@@ -33,12 +34,14 @@ import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
 import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionStatefulScreen
-import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentStatefulScreen
-import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentViewModel
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentViewModel
 import dev.tp_94.mobileapp.payment_result.ErrorPayment
 import dev.tp_94.mobileapp.payment_result.SuccessfulPayment
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
@@ -89,7 +92,12 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
                     popUpTo("customerOrders") { inclusive = true }
                 }
         },
-        onBasketClick = { /* TODO */ },
+        onBasketClick = {
+            if (currentScreen != Screen.ORDERS)
+                navController.navigate("basket") {
+                    popUpTo("basket") { inclusive = true }
+                }
+        },
         onProfileClick = {
             if (currentScreen != Screen.PROFILE)
                 navController.navigate("profile") {
@@ -164,6 +172,19 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                 })
         }
+        composable("basket") {
+            BasketStatefulScreen(
+                onOrder = {
+
+                },
+                topBar = {
+                    TopNameBar("Корзина") {
+                        navController.popBackStack()
+                    }
+                },
+                bottomBar = { AppBottomBar(Screen.BASKET, navController) }
+            )
+        }
         composable("mainCustomer") {
             LaunchedEffect(Unit) {
                 isAppInitialized.value = true
@@ -213,7 +234,6 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
             )
         }
-
         composable(
             "makecake/{confectionerJson}",
             arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
@@ -265,7 +285,6 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
             )
         }
-
         composable(
             "orderView/{order}",
             arguments = listOf(navArgument("order") { type = NavType.StringType })
@@ -306,7 +325,6 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             arguments = listOf(navArgument("order") { type = NavType.StringType })
         ) { backStackEntry ->
             val viewModel = hiltViewModel<OrderPaymentViewModel>(backStackEntry)
-            viewModel.initialization()
             OrderPaymentStatefulScreen(
                 viewModel = viewModel,
                 onSuccessfulPay = {
@@ -331,14 +349,44 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             )
         }
 
+        composable(
+            "basketPayment/{list}",
+            arguments = listOf(navArgument("list") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val viewModel = hiltViewModel<BasketPaymentViewModel>(backStackEntry)
+            BasketPaymentStatefulScreen(
+                viewModel = viewModel,
+                actionButtonName = "Оплатить",
+                onSuccessfulPay = {
+                    navController.navigate("successfulPayment") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorPay = {
+                    navController.navigate("errorPayment")
+                },
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Оформление заказа",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                },
+            )
+        }
+
         composable("successfulPayment") {
-            SuccessfulPayment ({
+            SuccessfulPayment({
                 navController.popBackStack()
             })
         }
 
         composable("errorPayment") {
-            ErrorPayment ({
+            ErrorPayment({
                 navController.popBackStack()
             })
         }
@@ -515,16 +563,16 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             )
         }
 
-    composable("changeProfile") {
-        ProfileEditorStatefulScreen(onError = {
-            navController.navigate("login") {
-                popUpTo(0)
-            }
-        }, onSave = {
-            navController.popBackStack()
-        }, topBar = {
-            TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
-        })
+        composable("changeProfile") {
+            ProfileEditorStatefulScreen(onError = {
+                navController.navigate("login") {
+                    popUpTo(0)
+                }
+            }, onSave = {
+                navController.popBackStack()
+            }, topBar = {
+                TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
+            })
+        }
     }
-}
 }

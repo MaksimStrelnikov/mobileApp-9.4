@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.data
 
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Order
@@ -23,6 +24,14 @@ class MockOrderRepository @Inject constructor(private val db: MockDB, private va
             customer = customer,
             confectioner = confectioner,
         )
+    }
+
+    override suspend fun placeGeneralCakeOrder(
+        cakeGeneral: CakeGeneral,
+        customer: Customer,
+        amount: Int
+    ) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getAllOrders(): List<Order> {

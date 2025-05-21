@@ -167,6 +167,7 @@ fun PreviewCakesFeedStatelessScreen() {
                 CakeGeneral(
                     1,
                     name = "TODO()",
+                    price = 1000,
                     description = "sdfhoij",
                     diameter = 10f,
                     weight = 1f,

@@ -3,7 +3,7 @@ package dev.tp_94.mobileapp.new_card_addition.domain
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionResult
 import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionState
-import dev.tp_94.mobileapp.order_payment.domain.CardRepository
+import dev.tp_94.mobileapp.payment.domain.CardRepository
 import javax.inject.Inject
 
 class AddCardUseCase @Inject constructor(private val cardRepository: CardRepository, private val sessionCache: SessionCache) {

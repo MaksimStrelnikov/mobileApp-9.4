@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.data
+package dev.tp_94.mobileapp.payment.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -24,7 +24,6 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.order_payment.presentation.OrderPaymentViewModel
 import dev.tp_94.mobileapp.new_card_addition.presentation.components.CardInputField
 
 @Composable

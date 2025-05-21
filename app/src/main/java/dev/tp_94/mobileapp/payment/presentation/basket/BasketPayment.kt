@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation
+package dev.tp_94.mobileapp.payment.presentation.basket
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
@@ -35,21 +36,23 @@ import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.order_payment.presentation.components.CardsList
-import dev.tp_94.mobileapp.order_payment.presentation.components.TotalCost
+import dev.tp_94.mobileapp.payment.presentation.components.CardsList
+import dev.tp_94.mobileapp.payment.presentation.components.TotalCost
+import dev.tp_94.mobileapp.payment.presentation.components.TotalCostSummary
 import kotlinx.datetime.LocalDate
 
+//TODO: unite with OrderPayment
 @Composable
-fun OrderPaymentStatefulScreen(
-    viewModel: OrderPaymentViewModel = hiltViewModel(),
+fun BasketPaymentStatefulScreen(
+    viewModel: BasketPaymentViewModel = hiltViewModel(),
     actionButtonName: String = "Оплатить",
     onSuccessfulPay: () -> Unit,
     onErrorPay: () -> Unit,
     onAddNewCard: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    val state by viewModel.mainState.collectAsStateWithLifecycle()
-    OrderPaymentStatelessScreen(
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    BasketPaymentStatelessScreen(
         state = state,
         actionButtonName = actionButtonName,
         onSelect = {
@@ -57,8 +60,8 @@ fun OrderPaymentStatefulScreen(
             viewModel.selectCard(it)
             Log.println(Log.INFO, "Log", "Put ${state.selected.toString()}")
         },
-        onPay = { card, order ->
-            viewModel.onPay(card, order, onSuccessfulPay, onErrorPay)
+        onPay = { card ->
+            viewModel.onPay(card, onSuccessfulPay, onErrorPay)
         },
         onAddNewCard = {
             onAddNewCard()
@@ -68,11 +71,11 @@ fun OrderPaymentStatefulScreen(
 }
 
 @Composable
-fun OrderPaymentStatelessScreen(
-    state: OrderPaymentState,
+fun BasketPaymentStatelessScreen(
+    state: BasketPaymentState,
     actionButtonName: String,
     onSelect: (Card?) -> Unit,
-    onPay: (Card, Order) -> Unit,
+    onPay: (Card) -> Unit,
     onAddNewCard: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -83,8 +86,7 @@ fun OrderPaymentStatelessScreen(
             ActiveButton(
                 onClick = {
                     if (state.selected == null) onAddNewCard() else onPay(
-                        state.selected,
-                        state.order
+                        state.selected
                     )
                 },
                 modifier = Modifier
@@ -114,7 +116,7 @@ fun OrderPaymentStatelessScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Spacer(Modifier.height(70.dp))
-                TotalCost(state.order)
+                TotalCostSummary(state.cakes)
                 Spacer(Modifier.height(8.dp))
                 HorizontalDivider(
                     color = colorResource(R.color.light_text),
@@ -142,7 +144,7 @@ fun OrderPaymentStatelessScreen(
 
 @Preview
 @Composable
-fun PreviewOrderPaymentStatelessScreen() {
+fun PreviewBasketPaymentStatelessScreen() {
     val confectioner = Confectioner(
         id = 1,
         name = "TODO()",
@@ -151,14 +153,13 @@ fun PreviewOrderPaymentStatelessScreen() {
         description = "TODO()",
         address = "TODO()"
     )
-    OrderPaymentStatelessScreen(
-
+    BasketPaymentStatelessScreen(
         topBar = {
             TopNameBar(
                 name = "Оформление заказа"
             ) { }
         },
-        state = OrderPaymentState(
+        state = BasketPaymentState(
             cards = listOf(
                 Card(
                     number = "9873378948373487",
@@ -167,34 +168,35 @@ fun PreviewOrderPaymentStatelessScreen() {
                 )
             ),
             selected = null,
-            order = Order(
-                cake = CakeCustom(
-                    name = "Индивидуальный торт",
-                    description = "Сделай по красоте от души прошу, реально, чтобы всё чётко было, вкусно, сочно и т.п.",
-                    diameter = 10f,
-                    preparation = 2,
-                    color = Color.Cyan,
-                    text = "TODO()",
-                    textOffset = Offset.Zero,
-                    imageUri = null,
-                    imageOffset = Offset.Zero,
-                    fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
+            cakes = mapOf(
+                Pair(
+                    CakeGeneral(
+                        name = "Наполеон",
+                        description = "Сделай по красоте от души прошу, реально, чтобы всё чётко было, вкусно, сочно и т.п.",
+                        diameter = 10f,
+                        preparation = 2,
+                        id = 1,
+                        price = 1092,
+                        weight = 12f,
+                        confectioner = confectioner,
+                    ), 1
                 ),
-                date = LocalDate(2024, 12, 31),
-                orderStatus = OrderStatus.REJECTED,
-                price = 1000,
-                quantity = 2,
-                customer = Customer(
-                    id = 1,
-                    name = "asd",
-                    phoneNumber = "TODO()",
-                    email = "TODO()"
-                ),
-                confectioner = confectioner
+                Pair(
+                    CakeGeneral(
+                        name = "Славица",
+                        description = "Сделай по красоте от души прошу, реально, чтобы всё чётко было, вкусно, сочно и т.п.",
+                        diameter = 10f,
+                        preparation = 2,
+                        id = 1,
+                        price = 1092,
+                        weight = 12f,
+                        confectioner = confectioner,
+                    ), 20
+                )
             ),
         ),
         onSelect = { TODO() },
-        onPay = { card, order -> },
+        onPay = { TODO() },
         onAddNewCard = { TODO() },
         actionButtonName = "Оплатить"
     )

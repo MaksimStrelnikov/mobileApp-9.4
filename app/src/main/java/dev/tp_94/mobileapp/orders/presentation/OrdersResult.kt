@@ -6,6 +6,7 @@ sealed class OrdersResult {
     sealed class Success: OrdersResult(){
         data class SuccessGet(val orders: List<Order>): Success()
         data class SuccessUpdate(val order: Order): Success()
+        data object SuccessAdd: Success()
     }
     data class Error(val message: String): OrdersResult()
 }

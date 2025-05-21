@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.domain
+package dev.tp_94.mobileapp.payment.domain
 
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.User

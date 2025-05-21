@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation.components
+package dev.tp_94.mobileapp.payment.presentation.components
 
 import android.util.Log
 import androidx.compose.foundation.background

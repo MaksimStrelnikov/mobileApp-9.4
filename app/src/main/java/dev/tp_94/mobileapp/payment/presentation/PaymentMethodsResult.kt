@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation
+package dev.tp_94.mobileapp.payment.presentation
 
 import dev.tp_94.mobileapp.core.models.Card
 

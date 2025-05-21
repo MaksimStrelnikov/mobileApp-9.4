@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.order_payment.presentation.components
+package dev.tp_94.mobileapp.payment.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +21,11 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun TotalCostSummary(
-    pool: List<CakeGeneral>
+    pool: Map<CakeGeneral, Int>
 ) {
     var cost = 0L
     pool.forEach {
-        cost += it.price
+        cost += it.value * it.key.price
     }
     Column(
         modifier = Modifier
@@ -43,13 +43,13 @@ fun TotalCostSummary(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = it.name,
+                    text = it.key.name + " x${it.value}шт.",
                     style = TextStyles.secondHeader(color = colorResource(R.color.middle_text)),
                     modifier = Modifier
                         .weight(1f)
                 )
                 Text(
-                    text = "${it.price} ₽",
+                    text = "${it.key.price * it.value} ₽",
                     style = TextStyles.secondHeader(color = colorResource(R.color.middle_text))
                 )
             }
@@ -93,38 +93,42 @@ fun TotalCost(
 @Composable
 fun PreviewTotalCostSummary() {
     TotalCostSummary(
-        pool = arrayListOf(
-            CakeGeneral(
-                price = 1233,
-                name = "TODO()",
-                description = "TODO()",
-                diameter = 3f,
-                weight = 3f,
-                preparation = 3,
-                confectioner = Confectioner(
-                    id = 1,
+        pool = mapOf(
+            Pair(
+                CakeGeneral(
+                    price = 1233,
                     name = "TODO()",
-                    phoneNumber = "TODO()",
-                    email = "TODO()",
                     description = "TODO()",
-                    address = "TODO()"
-                ),
+                    diameter = 3f,
+                    weight = 3f,
+                    preparation = 3,
+                    confectioner = Confectioner(
+                        id = 1,
+                        name = "TODO()",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    ),
+                ), 2
             ),
-            CakeGeneral(
-                price = 12373,
-                name = "Tdfgsghgf()",
-                description = "TODO()",
-                diameter = 3f,
-                weight = 3f,
-                preparation = 3,
-                confectioner = Confectioner(
-                    id = 1,
-                    name = "TODO()",
-                    phoneNumber = "TODO()",
-                    email = "TODO()",
+            Pair(
+                CakeGeneral(
+                    price = 12373,
+                    name = "Tdfgsghgf()",
                     description = "TODO()",
-                    address = "TODO()"
-                )
+                    diameter = 3f,
+                    weight = 3f,
+                    preparation = 3,
+                    confectioner = Confectioner(
+                        id = 1,
+                        name = "TODO()",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    )
+                ), 10
             )
         )
     )

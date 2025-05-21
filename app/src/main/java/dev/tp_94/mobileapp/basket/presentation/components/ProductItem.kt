@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -35,7 +36,8 @@ fun ProductItem(
     cake: CakeGeneral,
     image: Painter? = null,
     amount: Int,
-    onChangeAmount: (Int) -> Unit,
+    onAdd: (CakeGeneral) -> Unit,
+    onRemove: (CakeGeneral) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -70,7 +72,7 @@ fun ProductItem(
                 }
             } else {
                 Image(
-                    painter = painterResource(R.drawable.mock_cake),
+                    painter = image,
                     contentDescription = null,
                     modifier = Modifier.size(140.dp)
                 )
@@ -114,7 +116,7 @@ fun ProductItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { onChangeAmount(amount - 1) }
+                        onClick = { onAdd(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.minusbutton),
@@ -126,7 +128,7 @@ fun ProductItem(
                         style = TextStyles.secondHeader(colorResource(R.color.dark_text))
                     )
                     IconButton(
-                        onClick = { onChangeAmount(amount + 1) }
+                        onClick = { onRemove(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.plusbutton),
@@ -162,6 +164,7 @@ fun PreviewProductItem() {
         ),
         image = painterResource(R.drawable.mock_cake),
         amount = 3,
-        onChangeAmount = { }
+        onAdd = {},
+        onRemove = {},
     )
 }

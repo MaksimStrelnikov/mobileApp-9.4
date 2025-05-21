@@ -1,7 +1,7 @@
-package dev.tp_94.mobileapp.order_payment.domain
+package dev.tp_94.mobileapp.payment.domain
 
 import dev.tp_94.mobileapp.core.SessionCache
-import dev.tp_94.mobileapp.order_payment.presentation.PaymentMethodsResult
+import dev.tp_94.mobileapp.payment.presentation.PaymentMethodsResult
 import javax.inject.Inject
 
 class GetAllCardsUseCase @Inject constructor(private val sessionCache: SessionCache, private val repository: CardRepository) {
