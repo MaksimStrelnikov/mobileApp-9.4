@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.login.data
+package dev.tp_94.mobileapp.signup.data
 
 data class ConfectionerRegisterDTO(
     val user_id: Long,

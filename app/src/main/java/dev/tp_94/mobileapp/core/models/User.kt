@@ -2,9 +2,9 @@ package dev.tp_94.mobileapp.core.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import dev.tp_94.mobileapp.login.data.ConfectionerRegisterDTO
-import dev.tp_94.mobileapp.login.data.CustomerRegisterDTO
-import dev.tp_94.mobileapp.login.data.UserRegisterDTO
+import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
+import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
+import dev.tp_94.mobileapp.signup.data.UserRegisterDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -68,7 +68,7 @@ sealed interface UserPassword {
 fun UserPassword.toDto(): UserRegisterDTO {
     return UserRegisterDTO(
         name = name,
-        phone_number = phoneNumber,
+        phone = phoneNumber,
         password = password,
         email = email
     )
