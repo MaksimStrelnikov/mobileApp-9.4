@@ -255,9 +255,11 @@ fun DualButton(
             modifier = Modifier
                 .fillMaxWidth(0.5f),
             colors = firstColors,
+            contentPadding = PaddingValues(0.dp),
             shape = RoundedCornerShape(100, 0, 0, 100),
         ) {
-            Text(firstTitle, textAlign = TextAlign.Center, style = TextStyles.regularNoColor())
+            Text(firstTitle, textAlign = TextAlign.Center,
+                style = TextStyles.button(color = Color.Unspecified), softWrap = false)
         }
         Button(
             {
@@ -266,9 +268,11 @@ fun DualButton(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = secondColors,
+            contentPadding = PaddingValues(0.dp),
             shape = RoundedCornerShape(0, 100, 100, 0)
         ) {
-            Text(secondTitle, textAlign = TextAlign.Center, style = TextStyles.regularNoColor())
+            Text(secondTitle, textAlign = TextAlign.Center,
+                style = TextStyles.button(color = Color.Unspecified), softWrap = false)
         }
     }
 }

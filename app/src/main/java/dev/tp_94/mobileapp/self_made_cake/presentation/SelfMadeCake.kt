@@ -2,8 +2,10 @@ package dev.tp_94.mobileapp.self_made_cake.presentation
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,11 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,10 +47,15 @@ import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.DualButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
+import dev.tp_94.mobileapp.self_made_cake.presentation.components.DatePickerButton
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.DiameterSlider
+import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEditable
+import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.HsvDialog
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.ImageAddition
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.InteractableImage
@@ -83,7 +96,8 @@ fun SelfMadeCakeStatefulScreen(
         topBar = topBar,
         onSend = {
             viewModel.sendCustomCake(onDone)
-        }
+        },
+        onUpdateFillings = { viewModel.updateFillings(it) }
     )
 }
 
@@ -102,6 +116,7 @@ fun SelfMadeCakeStatelessScreen(
     onImageChange: (Uri?) -> Unit,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
+    onUpdateFillings: (List<String>) -> Unit,
     topBar: @Composable () -> Unit
 ) {
     Scaffold(
@@ -119,7 +134,6 @@ fun SelfMadeCakeStatelessScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(8.dp))
-            //TODO: move to relative offset rather then absolute
             Box(
                 modifier = Modifier
                     .width(360.dp)
@@ -159,25 +173,33 @@ fun SelfMadeCakeStatelessScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            ActiveButton(
+            Spacer(modifier = Modifier.height(16.dp))
+            DiscardButton(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(60.dp),
                 onClick = onColorChangeDialogOpen,
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     "Выбрать цвет",
+                    style = TextStyles.button(colorResource(R.color.dark_text))
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            ActiveButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                onClick = onColorChangeDialogOpen,
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "Генерация торта",
                     style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            DiameterSlider(
-                onChange = onDiameterChange,
-                diameter = state.cakeCustom.diameter,
-                valueRange = 10f..40f
-            )
-            Spacer(modifier = Modifier.height(9.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
                     .background(
@@ -192,14 +214,14 @@ fun SelfMadeCakeStatelessScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     DualButton(
-                        firstTitle = "Изображение",
+                        firstTitle = "Фото",
                         onFirstClick = onOpenImageChangeClick,
                         secondTitle = "Текст",
                         onSecondClick = onOpenTextChangeClick,
                         isFirstActive = state.textImageEditor == Editor.IMAGE,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp)
+                            .height(48.dp)
                     )
                     when (state.textImageEditor) {
                         Editor.IMAGE -> {
@@ -219,12 +241,78 @@ fun SelfMadeCakeStatelessScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(9.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            DiameterSlider(
+                onChange = onDiameterChange,
+                diameter = state.cakeCustom.diameter,
+                valueRange = 10f..40f
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val expandedState = remember { mutableStateOf(false) }
+            val expanded = expandedState.value
+            fun updateExpanded(newValue: Boolean) { expandedState.value = newValue }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(modifier = Modifier.wrapContentWidth()) {
+                    FillingNew(
+                        onClick = { updateExpanded(true) }
+                    )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { updateExpanded(false) },
+                        modifier = Modifier.fillMaxWidth(0.8f)
+                        .background(colorResource(R.color.light_background)),
+                    ) {
+                        //TODO: replace with state.confectioner.fillings
+                        val fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
+                        fillings.subtract(state.fillings).toList().forEach { filling ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = filling,
+                                        style = TextStyles.regular(color = colorResource(R.color.dark_text)),
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                },
+                                onClick = {
+                                    if (!state.fillings.contains(filling)) {
+                                        onUpdateFillings(state.fillings + filling)
+                                    }
+                                    updateExpanded(false)
+                                }
+                            )
+                        }
+                    }
+                }
+                LazyRow (
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    items(state.fillings.size) { index ->
+                        val filling = state.fillings[index]
+                        FillingAddEditable(
+                            text = filling,
+                            onDelete = { onUpdateFillings(state.fillings - filling) }
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            SectionHeader("Выбор начинки")
+            DatePickerButton(modifier = Modifier.fillMaxWidth().height(48.dp),
+                //TODO: replace with state.confectioner.workPeriod
+                minDaysFromToday = 2)
+            Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
                 text = state.cakeCustom.description,
                 header = "Комментарий кондитеру"
             )
+            Spacer(modifier = Modifier.height(8.dp))
             ActiveButton(
                 onClick = onSend,
                 modifier = Modifier.fillMaxWidth()
@@ -268,7 +356,8 @@ fun PreviewSelfMadeCakeStatelessScreen() {
                     email = "TODO()",
                     description = "TODO()",
                     address = "TODO()"
-                )
+                ),
+                fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный"),
             ),
             onImageDrag = {},
             onTextDrag = {},
@@ -282,7 +371,8 @@ fun PreviewSelfMadeCakeStatelessScreen() {
             onImageChange = {},
             onCommentChange = {},
             onSend = { },
-            topBar = { TopNameBar("Дизайн торта") { } }
+            topBar = { TopNameBar("Дизайн торта") { } },
+            onUpdateFillings = {}
         )
     }
 

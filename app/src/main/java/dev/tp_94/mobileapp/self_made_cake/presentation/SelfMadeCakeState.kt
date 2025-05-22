@@ -8,5 +8,7 @@ data class SelfMadeCakeState(
     var textImageEditor: Editor = Editor.IMAGE,
     val cakeCustom: CakeCustom,
     val confectioner: Confectioner,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val fillings: List<String> = emptyList()
+
 )
