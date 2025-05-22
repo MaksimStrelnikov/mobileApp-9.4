@@ -65,25 +65,21 @@ sealed interface UserPassword {
     val email: String
 }
 
-fun UserPassword.toDto(): UserRegisterDTO {
-    return UserRegisterDTO(
+fun Confectioner.toDto(password: String): ConfectionerRegisterDTO {
+    return ConfectionerRegisterDTO(
         name = name,
         phone = phoneNumber,
         password = password,
-        email = email
-    )
-}
-
-fun ConfectionerPassword.toDto(userId: Long): ConfectionerRegisterDTO {
-    return ConfectionerRegisterDTO(
-        user_id = userId,
-        description = description,
+        email = email,
         address = address
     )
 }
 
-fun CustomerPassword.toDto(userId: Long): CustomerRegisterDTO {
+fun Customer.toDto(password: String): CustomerRegisterDTO {
     return CustomerRegisterDTO(
-        user_id = userId
+        name = name,
+        phone = phoneNumber,
+        password = password,
+        email = email
     )
 }

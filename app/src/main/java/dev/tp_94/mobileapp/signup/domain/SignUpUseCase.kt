@@ -1,15 +1,18 @@
 package dev.tp_94.mobileapp.signup.domain
 
 import android.util.Patterns
-import dev.tp_94.mobileapp.core.models.ConfectionerPassword
-import dev.tp_94.mobileapp.core.models.CustomerPassword
-import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.core.SessionCache
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Session
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.signup.presenatation.SignUpResult
 import javax.inject.Inject
 
-class SignUpUseCase @Inject constructor(private val userRepository: UserRepository) {
-
+class SignUpUseCase @Inject constructor(
+    private val userRepository: UserRepository,
+    private val sessionCache: SessionCache
+) {
     suspend fun execute(
         phoneNumber: String,
         password: String,
@@ -30,31 +33,34 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
             return SignUpResult.Error("Некорректный формат адреса электронной почты")
         }
         try {
-            val user: User
+            val session: Session
             if (isConfectioner) {
-                user = userRepository.add(
-                    ConfectionerPassword(
-                        id = 0,
+                session = userRepository.add(
+                    Confectioner(
                         name = name,
                         phoneNumber = phoneNumber,
                         email = email,
-                        password = password,
                         description = "",
-                        address = ""
-                    )
+                        address = "",
+                        id = 0,
+                        canWithdrawal = 0,
+                        inProcess = 0
+                    ),
+                    password = password
                 )
             } else {
-                user = userRepository.add(
-                    CustomerPassword(
+                session = userRepository.add(
+                    Customer(
                         id = 0,
                         name = name,
                         phoneNumber = phoneNumber,
-                        email = email,
-                        password = password
-                    )
+                        email = email
+                    ),
+                    password = password
                 )
             }
-            return SignUpResult.Success(user)
+            sessionCache.saveSession(session)
+            return SignUpResult.Success(session.user)
         } catch (e: Exception) {
             return SignUpResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }
