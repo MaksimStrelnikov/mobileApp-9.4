@@ -105,8 +105,7 @@ fun AddProductStatelessScreen(
                 onChange = { onNameChange(it) },
                 text = state.name,
                 defaultText = "Название",
-                backgroundColor = colorResource(R.color.dark_background),
-                modifier = Modifier.height(48.dp).fillMaxWidth(),
+                backgroundColor = colorResource(R.color.dark_background)
             )
             Spacer(Modifier.height(8.dp))
             DescriptionEditor(
@@ -114,7 +113,7 @@ fun AddProductStatelessScreen(
                 text = state.description,
                 defaultText = "Описание",
                 backgroundColor = colorResource(R.color.dark_background),
-                modifier = Modifier.height(108.dp).fillMaxWidth(),
+                modifier = Modifier.height(108.dp),
             )
             Spacer(Modifier.height(8.dp))
             NumberEditor(
@@ -123,14 +122,12 @@ fun AddProductStatelessScreen(
                 label = "Диаметр изделия (см)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
-                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
             WeightEditor(
                 onChange = { onWeightChange(it) },
                 text = state.weight,
                 backgroundColor = colorResource(R.color.dark_background),
-                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
             NumberEditor(
@@ -139,14 +136,12 @@ fun AddProductStatelessScreen(
                 label = "Время работы (дни)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
-                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
             PriceEditor(
                 onChange = { onPriceChange(it) },
                 text = state.price,
                 backgroundColor = colorResource(R.color.dark_background),
-                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(16.dp))
             ActiveButton(
