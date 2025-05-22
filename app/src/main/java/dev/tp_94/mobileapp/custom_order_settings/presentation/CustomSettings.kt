@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.custom_order_settings.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,9 +30,10 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.custom_order_settings.presentation.components.FillingField
+import dev.tp_94.mobileapp.core.themes.FillingField
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.LabeledCheckbox
-import dev.tp_94.mobileapp.custom_order_settings.presentation.components.NumberField
+import dev.tp_94.mobileapp.core.themes.NumberEditor
+import dev.tp_94.mobileapp.core.themes.SpecialTextField
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEditable
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew
@@ -75,56 +78,65 @@ private fun CustomSettingsStatelessScreen(
                 Spacer(Modifier.height(42.dp))
                 SectionHeader(text = "Диаметр")
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    NumberField(
-                        value = state.minDiameter,
-                        onValueChange = onUpdateMinDiameter,
-                        label = "Минимальный",
-                        backgroundColor = colorResource(R.color.dark_background),
-                        modifier = Modifier.weight(1f)
-                    )
-                    NumberField(
-                        value = state.maxDiameter,
-                        onValueChange = onUpdateMaxDiameter,
-                        label = "Максимальный",
-                        backgroundColor = colorResource(R.color.dark_background),
-                        modifier = Modifier.weight(1f)
-                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        NumberEditor(
+                            value = state.minDiameter,
+                            onValueChange = onUpdateMinDiameter,
+                            label = "Минимальный",
+                            backgroundColor = colorResource(R.color.dark_background),
+                        )
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        NumberEditor(
+                            value = state.maxDiameter,
+                            onValueChange = onUpdateMaxDiameter,
+                            label = "Максимальный",
+                            backgroundColor = colorResource(R.color.dark_background),
+                        )
+                    }
                 }
                 Spacer(Modifier.height(12.dp))
                 SectionHeader(text = "Срок выполнения заказа")
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    NumberField(
-                        value = state.minWorkPeriod,
-                        onValueChange = onUpdateMinWorkPeriod,
-                        label = "Минимальный",
-                        backgroundColor = colorResource(R.color.dark_background),
-                        modifier = Modifier.weight(1f)
-                    )
-                    NumberField(
-                        value = state.maxWorkPeriod,
-                        onValueChange = onUpdateMaxWorkPeriod,
-                        label = "Максимальный",
-                        backgroundColor = colorResource(R.color.dark_background),
-                        modifier = Modifier.weight(1f)
-                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        NumberEditor(
+                            value = state.minWorkPeriod,
+                            onValueChange = onUpdateMinWorkPeriod,
+                            label = "Минимальный",
+                            backgroundColor = colorResource(R.color.dark_background),
+                            necessary = true
+                        )
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        NumberEditor(
+                            value = state.maxWorkPeriod,
+                            onValueChange = onUpdateMaxWorkPeriod,
+                            label = "Максимальный",
+                            backgroundColor = colorResource(R.color.dark_background),
+                            necessary = true
+                        )
+                    }
                 }
                 Spacer(Modifier.height(18.dp))
 
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    FillingField(
-                        value = state.newFilling, onValueChange = onUpdateNewFilling,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
-                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        FillingField(
+                            value = state.newFilling,
+                            onValueChange = onUpdateNewFilling,
+                        )
+                    }
+
                     FillingNew(onClick = {
                         onUpdateFillings(state.fillings + state.newFilling)
                         onUpdateNewFilling("")
-                    })
+                    }, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),)
                 }
+
 
                 Spacer(Modifier.height(18.dp))
                 LazyRow(

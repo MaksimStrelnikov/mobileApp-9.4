@@ -25,7 +25,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.login.presentation.components.PhoneVisualTransformation
@@ -33,13 +32,13 @@ import dev.tp_94.mobileapp.login.presentation.components.PhoneVisualTransformati
 
 @Composable
 fun SpecialTextField(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String,
     backgroundColor: Color = colorResource(R.color.dark_background),
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
-    height: Dp = 48.dp,
     inputFilter: (String) -> String = { it },
     visualTransformation: VisualTransformation = VisualTransformation.None,
     maxLength: Int? = null,
@@ -70,17 +69,16 @@ fun SpecialTextField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = singleLine,
-        modifier = Modifier
+        modifier = modifier.fillMaxWidth()
+            .height(48.dp)
             .background(backgroundColor, shape = RoundedCornerShape(8.dp))
-            .then(if (border != null) Modifier.border(border, RoundedCornerShape(8.dp)) else Modifier)
-            .fillMaxWidth()
-            .height(height),
+            .then(if (border != null) Modifier.border(border, RoundedCornerShape(8.dp))
+            else Modifier),
         textStyle = TextStyles.regular(colorResource(R.color.middle_text)),
         visualTransformation = visualTransformation,
         decorationBox =  { innerTextField ->
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(8.dp, 8.dp),
                 contentAlignment = contentAlignment
             ) {
@@ -98,6 +96,7 @@ fun SpecialTextField(
 
 @Composable
 fun ValidatedTextField(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String,
@@ -107,10 +106,9 @@ fun ValidatedTextField(
     errorColor: Color = colorResource(R.color.accent),
     inputFilter: (String) -> String = { it },
     singleLine: Boolean = true,
-    height: Dp = 48.dp,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     contentAlignment: Alignment = Alignment.CenterStart,
-    maxLength: Int? = null
+    maxLength: Int? = null,
 ) {
     var error by remember { mutableStateOf("") }
 
@@ -125,7 +123,7 @@ fun ValidatedTextField(
             backgroundColor = backgroundColor,
             keyboardType = keyboardType,
             singleLine = singleLine,
-            height = height,
+            modifier = modifier,
             visualTransformation = visualTransformation,
             contentAlignment = contentAlignment,
             maxLength = maxLength,
@@ -144,9 +142,9 @@ fun ValidatedTextField(
 
 @Composable
 fun DescriptionEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
-    height: Dp = 70.dp,
     defaultText: String = "Описание",
     backgroundColor: Color = colorResource(R.color.dark_background),
     contentAlignment: Alignment = Alignment.TopStart,
@@ -159,9 +157,9 @@ fun DescriptionEditor(
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Text,
         singleLine = false,
-        height = height,
         contentAlignment = contentAlignment,
         maxLength = maxLength,
+        modifier = modifier,
         validator = {
             if (maxLength != null && it.length > maxLength) {
                 "Максимальная длина описания - $maxLength символов"
@@ -172,13 +170,13 @@ fun DescriptionEditor(
 
 @Composable
 fun NumberEditor(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    height: Dp = 48.dp,
     backgroundColor: Color = colorResource(R.color.dark_background),
     maxLength: Int? = 10,
-    necessary: Boolean = false
+    necessary: Boolean = false,
 ) {
     ValidatedTextField(
         text = value,
@@ -187,7 +185,7 @@ fun NumberEditor(
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Number,
         singleLine = true,
-        height = height,
+        modifier = modifier,
         inputFilter = { it.filter { c -> c.isDigit() } },
         maxLength = maxLength,
         validator = {
@@ -200,6 +198,7 @@ fun NumberEditor(
 
 @Composable
 fun PriceEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Цена изделия",
@@ -214,6 +213,7 @@ fun PriceEditor(
         defaultText = defaultText,
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Number,
+        modifier = modifier,
         inputFilter = { it.filter { c -> c.isDigit() } },
         maxLength = maxLength,
         validator = {
@@ -226,6 +226,7 @@ fun PriceEditor(
 
 @Composable
 fun WeightEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Вес (в кг)",
@@ -238,7 +239,7 @@ fun WeightEditor(
         defaultText = defaultText,
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Decimal,
-        height = 48.dp,
+        modifier = modifier,
         singleLine = true,
         inputFilter = { newText ->
             val replaced = newText.replace(',', '.')
@@ -258,14 +259,16 @@ fun WeightEditor(
 
 @Composable
 fun PhoneEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
-    backgroundColor: Color = colorResource(R.color.light_background)
+    backgroundColor: Color = colorResource(R.color.light_background),
 ) {
     ValidatedTextField(
+        modifier = modifier,
         text = text,
         onChange = onChange,
-        defaultText = "Номер телефона: +7 000 000-00-00",
+        defaultText = "Номер телефона",
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Phone,
         inputFilter = { it.filter { c -> c.isDigit() } },
@@ -283,12 +286,14 @@ fun PhoneEditor(
 
 @Composable
 fun PasswordTextEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     backgroundColor: Color = colorResource(R.color.light_background),
     maxLength: Int? = 30
 ) {
     ValidatedTextField(
+        modifier = modifier,
         text = text,
         onChange = onChange,
         defaultText = "Пароль",
@@ -308,6 +313,7 @@ fun PasswordTextEditor(
 
 @Composable
 fun EmailEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     backgroundColor: Color = colorResource(R.color.light_background),
@@ -319,6 +325,7 @@ fun EmailEditor(
         defaultText = "Электронная почта",
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Email,
+        modifier = modifier,
         validator = {
             if (it.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()) {
                 "Некорректный вид адреса"
@@ -332,6 +339,7 @@ fun EmailEditor(
 
 @Composable
 fun NameEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Имя",
@@ -339,6 +347,7 @@ fun NameEditor(
     maxLength: Int? = 30
 ) {
     ValidatedTextField(
+        modifier = modifier,
         text = text,
         onChange = onChange,
         defaultText = defaultText,
@@ -354,6 +363,7 @@ fun NameEditor(
 
 @Composable
 fun AddressEditor(
+    modifier: Modifier = Modifier,
     text: String,
     onChange: (String) -> Unit,
     backgroundColor: Color = colorResource(R.color.light_background),
@@ -364,6 +374,7 @@ fun AddressEditor(
         onChange = onChange,
         defaultText = "Адрес",
         backgroundColor = backgroundColor,
+        modifier = modifier,
         validator = {
             if (it.isEmpty()) "Адрес - обязательное поле"
             else if (maxLength != null && it.length > maxLength) "Максимальная длина адреса - $maxLength символов"
@@ -375,6 +386,7 @@ fun AddressEditor(
 
 @Composable
 fun FillingField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     backgroundColor: Color = colorResource(R.color.dark_background),
@@ -387,7 +399,7 @@ fun FillingField(
         backgroundColor = backgroundColor,
         keyboardType = KeyboardType.Text,
         singleLine = true,
-        height = 48.dp,
+        modifier = modifier,
         maxLength = maxLength,
         validator = {
             if (it.isEmpty()) {
