@@ -27,7 +27,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 fun WeightEditor(
     text: String,
     onChange: (String) -> Unit,
-    defaultText: String = "Вес (в кг)",
+    defaultText: String = "Вес (в граммах)",
     backgroundColor: Color = colorResource(R.color.dark_background)
 ) {
     var description by remember { mutableStateOf(text) }
@@ -48,14 +48,14 @@ fun WeightEditor(
             onChange(filtered)
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        singleLine = false,
+        singleLine = true,
         modifier = Modifier
             .background(
                 backgroundColor,
                 shape = RoundedCornerShape(8.dp)
             )
             .fillMaxWidth()
-            .height(108.dp),
+            .height(48.dp),
         textStyle = TextStyles.regular(colorResource(R.color.middle_text)),
         decorationBox = { innerTextField ->
             Box(
