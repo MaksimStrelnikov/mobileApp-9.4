@@ -26,19 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.add_product.presentation.components.CakeDescriptionEditor
+import dev.tp_94.mobileapp.add_product.presentation.components.CakeImageAddition
+import dev.tp_94.mobileapp.core.themes.DescriptionEditor
+import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
-import dev.tp_94.mobileapp.add_product.presentation.components.CakeImageAddition
-import dev.tp_94.mobileapp.add_product.presentation.components.DiameterEditor
-import dev.tp_94.mobileapp.add_product.presentation.components.PreparationEditor
-import dev.tp_94.mobileapp.add_product.presentation.components.PriceEditor
-import dev.tp_94.mobileapp.add_product.presentation.components.WeightEditor
 import dev.tp_94.mobileapp.core.themes.TextButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.custom_order_settings.presentation.CustomSettingsState
-import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
+import dev.tp_94.mobileapp.core.themes.NameEditor
+import dev.tp_94.mobileapp.core.themes.NumberEditor
+import dev.tp_94.mobileapp.core.themes.WeightEditor
 
 
 @Composable
@@ -102,42 +100,53 @@ fun AddProductStatelessScreen(
                 onAdd = onImageChange,
                 imageUri = state.image
             )
+            Spacer(Modifier.height(16.dp))
             NameEditor(
                 onChange = { onNameChange(it) },
                 text = state.name,
                 defaultText = "Название",
-                backgroundColor = colorResource(R.color.dark_background)
+                backgroundColor = colorResource(R.color.dark_background),
+                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            CakeDescriptionEditor(
+            DescriptionEditor(
                 onChange = { onDescriptionChange(it) },
                 text = state.description,
                 defaultText = "Описание",
-                backgroundColor = colorResource(R.color.dark_background)
+                backgroundColor = colorResource(R.color.dark_background),
+                modifier = Modifier.height(108.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            DiameterEditor(
-                onChange = { onDiameterChange(it) },
-                text = state.diameter,
-                backgroundColor = colorResource(R.color.dark_background)
+            NumberEditor(
+                onValueChange = { onDiameterChange(it) },
+                value = state.diameter,
+                label = "Диаметр изделия (см)",
+                backgroundColor = colorResource(R.color.dark_background),
+                necessary = true,
+                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
             WeightEditor(
                 onChange = { onWeightChange(it) },
                 text = state.weight,
-                backgroundColor = colorResource(R.color.dark_background)
+                backgroundColor = colorResource(R.color.dark_background),
+                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            PreparationEditor(
-                onChange = { onWorkPeriodChange(it) },
-                text = state.workPeriod,
-                backgroundColor = colorResource(R.color.dark_background)
+            NumberEditor(
+                onValueChange = { onWorkPeriodChange(it) },
+                value = state.workPeriod,
+                label = "Время работы (дни)",
+                backgroundColor = colorResource(R.color.dark_background),
+                necessary = true,
+                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
             PriceEditor(
                 onChange = { onPriceChange(it) },
                 text = state.price,
-                backgroundColor = colorResource(R.color.dark_background)
+                backgroundColor = colorResource(R.color.dark_background),
+                modifier = Modifier.height(48.dp).fillMaxWidth(),
             )
             Spacer(Modifier.height(16.dp))
             ActiveButton(
