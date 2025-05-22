@@ -24,7 +24,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun DescriptionEditor(
+fun CakeDescriptionEditor(
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Описание",
@@ -54,8 +54,8 @@ fun DescriptionEditor(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .padding(22.dp, 0.dp),
-                contentAlignment = Alignment.CenterStart
+                    .padding(22.dp, 8.dp),
+                contentAlignment = Alignment.TopStart
             ) {
                 if (description.isEmpty()) {
                     Text(
