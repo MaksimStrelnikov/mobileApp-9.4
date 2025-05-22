@@ -30,10 +30,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
-import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
+import dev.tp_94.mobileapp.core.themes.PasswordTextEditor
+import dev.tp_94.mobileapp.core.themes.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.EmailEditor
+import dev.tp_94.mobileapp.core.themes.NameEditor
+import dev.tp_94.mobileapp.custom_order_settings.presentation.components.LabeledCheckbox
 
 @Composable
 fun SignUpStatefulScreen(
@@ -92,52 +93,33 @@ fun SignUpStatelessScreen(
                 style = TextStyles.regular(colorResource(R.color.dark_accent))
             )
         }
-        Spacer(Modifier.height(26.dp))
+        Spacer(Modifier.height(16.dp))
         PhoneEditor(
             onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(8.dp))
         PasswordTextEditor(
             onChange = onPasswordChange,
             text = state.password,
         )
+        Spacer(Modifier.height(8.dp))
         NameEditor(
             onChange = onNameChange,
             text = state.name
         )
+        Spacer(Modifier.height(8.dp))
         EmailEditor(
             onChange = onEmailChange,
             text = state.email,
         )
-        Spacer(Modifier.height(18.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = state.isConfectioner,
-                onCheckedChange = onConfectioner,
-                colors = CheckboxColors(
-                    checkedCheckmarkColor = colorResource(R.color.background),
-                    uncheckedCheckmarkColor = colorResource(R.color.background),
-                    checkedBoxColor = colorResource(R.color.dark_accent),
-                    uncheckedBoxColor = colorResource(R.color.background),
-                    disabledCheckedBoxColor = colorResource(R.color.middle_text),
-                    disabledUncheckedBoxColor = colorResource(R.color.light_text),
-                    disabledIndeterminateBoxColor = colorResource(R.color.middle_text),
-                    checkedBorderColor = colorResource(R.color.dark_accent),
-                    uncheckedBorderColor = colorResource(R.color.dark_accent),
-                    disabledBorderColor = colorResource(R.color.middle_text),
-                    disabledUncheckedBorderColor = colorResource(R.color.middle_text),
-                    disabledIndeterminateBorderColor = colorResource(R.color.middle_text)
-                )
-            )
-            Text(
-                text = "Я хочу быть кондитером здесь",
-                style = TextStyles.secondHeader(colorResource(R.color.dark_accent))
-            )
-        }
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(16.dp))
+        LabeledCheckbox(
+            checked = state.isConfectioner,
+            onCheckedChange = onConfectioner,
+            label = "Я хочу быть кондитером здесь",
+        )
+        Spacer(Modifier.height(16.dp))
         DiscardButton(
             onClick = onSignUp,
             modifier = Modifier

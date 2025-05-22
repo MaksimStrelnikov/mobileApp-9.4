@@ -29,8 +29,8 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
-import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.PasswordTextEditor
+import dev.tp_94.mobileapp.core.themes.PhoneEditor
 
 @Composable
 fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit) {
@@ -78,7 +78,8 @@ fun LoginStatelessScreen(
         if (!(state.error == null || state.error == "")) {
             Text(
                 state.error,
-                style = TextStyles.regular(colorResource(R.color.dark_accent))
+                style = TextStyles.regular(colorResource(R.color.dark_accent)),
+
             )
         }
         Spacer(Modifier.height(26.dp))
@@ -107,6 +108,9 @@ fun LoginStatelessScreen(
         Spacer(Modifier.height(18.dp))
         ActiveButton(
             onClick = onSignUp,
+            modifier = Modifier
+                .width(218.dp)
+                .height(48.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
