@@ -32,21 +32,18 @@ class OrdersViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getAllOrdersUseCase.execute(getUser())
             if (result is OrdersResult.Success.SuccessGet) {
-
-                _state.value = _state.value.copy(orders = _state.value.orders + result.orders)
-
+                _state.value = _state.value.copy(orders = result.orders)
             }
         }
-        //TODO: add error handling
     }
 
     fun changeStatus(price: Int, status: OrderStatus) {
         viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(state.value.currentOrder!!, status, price, getUser())
+            val result = updateOrderStatusUseCase.execute(state.value.currentOrder!!, status, price)
             if (result is OrdersResult.Success.SuccessUpdate) {
                 _state.value =
                     _state.value.copy(orders = _state.value.orders.filter { it != state.value.currentOrder!! } + arrayListOf(
-                        state.value.currentOrder!!.copy(orderStatus = status, price = price)
+                        result.order
                     ))
             }
             //TODO: add error handling
@@ -56,11 +53,11 @@ class OrdersViewModel @Inject constructor(
 
     fun changeStatus(order: Order, status: OrderStatus) {
         viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(order, status, getUser())
+            val result = updateOrderStatusUseCase.execute(order, status, order.price)
             if (result is OrdersResult.Success.SuccessUpdate) {
                 _state.value =
                     _state.value.copy(orders = _state.value.orders.filter { it != order } + arrayListOf(
-                        order.copy(orderStatus = status)
+                        result.order
                     ))
             }
             //TODO: add error handling
@@ -68,17 +65,13 @@ class OrdersViewModel @Inject constructor(
     }
 
     fun onDialogOpen(order: Order) {
-        _state.value = _state.value.copy(dialogOpen = !_state.value.dialogOpen, currentOrder = order)
+        _state.value = _state.value.copy(dialogOpen = true, currentOrder = order)
     }
 
     fun onDialogClose() {
-        _state.value = _state.value.copy(dialogOpen = !_state.value.dialogOpen, currentOrder = null)
+        _state.value = _state.value.copy(dialogOpen = false, currentOrder = null)
     }
 
     private val _state = MutableStateFlow(OrdersState())
     val state = _state.asStateFlow()
-
-    init {
-        getOrders()
-    }
 }

@@ -1,12 +1,10 @@
 package dev.tp_94.mobileapp.core.themes
 
 
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -199,6 +197,7 @@ fun PreviewBuyButton() {
 fun BlockButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(6.dp),
     shape: Shape = RoundedCornerShape(12.dp),
     contentAlignment: Alignment = Alignment.TopStart,
     containerColor: Color = colorResource(id = R.color.light_background),
@@ -206,11 +205,12 @@ fun BlockButton(
 ) {
     Box(
         modifier = modifier
-            .clickable { onClick() }
             .background(
                 color = containerColor,
                 shape = shape
-            ),
+            )
+            .clickable { onClick() }
+            .padding(padding),
         contentAlignment = contentAlignment
     ) {
         content()

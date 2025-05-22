@@ -3,15 +3,21 @@ package dev.tp_94.mobileapp.core.models
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
+@Polymorphic
 sealed interface Cake {
     val name: String
     val preparation: Int
     val diameter: Float
     val description: String
 }
-
+@Serializable(with=CakeCustomSerializer::class)
+@SerialName("custom")
 data class CakeCustom(
     var color: Color,
     override val diameter: Float,
@@ -26,7 +32,7 @@ data class CakeCustom(
 ) : Cake
 
 @Serializable
-data class SerializableColor(val value: Long)
+data class SerializableColor(val value: Int)
 
 @Serializable
 data class SerializableOffset(val x: Float, val y: Float)
@@ -34,7 +40,7 @@ data class SerializableOffset(val x: Float, val y: Float)
 @Serializable
 data class SerializableUri(val uri: String?)
 
-fun Color.toSerializable() = SerializableColor(this.value.toLong())
+fun Color.toSerializable() = SerializableColor(this.toArgb())
 fun SerializableColor.toColor() = Color(this.value)
 
 fun Offset.toSerializable() = SerializableOffset(x, y)
@@ -42,6 +48,7 @@ fun SerializableOffset.toOffset() = Offset(x, y)
 
 fun Uri?.toSerializable() = SerializableUri(this?.toString())
 fun SerializableUri.toUri() = this.uri?.let { Uri.parse(it) }
+
 
 @Serializable
 data class CakeCustomSerializable(
@@ -89,8 +96,11 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
 
 
 @Serializable
+@SerialName("general")
 data class CakeGeneral(
+    val id: Int = 0,
     val price: Int,
+    val imageUrl: String? = null,
     override val name: String,
     override val description: String,
     override val diameter: Float,

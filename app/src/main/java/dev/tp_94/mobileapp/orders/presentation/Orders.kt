@@ -24,13 +24,14 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.orders.presentation.components.ConfectionerOrderItem
-import dev.tp_94.mobileapp.orders.presentation.components.CustomerOrderItem
+import dev.tp_94.mobileapp.orders.presentation.components.OrderItem
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
 
 @Composable
 fun ConfectionerOrdersStatefulScreen(
     viewModel: OrdersViewModel = hiltViewModel(),
+    onNavigate: (Order) -> Unit,
     onError: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -41,10 +42,13 @@ fun ConfectionerOrdersStatefulScreen(
             viewModel.exit()
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.getOrders()
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConfectionerOrdersStatelessScreen(
         state = state,
-        onDecline = { viewModel.changeStatus(it, OrderStatus.REJECTED) },
+        onReject = { viewModel.changeStatus(it, OrderStatus.REJECTED) },
         onApprove = { price ->
             viewModel.changeStatus(
                 price,
@@ -54,6 +58,7 @@ fun ConfectionerOrdersStatefulScreen(
         onDone = { viewModel.changeStatus(it, OrderStatus.DONE) },
         onOpenPriceEditor = { viewModel.onDialogOpen(it) },
         onClosePriceEditor = { viewModel.onDialogClose() },
+        onClick = onNavigate,
         topBar = topBar,
     )
 }
@@ -61,9 +66,10 @@ fun ConfectionerOrdersStatefulScreen(
 @Composable
 fun ConfectionerOrdersStatelessScreen(
     state: OrdersState,
+    onClick: (Order) -> Unit,
     onOpenPriceEditor: (Order) -> Unit,
     onClosePriceEditor: () -> Unit,
-    onDecline: (Order) -> Unit,
+    onReject: (Order) -> Unit,
     onApprove: (Int) -> Unit,
     onDone: (Order) -> Unit,
     topBar: @Composable () -> Unit
@@ -79,18 +85,23 @@ fun ConfectionerOrdersStatelessScreen(
         ) {
             LazyColumn {
                 items(state.orders) { order ->
-                    ConfectionerOrderItem(
+                    OrderItem(
                         cakeName = order.cake.name,
                         customersPhone = order.customer.phoneNumber,
                         orderDate = order.date,
                         preparation = order.cake.preparation,
                         price = order.price,
-                        onDecline = { onDecline(order) },
+                        onReject = { onReject(order) },
                         onApprove = {
                             onOpenPriceEditor(order)
                         },
                         onDone = { onDone(order) },
-                        orderStatus = order.orderStatus
+                        orderStatus = order.orderStatus,
+                        userType = UserType.CONFECTIONER,
+                        onPay = {},
+                        onReceive = {},
+                        onCancel = {},
+                        onClick = { onClick(order) }
                     )
                     Spacer(Modifier.height(12.dp))
                 }
@@ -117,18 +128,20 @@ fun PreviewConfectionerOrdersStatelessScreen() {
         state = OrdersState(
             orders = arrayListOf()
         ),
-        onDecline = { TODO() },
+        onReject = { TODO() },
         onApprove = { TODO() },
         onDone = { TODO() },
         topBar = { TopNameBar("F") { } },
         onOpenPriceEditor = { TODO() },
-        onClosePriceEditor = { TODO() }
+        onClosePriceEditor = { TODO() },
+        onClick = { TODO() }
     )
 }
 
 @Composable
 fun CustomerOrdersStatefulScreen(
     viewModel: OrdersViewModel = hiltViewModel(),
+    onNavigate: (Order) -> Unit,
     onError: () -> Unit,
     onPay: (Order) -> Unit,
     topBar: @Composable () -> Unit,
@@ -141,21 +154,26 @@ fun CustomerOrdersStatefulScreen(
             viewModel.exit()
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.getOrders()
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
     CustomerOrdersStatelessScreen(
         state = state,
-        onDecline = { viewModel.changeStatus(it, OrderStatus.CANCELED) },
+        onCancel = { viewModel.changeStatus(it, OrderStatus.CANCELED) },
         onPay = { onPay(it) },
         onReceive = { viewModel.changeStatus(it, OrderStatus.RECEIVED) },
         topBar = topBar,
-        bottomBar = bottomBar
+        bottomBar = bottomBar,
+        onClick = onNavigate
     )
 }
 
 @Composable
 fun CustomerOrdersStatelessScreen(
     state: OrdersState,
-    onDecline: (Order) -> Unit,
+    onClick: (Order) -> Unit,
+    onCancel: (Order) -> Unit,
     onPay: (Order) -> Unit,
     onReceive: (Order) -> Unit,
     topBar: @Composable () -> Unit,
@@ -173,16 +191,21 @@ fun CustomerOrdersStatelessScreen(
         ) {
             LazyColumn {
                 items(state.orders) { order ->
-                    CustomerOrderItem(
+                    OrderItem(
                         cakeName = order.cake.name,
                         customersPhone = order.confectioner.phoneNumber,
                         orderDate = order.date,
                         preparation = order.cake.preparation,
                         price = order.price,
-                        onDecline = { onDecline(order) },
+                        onCancel = { onCancel(order) },
                         orderStatus = order.orderStatus,
                         onPay = { onPay(order) },
                         onReceive = { onReceive(order) },
+                        userType = UserType.CUSTOMER,
+                        onApprove = { },
+                        onDone = { },
+                        onReject = { },
+                        onClick = { onClick(order) }
                     )
                     Spacer(Modifier.height(12.dp))
                 }
@@ -198,10 +221,11 @@ fun PreviewCustomerOrdersStatelessScreen() {
         state = OrdersState(
             orders = arrayListOf()
         ),
-        onDecline = { TODO() },
+        onCancel = { TODO() },
         topBar = { TopNameBar("F") { } },
         onPay = { TODO() },
         onReceive = { TODO() },
         bottomBar = { TODO() },
+        onClick = { TODO() }
     )
 }

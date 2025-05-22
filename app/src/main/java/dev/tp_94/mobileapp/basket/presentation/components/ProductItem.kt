@@ -20,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +34,10 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 @Composable
 fun ProductItem(
     cake: CakeGeneral,
+    image: Painter? = null,
     amount: Int,
-    onChangeAmount: (Int) -> Unit,
+    onAdd: (CakeGeneral) -> Unit,
+    onRemove: (CakeGeneral) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -49,27 +53,31 @@ fun ProductItem(
                 .fillMaxWidth()
                 .height(140.dp)
         ) {
-            /*Image(
-                painter = painterResource(R.drawable.mock_cake),
-                contentDescription = null,
-                modifier = Modifier.size(140.dp)
-            )*/
-            Box(
-                modifier = Modifier
-                    .size(140.dp)
-                    .background(
-                        color = colorResource(R.color.dark_background),
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.nocake),
+            if (image == null) {
+                Box(
+                    modifier = Modifier
+                        .size(140.dp)
+                        .background(
+                            color = colorResource(R.color.dark_background),
+                            shape = RoundedCornerShape(8.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.nocake),
+                        contentDescription = null,
+                        tint = colorResource(R.color.light_text),
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+            } else {
+                Image(
+                    painter = image,
                     contentDescription = null,
-                    tint = colorResource(R.color.light_text),
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(140.dp)
                 )
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +116,7 @@ fun ProductItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { onChangeAmount(amount - 1) }
+                        onClick = { onAdd(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.minusbutton),
@@ -120,7 +128,7 @@ fun ProductItem(
                         style = TextStyles.secondHeader(colorResource(R.color.dark_text))
                     )
                     IconButton(
-                        onClick = { onChangeAmount(amount + 1) }
+                        onClick = { onRemove(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.plusbutton),
@@ -154,7 +162,9 @@ fun PreviewProductItem() {
                 address = "TODO()"
             )
         ),
-        amount = 1,
-        onChangeAmount = { }
+        image = painterResource(R.drawable.mock_cake),
+        amount = 3,
+        onAdd = {},
+        onRemove = {},
     )
 }

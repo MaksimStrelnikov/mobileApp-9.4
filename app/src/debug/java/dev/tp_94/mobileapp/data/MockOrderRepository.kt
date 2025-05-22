@@ -1,16 +1,18 @@
 package dev.tp_94.mobileapp.data
 
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.selfmadecake.domain.OrderRepository
+import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class MockOrderRepository @Inject constructor(private val db: MockDB) : OrderRepository {
+class MockOrderRepository @Inject constructor(private val db: MockDB, private val sessionCache: SessionCache) : OrderRepository {
     override suspend fun placeCustomCakeOrder(
         cakeCustom: CakeCustom,
         customer: Customer,
@@ -24,20 +26,23 @@ class MockOrderRepository @Inject constructor(private val db: MockDB) : OrderRep
         )
     }
 
-    override suspend fun getAllOrders(user: User?): List<Order> {
-        return db.getAllOrders(user)
+    override suspend fun placeGeneralCakeOrder(
+        cakeGeneral: CakeGeneral,
+        customer: Customer,
+        amount: Int
+    ) {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
-        db.updateOrderStatus(user, order, status)
+    override suspend fun getAllOrders(): List<Order> {
+        return db.getAllOrders(sessionCache.session?.user)
     }
 
     override suspend fun updateOrderStatus(
-        user: User?,
         order: Order,
         price: Int,
         status: OrderStatus
-    ) {
-        db.updateOrderStatus(user, order, price, status)
+    ): Order {
+        return db.updateOrderStatus(sessionCache.session?.user, order, price, status)
     }
 }

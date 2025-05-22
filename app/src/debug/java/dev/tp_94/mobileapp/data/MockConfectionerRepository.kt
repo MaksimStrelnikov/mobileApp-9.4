@@ -1,7 +1,7 @@
 package dev.tp_94.mobileapp.data
 
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.customersfeed.domain.ConfectionerRepository
+import dev.tp_94.mobileapp.customers_feed.domain.ConfectionerRepository
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 

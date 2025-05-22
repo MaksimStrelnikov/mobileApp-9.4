@@ -1,5 +1,7 @@
 package dev.tp_94.mobileapp
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -17,27 +19,39 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageStatefulScreen
-import dev.tp_94.mobileapp.confectionerpage.presentation.ConfectionerPageViewModel
+import dev.tp_94.mobileapp.basket.presentation.BasketStatefulScreen
+import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageStatefulScreen
+import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageViewModel
 import dev.tp_94.mobileapp.core.SplashNavigationScreen
+import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.customersfeed.presentation.CustomersFeedStatefulScreen
+import dev.tp_94.mobileapp.customers_feed.presentation.CustomersFeedStatefulScreen
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
-import dev.tp_94.mobileapp.mainconfectioner.presentation.MainConfectionerStatefulScreen
-import dev.tp_94.mobileapp.maincustomer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
+import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
+import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentViewModel
+import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
+import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentViewModel
+import dev.tp_94.mobileapp.payment_result.ErrorPayment
+import dev.tp_94.mobileapp.payment_result.SuccessfulPayment
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
-import dev.tp_94.mobileapp.profileeditor.presentation.ProfileEditorStatefulScreen
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeStatefulScreen
-import dev.tp_94.mobileapp.selfmadecake.presentation.SelfMadeCakeViewModel
+import dev.tp_94.mobileapp.profile_editor.presentation.ProfileEditorStatefulScreen
+import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeStatefulScreen
+import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
+import dev.tp_94.mobileapp.withdrawal.presentation.WithdrawalStatefulScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLEncoder
@@ -47,7 +61,9 @@ class MainActivity : ComponentActivity() {
 
     private val isAppInitialized = mutableStateOf(false)
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
             !isAppInitialized.value
@@ -76,7 +92,12 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
                     popUpTo("customerOrders") { inclusive = true }
                 }
         },
-        onBasketClick = { /* TODO */ },
+        onBasketClick = {
+            if (currentScreen != Screen.ORDERS)
+                navController.navigate("basket") {
+                    popUpTo("basket") { inclusive = true }
+                }
+        },
         onProfileClick = {
             if (currentScreen != Screen.PROFILE)
                 navController.navigate("profile") {
@@ -151,6 +172,19 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                 })
         }
+        composable("basket") {
+            BasketStatefulScreen(
+                onOrder = {
+
+                },
+                topBar = {
+                    TopNameBar("Корзина") {
+                        navController.popBackStack()
+                    }
+                },
+                bottomBar = { AppBottomBar(Screen.BASKET, navController) }
+            )
+        }
         composable("mainCustomer") {
             LaunchedEffect(Unit) {
                 isAppInitialized.value = true
@@ -200,7 +234,6 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
             )
         }
-
         composable(
             "makecake/{confectionerJson}",
             arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
@@ -252,6 +285,125 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
             )
         }
+        composable(
+            "orderView/{order}",
+            arguments = listOf(navArgument("order") { type = NavType.StringType })
+        ) {
+            val viewModel = hiltViewModel<OrderViewModel>()
+            OrderViewStatefulScreen(
+                viewModel = viewModel,
+                onConfectionerClick = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("confectionerpage/$encoded")
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar("Заказ") {
+                        navController.popBackStack()
+                    }
+                },
+                onPay = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "paymentResult",
+                        null
+                    )
+                    navController.navigate("orderPayment/$encoded")
+                }
+            )
+        }
+
+        composable(
+            "orderPayment/{order}",
+            arguments = listOf(navArgument("order") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val viewModel = hiltViewModel<OrderPaymentViewModel>(backStackEntry)
+            OrderPaymentStatefulScreen(
+                viewModel = viewModel,
+                onSuccessfulPay = {
+                    navController.navigate("successfulPayment") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorPay = {
+                    navController.navigate("errorPayment")
+                },
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Оформление заказа",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+            )
+        }
+
+        composable(
+            "basketPayment/{list}",
+            arguments = listOf(navArgument("list") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val viewModel = hiltViewModel<BasketPaymentViewModel>(backStackEntry)
+            BasketPaymentStatefulScreen(
+                viewModel = viewModel,
+                actionButtonName = "Оплатить",
+                onSuccessfulPay = {
+                    navController.navigate("successfulPayment") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorPay = {
+                    navController.navigate("errorPayment")
+                },
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Оформление заказа",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                },
+            )
+        }
+
+        composable("successfulPayment") {
+            SuccessfulPayment({
+                navController.popBackStack()
+            })
+        }
+
+        composable("errorPayment") {
+            ErrorPayment({
+                navController.popBackStack()
+            })
+        }
+
+        composable("addNewCard") {
+            NewCardAdditionStatefulScreen(
+                onDone = {
+                    navController.popBackStack()
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Добавление новой карты",
+                        onBackClick = { navController.popBackStack() },
+                    )
+                }
+            )
+        }
 
         composable("confectionerOrders") {
             ConfectionerOrdersStatefulScreen(
@@ -259,6 +411,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("login") {
                         popUpTo(0)
                     }
+                },
+                onNavigate = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderView/$encoded")
                 },
                 topBar = {
                     TopNameBar(
@@ -278,6 +436,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                     }
                 },
+                onNavigate = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderView/$encoded")
+                },
                 topBar = {
                     TopNameBar(
                         name = "Заказы",
@@ -286,7 +450,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         },
                     )
                 },
-                onPay = {/*TODO()*/ },
+                onPay = {
+                    val json =
+                        Json { serializersModule = CakeSerializerModule.module }.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("orderPayment/$encoded")
+                },
                 bottomBar = {
                     AppBottomBar(currentScreen = Screen.ORDERS, navController = navController)
                 }
@@ -306,14 +475,22 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 }
             })
         }
-        //TODO: divide profile
+
         composable("profile") {
             Log.println(Log.INFO, "Log", "Profile")
-            ProfileScreen(confectionerRoutes = ProfileConfectionerRoutes(onChangePersonalData = {
-                navController.navigate(
-                    "changeProfile"
-                )
-            }, onViewOrders = { }, onChangeCustomCake = { }),
+            ProfileScreen(
+                confectionerRoutes = ProfileConfectionerRoutes(
+                    onChangePersonalData = {
+                        navController.navigate(
+                            "changeProfile"
+                        )
+                    },
+                    onViewOrders = {
+                        navController.navigate("confectionerOrders")
+                    },
+                    onChangeCustomCake = { /*TODO*/ },
+                    onWithdraw = { navController.navigate("withdraw") }
+                ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
                 },
@@ -341,6 +518,51 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     Log.println(Log.INFO, "Log", "Exit")
                 })
         }
+
+        composable("withdraw") {
+            WithdrawalStatefulScreen(
+                onAddNewCard = {
+                    navController.navigate("addNewCard")
+                },
+                onSuccessfulWithdrawal = {
+                    navController.navigate("successfulWithdrawal") {
+                        popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onErrorWithdrawal = {
+                    navController.navigate("errorWithdrawal")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Мои финансы",
+                        onBackClick = { navController.popBackStack() },
+                    )
+                }
+            )
+        }
+
+        composable("successfulWithdrawal") {
+            SuccessfulPayment(
+                onDismissRequest = {
+                    navController.popBackStack()
+                },
+                mainText = "Все прошло успешно!",
+                description = "Деньги скоро поступят",
+            )
+        }
+
+        composable("errorWithdrawal") {
+            ErrorPayment(
+                onDismissRequest = {
+                    navController.popBackStack()
+                },
+                mainText = "Вывод не прошел!",
+                description = "Деньги всё ещё у вас.\nПожалуйста, смените способ вывода\nили попробуйте позднее",
+            )
+        }
+
         composable("changeProfile") {
             ProfileEditorStatefulScreen(onError = {
                 navController.navigate("login") {

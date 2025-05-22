@@ -24,7 +24,9 @@ data class Confectioner(
     override val phoneNumber: String,
     override val email: String,
     val description: String,
-    val address: String
+    val address: String,
+    val canWithdrawal: Int = 0,
+    val inProcess: Int = 0
 ) : User
 
 @JsonClass(generateAdapter = true)

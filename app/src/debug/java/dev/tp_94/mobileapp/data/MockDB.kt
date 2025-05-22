@@ -1,5 +1,8 @@
 package dev.tp_94.mobileapp.data
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.ConfectionerPassword
@@ -9,8 +12,9 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.UserPassword
-import dev.tp_94.mobileapp.selfmadecake.domain.Restrictions
+import dev.tp_94.mobileapp.core.models.Restrictions
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -49,6 +53,41 @@ class MockDB {
                 maxPreparationDays = 7,
                 fillings = arrayListOf("Клубника", "Вишня", "Ананас"),
                 confectioner = login("9876543210", "123456789") as Confectioner
+            )
+        )
+        orderDatabase.add(
+            Order(
+                id = 1,
+                cake = CakeCustom(
+                    color = Color.Cyan,
+                    diameter = 10f,
+                    text = "TODO()",
+                    textOffset = Offset(0f,0f),
+                    imageUri = null,
+                    imageOffset = Offset(0f,0f),
+                    fillings = listOf(),
+                    preparation = 3,
+                    description = "TODO()",
+                    name = "TODO()"
+                ),
+                date = LocalDate(2025, 5, 13),
+                orderStatus = OrderStatus.PENDING_PAYMENT,
+                price = 123126,
+                quantity = 1,
+                customer = Customer(
+                    id = 1,
+                    name = "Елена Жужпожуж",
+                    phoneNumber = "8005553535",
+                    email = "lenochka.devochka@gigamail.com"
+                ),
+                confectioner = Confectioner(
+                    id = 2,
+                    name = "Тортодел",
+                    phoneNumber = "9876543210",
+                    email = "cake.make@gigamail.com",
+                    description = "Просто делаем просто торты",
+                    address = "г. Воронеж, Университетская площадь, 1"
+                ),
             )
         )
     }
@@ -217,7 +256,7 @@ class MockDB {
         }
     }
 
-    fun updateOrderStatus(user: User?, order: Order, status: OrderStatus) {
+    fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus): Order {
         if (user == null) {
             throw Exception("User is null")
         }
@@ -227,50 +266,25 @@ class MockDB {
         if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
             throw Exception("User is not a customer")
         }
+        val returnOrder: Order
         when (user) {
             is Confectioner -> {
                 val filtered = orderDatabase.filter { it == order && it.confectioner == user }
                 if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
                 val deleted = filtered.last()
                 orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
+                returnOrder = deleted.copy(orderStatus = status, price = price)
+                orderDatabase.add(returnOrder)
             }
             is Customer -> {
                 val filtered = orderDatabase.filter { it == order && it.customer == user }
                 if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
                 val deleted = filtered.last()
                 orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
+                returnOrder = deleted.copy(orderStatus = status, price = price)
+                orderDatabase.add(returnOrder)
             }
         }
-    }
-
-    fun updateOrderStatus(user: User?, order: Order, price: Int, status: OrderStatus) {
-        if (user == null) {
-            throw Exception("User is null")
-        }
-        if (user !is Confectioner && arrayListOf(OrderStatus.PENDING_PAYMENT, OrderStatus.REJECTED, OrderStatus.DONE).contains(status)) {
-            throw Exception("User is not a confectioner")
-        }
-        if (user !is Customer && arrayListOf(OrderStatus.PENDING_APPROVAL, OrderStatus.IN_PROGRESS, OrderStatus.CANCELED, OrderStatus.RECEIVED).contains(status)) {
-            throw Exception("User is not a customer")
-        }
-        when (user) {
-            is Confectioner -> {
-                val filtered = orderDatabase.filter { it == order && it.confectioner == user }
-                if (filtered.isEmpty()) throw Exception("No such order: $order to confectioner: $user")
-                val deleted = filtered.last()
-                orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status, price = price))
-            }
-            is Customer -> {
-                val filtered = orderDatabase.filter { it == order && it.customer == user }
-                if (filtered.isEmpty()) throw Exception("No such order: $order from customer: $user")
-                val deleted = filtered.last()
-                orderDatabase.remove(deleted)
-                orderDatabase.add(deleted.copy(orderStatus = status))
-            }
-        }
-
+        return returnOrder
     }
 }
