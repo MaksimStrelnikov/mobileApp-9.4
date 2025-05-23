@@ -250,6 +250,11 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 onCustomOrdersClick = {
                     navController.navigate("confectionerOrders")
                 },
+                onNavigateToProductEdit = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    // TODO:navController.navigate("/$encoded")
+                }
             )
         }
         composable(
@@ -290,6 +295,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     val json = Json.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("makecake/$encoded")
+                },
+                onNavigateToProduct = {
+                    //TODO
                 },
                 onError = {
                     navController.navigate("login") {
