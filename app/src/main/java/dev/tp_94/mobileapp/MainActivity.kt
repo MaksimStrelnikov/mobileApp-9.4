@@ -156,6 +156,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                         Log.println(Log.INFO, "Log", "Navigate to profile")
                     }
+                },
+                onSkip = {
+                    //TODO: Переход как незарегистрированный пользователь
+                    navController.navigate("main") {
+                        popUpTo(0)
+                    }
                 }
             )
         }
@@ -170,7 +176,19 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                         Log.println(Log.INFO, "Log", "Navigate to profile")
                     }
-                })
+                },
+                onSkip = {
+                    //TODO: Переход как незарегистрированный пользователь
+                    navController.navigate("main") {
+                        popUpTo(0)
+                    }
+                },
+                onLogin = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                }
+            )
         }
         composable("basket") {
             BasketStatefulScreen(

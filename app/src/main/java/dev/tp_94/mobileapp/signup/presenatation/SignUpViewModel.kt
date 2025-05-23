@@ -32,6 +32,10 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
         _state.value = _state.value.copy(isConfectioner = isConfectioner)
     }
 
+    fun updateAddress(address: String) {
+        _state.value = _state.value.copy(address = address)
+    }
+
     fun signUp(onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
@@ -40,6 +44,7 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
                 password = state.value.password,
                 name = state.value.name,
                 email = state.value.email,
+                address = state.value.address,
                 isConfectioner = state.value.isConfectioner
             )
             if (response is SignUpResult.Error) _state.value =

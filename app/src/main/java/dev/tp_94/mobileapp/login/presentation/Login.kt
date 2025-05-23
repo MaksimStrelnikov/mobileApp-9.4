@@ -31,16 +31,18 @@ import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.PasswordTextEditor
 import dev.tp_94.mobileapp.core.themes.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.TextButton
 
 @Composable
-fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit) {
+fun LoginStatefulScreen(viewModel: LoginViewModel = hiltViewModel(), onSignUp: () -> Unit, onSuccessCustomer: () -> Unit, onSuccessConfectioner: () -> Unit, onSkip: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LoginStatelessScreen(
         state = state,
         onPhoneNumberChange = { viewModel.updatePhoneNumber(it) },
         onPasswordChange = { viewModel.updatePassword(it) },
         onSignUp = onSignUp,
-        onLogin = { viewModel.login(onSuccessCustomer, onSuccessConfectioner) }
+        onLogin = { viewModel.login(onSuccessCustomer, onSuccessConfectioner) },
+        onSkip = onSkip,
     )
 }
 
@@ -50,7 +52,8 @@ fun LoginStatelessScreen(
     onPhoneNumberChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSignUp: () -> Unit,
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
+    onSkip: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -102,10 +105,11 @@ fun LoginStatelessScreen(
             enabled = !state.isLoading
         ) {
             Text(
-                if (!state.isLoading) "Войти" else "Входим..."
+                if (!state.isLoading) "Войти" else "Входим...",
+                style = TextStyles.button()
             )
         }
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(8.dp))
         ActiveButton(
             onClick = onSignUp,
             modifier = Modifier
@@ -116,6 +120,19 @@ fun LoginStatelessScreen(
             Text(
                 "Зарегистрироваться",
                 style = TextStyles.button(color = colorResource(R.color.light_background))
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        TextButton(
+            onClick = onSkip,
+            modifier = Modifier
+                .width(218.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                "Пропустить",
+                style = TextStyles.regular(color = colorResource(R.color.light_text))
             )
         }
     }
@@ -130,7 +147,8 @@ fun PreviewLoginStatelessScreen() {
             onPhoneNumberChange = {  },
             onPasswordChange = {  },
             onSignUp = {  },
-            onLogin = {  }
+            onLogin = {  },
+            onSkip = {  },
         )
     }
 }

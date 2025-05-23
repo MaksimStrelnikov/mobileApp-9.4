@@ -15,6 +15,7 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
         password: String,
         name: String,
         email: String,
+        address: String,
         isConfectioner: Boolean
     ): SignUpResult {
         if (!(phoneNumber.matches(Regex("[0-9]*")) && phoneNumber.length == 10)) {
@@ -32,6 +33,9 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
         try {
             val user: User
             if (isConfectioner) {
+                if (address.isEmpty()) {
+                    return SignUpResult.Error("Адрес не указан")
+                }
                 user = userRepository.add(
                     ConfectionerPassword(
                         id = 0,
@@ -40,7 +44,7 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
                         email = email,
                         password = password,
                         description = "",
-                        address = ""
+                        address = address
                     )
                 )
             } else {

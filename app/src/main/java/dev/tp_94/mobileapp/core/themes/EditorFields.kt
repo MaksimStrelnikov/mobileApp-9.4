@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,27 +49,19 @@ fun SpecialTextField(
     contentAlignment: Alignment = Alignment.CenterStart,
     border: BorderStroke? = null
 ) {
-    var localText by remember(text) {
-        mutableStateOf(
-            if (maxLength != null) inputFilter(text).take(maxLength)
-            else inputFilter(text)
-        )
-    }
+    var localText by remember { mutableStateOf(processText(text, inputFilter, maxLength)) }
 
     LaunchedEffect(text) {
-        val filtered = inputFilter(text)
-        val limited = if (maxLength != null) filtered.take(maxLength) else filtered
-        if (limited != localText) {
-            localText = limited
-        }
+        val processed = processText(text, inputFilter, maxLength)
+        if (processed != localText) localText = processed
     }
 
     BasicTextField(
         value = localText,
         onValueChange = { newValue ->
-            val filteredNewValue = inputFilter(newValue)
-            localText = if (maxLength != null) filteredNewValue.take(maxLength) else filteredNewValue
-            onChange(localText)
+            val processed = processText(newValue, inputFilter, maxLength)
+            localText = processed
+            onChange(processed)
         },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = singleLine,
@@ -97,6 +90,11 @@ fun SpecialTextField(
     )
 }
 
+
+private fun processText(text: String, filter: (String) -> String, maxLength: Int?): String {
+    return filter(text).let { if (maxLength != null) it.take(maxLength) else it }
+}
+
 @Composable
 fun ValidatedTextField(
     modifier: Modifier = Modifier,
@@ -114,19 +112,34 @@ fun ValidatedTextField(
     maxLength: Int? = null,
 ) {
     var error by remember { mutableStateOf("") }
+    var hiddenError by remember { mutableStateOf("") }
+    var hasFocus by remember { mutableStateOf(false) }
+    var isTouched by remember { mutableStateOf(false) }
+
 
     Column {
         SpecialTextField(
             text = text,
             onChange = {
                 onChange(it)
-                error = validator(it) ?: ""
+                hiddenError = validator(it) ?: ""
             },
             defaultText = defaultText,
             backgroundColor = backgroundColor,
             keyboardType = keyboardType,
             singleLine = singleLine,
-            modifier = modifier,
+            modifier = modifier
+                .onFocusChanged { focusState ->
+                    val wasFocused = hasFocus
+                    hasFocus = focusState.isFocused
+
+                    if (wasFocused && !hasFocus) {
+                        isTouched = true
+                        error = hiddenError
+                    } else if (!wasFocused && hasFocus) {
+                        error = ""
+                    }
+                },
             visualTransformation = visualTransformation,
             contentAlignment = contentAlignment,
             maxLength = maxLength,
@@ -153,7 +166,7 @@ fun DescriptionEditor(
     contentAlignment: Alignment = Alignment.TopStart,
     maxLength: Int? = 400
 ) {
-    ValidatedTextField(
+    SpecialTextField(
         text = text,
         onChange = onChange,
         defaultText = defaultText,
@@ -163,11 +176,6 @@ fun DescriptionEditor(
         contentAlignment = contentAlignment,
         maxLength = maxLength,
         modifier = modifier,
-        validator = {
-            if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина описания - $maxLength символов"
-            } else null
-        }
     )
 }
 
@@ -192,9 +200,7 @@ fun NumberEditor(
         inputFilter = { it.filter { c -> c.isDigit() } },
         maxLength = maxLength,
         validator = {
-            if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина - $maxLength символов"
-            } else if (necessary && it.isEmpty()) "$label - обязательное поле" else null
+            if (necessary && it.isEmpty()) "$label - обязательное поле" else null
         }
     )
 }
@@ -220,9 +226,7 @@ fun PriceEditor(
         inputFilter = { it.filter { c -> c.isDigit() } },
         maxLength = maxLength,
         validator = {
-            if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина цены - $maxLength цифр"
-            } else if (it.isEmpty()) "$defaultText - обязательное поле" else null
+            if (it.isEmpty()) "$defaultText - обязательное поле" else null
         }
     )
 }
@@ -253,9 +257,7 @@ fun WeightEditor(
         },
         maxLength = maxLength,
         validator = {
-            if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина веса - $maxLength символов"
-            } else if (it.isEmpty()) "$defaultText - обязательное поле" else null
+            if (it.isEmpty()) "$defaultText - обязательное поле" else null
         }
     )
 }
@@ -280,8 +282,6 @@ fun PasswordTextEditor(
         validator = {
             if (it.isEmpty()) {
                 "Пароль не может быть пустым"
-            } else if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина пароля - $maxLength символов"
             } else null
         }
     )
@@ -304,9 +304,7 @@ fun EmailEditor(
         modifier = modifier,
         validator = {
             if (it.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()) {
-                "Некорректный вид адреса"
-            } else if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина email - $maxLength символов"
+                "Некорректный вид для электронной почты"
             } else null
         },
         maxLength = maxLength
@@ -330,7 +328,6 @@ fun NameEditor(
         backgroundColor = backgroundColor,
         validator = {
             if (it.isEmpty()) "$defaultText - обязательное поле"
-            else if (maxLength != null && it.length > maxLength) "Максимальная длина - $maxLength символов"
             else null
         },
         maxLength = maxLength
@@ -353,7 +350,6 @@ fun AddressEditor(
         modifier = modifier,
         validator = {
             if (it.isEmpty()) "Адрес - обязательное поле"
-            else if (maxLength != null && it.length > maxLength) "Максимальная длина адреса - $maxLength символов"
             else null
         },
         maxLength = maxLength
@@ -368,7 +364,7 @@ fun FillingField(
     backgroundColor: Color = colorResource(R.color.dark_background),
     maxLength: Int? = 40
 ) {
-    ValidatedTextField(
+    SpecialTextField(
         text = value,
         onChange = onValueChange,
         defaultText = "Начинка",
@@ -376,14 +372,7 @@ fun FillingField(
         keyboardType = KeyboardType.Text,
         singleLine = true,
         modifier = modifier,
-        maxLength = maxLength,
-        validator = {
-            if (it.isEmpty()) {
-                "Начинка не может быть пустой"
-            } else if (maxLength != null && it.length > maxLength) {
-                "Максимальная длина начинки - $maxLength символов"
-            } else null
-        }
+        maxLength = maxLength
     )
 }
 
@@ -405,11 +394,9 @@ fun PhoneEditor(
         visualTransformation = PhoneVisualTransformation("+7 000 000-00-00", '0'),
         maxLength = 10,
         validator = {
-            if (it.length < 10) {
-                "Номер должен содержать 10 цифр"
-            } else if (it.length > 10) {
-                "Максимальная длина номера - 10 цифр"
-            } else null
+            if (it.isEmpty()) "Номер телефона - обязательное поле"
+            else if (it.length < 10) "Номер телефона должен состоять из 10 цифр"
+            else null
         }
     )
 }
