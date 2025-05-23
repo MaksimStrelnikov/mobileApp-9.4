@@ -1,0 +1,36 @@
+package dev.tp_94.mobileapp.data
+
+import dev.tp_94.mobileapp.core.data.HttpStatus.*
+import dev.tp_94.mobileapp.core.models.Order
+import dev.tp_94.mobileapp.core.models.OrderStatus
+import dev.tp_94.mobileapp.self_made_cake.data.OrderApi
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
+import javax.inject.Inject
+
+class OrderRepositoryImpl @Inject constructor(
+    private val api: OrderApi
+): OrderRepository {
+    override suspend fun placeOrder(orderRequestDTO: OrderRequestDTO) {
+        val response = api.createOrder(orderRequestDTO)
+        if (response.code() != CREATED.status) {
+            throw Exception("Возникла непредвиденная ошибка")
+        }
+    }
+
+    override suspend fun placeOrder(orderFullRequestDTO: OrderFullRequestDTO) {
+        val response = api.createOrder(orderFullRequestDTO)
+        if (response.code() != CREATED.status) {
+            throw Exception("Возникла непредвиденная ошибка")
+        }
+    }
+
+    override suspend fun getAllOrders(): List<Order> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateOrderStatus(order: Order, price: Int, status: OrderStatus): Order {
+        TODO("Not yet implemented")
+    }
+}

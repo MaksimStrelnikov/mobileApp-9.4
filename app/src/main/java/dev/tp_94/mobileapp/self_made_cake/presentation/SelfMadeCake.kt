@@ -139,7 +139,7 @@ fun SelfMadeCakeStatelessScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         InteractableImage(
-                            imageUri = state.cakeCustom.imageUri,
+                            imageUrl = state.cakeCustom.imageUrl,
                             imageOffset = state.cakeCustom.imageOffset,
                             onOffsetChanged = onImageDrag
                         )
@@ -205,7 +205,7 @@ fun SelfMadeCakeStatelessScreen(
                         Editor.IMAGE -> {
                             ImageAddition(
                                 onAdd = onImageChange,
-                                imageUri = state.cakeCustom.imageUri
+                                imageUri = state.cakeCustom.imageUrl
                             )
                         }
 
@@ -257,18 +257,19 @@ fun SelfMadeCakeStatelessScreen(
 @Preview
 @Composable
 fun PreviewSelfMadeCakeStatelessScreen() {
+    val c = Confectioner(
+        id = 1,
+        name = "TODO()",
+        phoneNumber = "TODO()",
+        email = "TODO()",
+        description = "TODO()",
+        address = "TODO()"
+    )
     MaterialTheme {
         SelfMadeCakeStatelessScreen(
             state = SelfMadeCakeState(
-                cakeCustom = CakeCustom(Color.Cyan, 10f),
-                confectioner = Confectioner(
-                    id = 1,
-                    name = "TODO()",
-                    phoneNumber = "TODO()",
-                    email = "TODO()",
-                    description = "TODO()",
-                    address = "TODO()"
-                )
+                cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
+                confectioner = c
             ),
             onImageDrag = {},
             onTextDrag = {},

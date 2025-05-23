@@ -344,7 +344,7 @@ fun CustomOrderViewStatelessScreen(
                                 .background(state.order.cake.color),
                             contentAlignment = Alignment.Center
                         ) {
-                            state.order.cake.imageUri?.let { uri ->
+                            state.order.cake.imageUrl?.let { uri ->
                                 val painter = rememberAsyncImagePainter(uri)
                                 Image(
                                     painter = painter,
@@ -494,7 +494,7 @@ fun PreviewCustomOrderViewStatelessScreen() {
                 color = Color.Cyan,
                 text = "TODO()",
                 textOffset = Offset.Zero,
-                imageUri = null,
+                imageUrl = null,
                 imageOffset = Offset.Zero,
                 fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
             ),

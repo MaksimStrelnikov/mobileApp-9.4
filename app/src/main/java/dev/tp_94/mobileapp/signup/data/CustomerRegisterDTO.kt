@@ -1,8 +1,10 @@
 package dev.tp_94.mobileapp.signup.data
 
+import com.google.gson.annotations.SerializedName
+
 data class CustomerRegisterDTO(
-    override val name: String,
-    override val phone: String,
-    override val password: String,
-    override val email: String
-): UserRegisterDTO
+    @SerializedName("name") override val name: String,
+    @SerializedName("phone") override val phone: String,
+    @SerializedName("password") override val password: String,
+    @SerializedName("email") override val email: String
+) : UserRegisterDTO

@@ -176,7 +176,7 @@ fun PreviewOrderPaymentStatelessScreen() {
                     color = Color.Cyan,
                     text = "TODO()",
                     textOffset = Offset.Zero,
-                    imageUri = null,
+                    imageUrl = null,
                     imageOffset = Offset.Zero,
                     fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
                 ),

@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.core.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
 import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
 import dev.tp_94.mobileapp.signup.data.UserRegisterDTO
@@ -81,5 +82,28 @@ fun Customer.toDto(password: String): CustomerRegisterDTO {
         phone = phoneNumber,
         password = password,
         email = email
+    )
+}
+
+fun UserResponseDTO.toConfectioner(): Confectioner {
+    return Confectioner(
+        id = this.id,
+        name = this.name,
+        phoneNumber = this.phone,
+        email = this.email,
+        description = this.description ?: "",
+        address = this.address ?: "",
+        //TODO BACKEND AWAITING
+        canWithdrawal = 0,
+        inProcess = 0
+    )
+}
+
+fun UserResponseDTO.toCustomer(): Customer {
+    return Customer(
+        id = this.id,
+        name = this.name,
+        phoneNumber = this.phone,
+        email = this.email
     )
 }

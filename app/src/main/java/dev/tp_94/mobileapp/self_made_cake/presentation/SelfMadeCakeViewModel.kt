@@ -59,7 +59,7 @@ class SelfMadeCakeViewModel @Inject constructor(
 
     fun updateImage(imageUri: Uri?) {
         _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUri = imageUri))
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUrl = imageUri.toString()))
     }
 
     fun updateComment(comment: String) {
@@ -74,7 +74,11 @@ class SelfMadeCakeViewModel @Inject constructor(
     fun sendCustomCake(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val result = sendCustomCakeUseCase.execute(_state.value.cakeCustom, (getUser() as Customer), _state.value.confectioner)
+            val result = sendCustomCakeUseCase.execute(
+                _state.value.cakeCustom,
+                (getUser() as Customer),
+                _state.value.confectioner
+            )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
                 //TODO: add proper error handling
@@ -91,13 +95,21 @@ class SelfMadeCakeViewModel @Inject constructor(
         sessionCache.clearSession()
     }
 
-    private val _state = MutableStateFlow(SelfMadeCakeState(
-        colorPickerOpen = false,
-        cakeCustom = CakeCustom(Color.Cyan, 10f),
-        confectioner = savedStateHandle.get<String>("confectionerJson")
-            ?.let { URLDecoder.decode(it, "UTF-8") }
-            ?.let { Json.decodeFromString<Confectioner>(it) }
-            ?: error("Confectioner not provided")
-    ))
+    private val confectioner = savedStateHandle.get<String>("confectionerJson")
+        ?.let { URLDecoder.decode(it, "UTF-8") }
+        ?.let { Json.decodeFromString<Confectioner>(it) }
+        ?: error("Confectioner not provided")
+
+    private val _state = MutableStateFlow(
+        SelfMadeCakeState(
+            colorPickerOpen = false,
+            cakeCustom = CakeCustom(
+                Color.Cyan,
+                10f,
+                confectioner = confectioner
+            ),
+            confectioner = confectioner
+        )
+    )
     val state = _state.asStateFlow()
 }

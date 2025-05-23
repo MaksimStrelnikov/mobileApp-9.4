@@ -1,17 +1,25 @@
 package dev.tp_94.mobileapp.signup.domain
 
 import android.util.Patterns
+import coil.map.Mapper
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Session
+import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.core.models.toConfectioner
+import dev.tp_94.mobileapp.core.models.toCustomer
+import dev.tp_94.mobileapp.core.models.toDto
+import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.signup.presenatation.SignUpResult
 import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val sessionCache: SessionCache
+    private val sessionCache: SessionCache,
+    private val confectionerMapper: Mapper<UserResponseDTO, Confectioner>,
+    private val customerMapper: Mapper<UserResponseDTO, Customer>
 ) {
     suspend fun execute(
         phoneNumber: String,
@@ -33,9 +41,9 @@ class SignUpUseCase @Inject constructor(
             return SignUpResult.Error("Некорректный формат адреса электронной почты")
         }
         try {
-            val session: Session
+            val user: User
             if (isConfectioner) {
-                session = userRepository.add(
+                user = userRepository.add(
                     Confectioner(
                         name = name,
                         phoneNumber = phoneNumber,
@@ -45,22 +53,20 @@ class SignUpUseCase @Inject constructor(
                         id = 0,
                         canWithdrawal = 0,
                         inProcess = 0
-                    ),
-                    password = password
-                )
+                    ).toDto(password)
+                ).toConfectioner()
             } else {
-                session = userRepository.add(
+                user = userRepository.add(
                     Customer(
                         id = 0,
                         name = name,
                         phoneNumber = phoneNumber,
                         email = email
-                    ),
-                    password = password
-                )
+                    ).toDto(password)
+                ).toCustomer()
             }
-            sessionCache.saveSession(session)
-            return SignUpResult.Success(session.user)
+            sessionCache.saveSession(Session(user, "token" /*TODO: tokenization BACKEND AWAITING*/))
+            return SignUpResult.Success(user)
         } catch (e: Exception) {
             return SignUpResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

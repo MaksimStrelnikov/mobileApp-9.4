@@ -1,15 +1,17 @@
-package dev.tp_94.mobileapp.login.data
+package dev.tp_94.mobileapp.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.tp_94.mobileapp.core.data.RetrofitInstance
+import dev.tp_94.mobileapp.login.data.UserApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,7 +24,6 @@ object NetworkModule {
     val client = OkHttpClient.Builder()
         .addInterceptor(logging)
         .build()
-
 
     @Provides
     @Singleton

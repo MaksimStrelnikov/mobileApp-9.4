@@ -8,89 +8,41 @@ import dev.tp_94.mobileapp.login.data.UserApi
 import dev.tp_94.mobileapp.login.data.dto.UserLoginDTO
 import dev.tp_94.mobileapp.core.data.HttpStatus.*
 import dev.tp_94.mobileapp.core.models.toDto
+import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
+import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
+import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val api: UserApi
 ) : UserRepository {
-    override suspend fun login(username: String, password: String): Session {
-        val response = api.login(
-            UserLoginDTO(
-                phone = username,
-                password = password
-            )
-        )
+    override suspend fun login(loginDTO: UserLoginDTO): UserResponseDTO {
+        val response = api.login(loginDTO)
         if (response.code() == OK.status) {
-            val user = response.body()!!
-            return Session(
-                user = if (user.type == "confectioner") {
-                        Confectioner(
-                            id = user.id,
-                            name = user.name,
-                            phoneNumber = user.phone,
-                            email = user.email,
-                            description = user.description ?: "",
-                            address = user.address!!
-                        )
-                } else {
-                    Customer(
-                        id = user.id,
-                        name = user.name,
-                        phoneNumber = user.phone,
-                        email = user.email
-                    )
-                },
-                //TODO: tokenization
-                token = "token"
-            )
+            return response.body()!!
         } else if (response.code() == UNAUTHORIZED.status || response.code() == FORBIDDEN.status) {
             throw Exception("Неверный логин или пароль")
         }
         throw Exception("Неизвестная ошибка")
     }
 
-    override suspend fun add(confectioner: Confectioner, password: String): Session {
-        val result = api.registerConfectioner(confectioner.toDto(password))
-        if (result.code() == CREATED.status) {
-            val user = result.body()!!
-            return Session(
-                user = Confectioner(
-                    id = user.id,
-                    name = user.name,
-                    phoneNumber = user.phone,
-                    email = user.email,
-                    description = user.description ?: "",
-                    address = user.address!!,
-                    //TODO: BACKEND AWAITING
-                    canWithdrawal = 0,
-                    inProcess = 0
-                ),
-                //TODO: tokenization BACKEND AWAITING
-                token = "token"
-            )
-        } else if (result.code() == CONFLICT.status) {
+    override suspend fun add(confectioner: ConfectionerRegisterDTO): UserResponseDTO {
+        val response = api.registerConfectioner(confectioner)
+        if (response.code() == CREATED.status) {
+            return response.body()!!
+        } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
             throw Exception("Неизвестная ошибка")
         }
     }
 
-    override suspend fun add(customer: Customer, password: String): Session {
-        val result = api.registerCustomer(customer.toDto(password))
-        if (result.code() == CREATED.status) {
-            val user = result.body()!!
-            return Session(
-                user = Customer(
-                    id = user.id,
-                    name = user.name,
-                    phoneNumber = user.phone,
-                    email = user.email
-                ),
-                //TODO: tokenization BACKEND AWAITING
-                token = "token"
-            )
-        } else if (result.code() == CONFLICT.status) {
+    override suspend fun add(customer: CustomerRegisterDTO): UserResponseDTO {
+        val response = api.registerCustomer(customer)
+        if (response.code() == CREATED.status) {
+            return response.body()!!
+        } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
             throw Exception("Неизвестная ошибка")
