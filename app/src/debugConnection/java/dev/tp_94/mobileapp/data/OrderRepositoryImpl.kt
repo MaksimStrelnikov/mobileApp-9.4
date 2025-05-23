@@ -3,6 +3,7 @@ package dev.tp_94.mobileapp.data
 import dev.tp_94.mobileapp.core.data.HttpStatus.*
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
+import dev.tp_94.mobileapp.orders.data.OrderResponseDTO
 import dev.tp_94.mobileapp.self_made_cake.data.OrderApi
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
@@ -26,7 +27,7 @@ class OrderRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllOrders(): List<Order> {
+    override suspend fun getAllOrders(): List<OrderResponseDTO> {
         TODO("Not yet implemented")
     }
 
