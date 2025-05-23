@@ -15,4 +15,8 @@ class ProfileViewModel @Inject constructor(private val sessionCache: SessionCach
     fun logout() {
         sessionCache.clearSession()
     }
+
+    fun deleteAccount() {
+        // TODO: delete account
+    }
 }

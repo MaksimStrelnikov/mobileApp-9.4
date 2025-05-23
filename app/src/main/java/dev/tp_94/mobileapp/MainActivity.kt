@@ -507,7 +507,8 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         navController.navigate("confectionerOrders")
                     },
                     onChangeCustomCake = { /*TODO*/ },
-                    onWithdraw = { navController.navigate("withdraw") }
+                    onWithdraw = { navController.navigate("withdraw") },
+                    onAddCake = { /*TODO*/ },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
