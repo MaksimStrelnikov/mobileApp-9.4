@@ -113,7 +113,7 @@ fun SelfMadeCakeStatelessScreen(
     onOpenTextChangeClick: () -> Unit,
     onOpenImageChangeClick: () -> Unit,
     onTextChange: (String) -> Unit,
-    onImageChange: (Uri?) -> Unit,
+    onImageChange: (String?) -> Unit,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
     onUpdateFillings: (List<String>) -> Unit,
@@ -227,7 +227,7 @@ fun SelfMadeCakeStatelessScreen(
                         Editor.IMAGE -> {
                             ImageAddition(
                                 onAdd = onImageChange,
-                                imageUri = state.cakeCustom.imageUrl
+                                imageUrl = state.cakeCustom.imageUrl
                             )
                         }
 

@@ -1,6 +1,6 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
-import android.net.Uri
+
 
 data class AddProductState (
     val name: String = "",
@@ -9,6 +9,6 @@ data class AddProductState (
     val weight: String = "",
     val workPeriod: String = "",
     val price: String = "",
-    val image: Uri? = null,
+    val image: String? = null,
     val isLoading: Boolean = false,
 )

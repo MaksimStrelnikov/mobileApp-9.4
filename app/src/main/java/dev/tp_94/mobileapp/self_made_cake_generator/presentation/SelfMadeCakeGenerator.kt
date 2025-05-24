@@ -113,7 +113,7 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(8.dp))
-            GeneratedImage(imageUri = state.cakeCustom.imageUri)
+            GeneratedImage(imageUrl = state.cakeCustom.imageUrl)
             Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
@@ -275,18 +275,19 @@ fun SelfMadeCakeGeneratorStatelessScreen(
 @Preview
 @Composable
 fun PreviewSelfMadeCakeGeneratorStatelessScreen() {
+    val c = Confectioner(
+        id = 1,
+        name = "TODO()",
+        phoneNumber = "TODO()",
+        email = "TODO()",
+        description = "TODO()",
+        address = "TODO()"
+    )
     val state = remember {
         mutableStateOf(
             SelfMadeCakeGeneratorState(
-                cakeCustom = CakeCustom(Color.Cyan, 10f),
-                confectioner = Confectioner(
-                    id = 1,
-                    name = "TODO()",
-                    phoneNumber = "TODO()",
-                    email = "TODO()",
-                    description = "TODO()",
-                    address = "TODO()"
-                ),
+                cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
+                confectioner = c,
                 fillings = listOf(
                     "Ягодный", "Ореховый",
                     "Кокосовый", "Клубничный", "Лимонный"

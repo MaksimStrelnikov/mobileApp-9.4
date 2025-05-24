@@ -47,9 +47,10 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     }
 
     //TODO: make it work
+    /*this should use a proper use case in the viewModelScope*/
     fun generateImage() {
         _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUri = null))
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUrl = null))
     }
 
     fun sendCustomCake(onSuccess: () -> Unit) {
@@ -71,14 +72,15 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     fun exit() {
         sessionCache.clearSession()
     }
+    private val confectioner = savedStateHandle.get<String>("confectionerJson")
+        ?.let { URLDecoder.decode(it, "UTF-8") }
+        ?.let { Json.decodeFromString<Confectioner>(it) }
+        ?: error("Confectioner not provided")
 
     private val _state = MutableStateFlow(
         SelfMadeCakeGeneratorState(
-        cakeCustom = CakeCustom(Color.Unspecified, 10f),
-        confectioner = savedStateHandle.get<String>("confectionerJson")
-            ?.let { URLDecoder.decode(it, "UTF-8") }
-            ?.let { Json.decodeFromString<Confectioner>(it) }
-            ?: error("Confectioner not provided")
+        cakeCustom = CakeCustom(Color.Unspecified, 10f, confectioner = confectioner),
+        confectioner = confectioner
     ))
     val state = _state.asStateFlow()
 }

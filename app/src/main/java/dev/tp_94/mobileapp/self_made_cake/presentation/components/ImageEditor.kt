@@ -35,11 +35,12 @@ import dev.tp_94.mobileapp.core.themes.SquareBox
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun ImageAddition(onAdd: (Uri?) -> Unit, imageUri: String? = null) {
+fun ImageAddition(onAdd: (String?) -> Unit, imageUrl: String? = null) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        onAdd(uri)
+    ) { uri ->
+        if (uri == null) onAdd(null)
+        else onAdd(uri.toString())
     }
     Box(
         modifier = Modifier
@@ -68,7 +69,7 @@ fun ImageAddition(onAdd: (Uri?) -> Unit, imageUri: String? = null) {
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (imageUri == null) {
+                if (imageUrl == null) {
                     val painter = rememberAsyncImagePainter(R.drawable.no_image)
                     Image(
                         painter = painter,
@@ -77,7 +78,7 @@ fun ImageAddition(onAdd: (Uri?) -> Unit, imageUri: String? = null) {
                             .size(40.dp)
                     )
                 }
-                imageUri?.let { uri ->
+                imageUrl?.let { uri ->
                     val painter = rememberAsyncImagePainter(uri)
                     Image(
                         painter = painter,

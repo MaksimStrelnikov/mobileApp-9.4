@@ -34,7 +34,7 @@ class SendCustomCakeUseCase @Inject constructor(
                     textY = cake.textOffset.y,
                     price = 0
                 ),
-                imageUri = cake.imageUrl
+                imageUrl = cake.imageUrl
             )
             orderRepository.placeOrder(
                 OrderRequestDTO(
@@ -44,7 +44,7 @@ class SendCustomCakeUseCase @Inject constructor(
                     quantity = 1
                 ),
             )
-            return SelfMadeCakeResult.Success()
+            return SelfMadeCakeResult.Success
         } catch (e: Exception) {
             return SelfMadeCakeResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

@@ -76,7 +76,7 @@ fun AddProductStatelessScreen(
     onWeightChange: (String) -> Unit,
     onWorkPeriodChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
-    onImageChange: (Uri?) -> Unit,
+    onImageChange: (String?) -> Unit,
     onSave: () -> Unit,
     onCancellation: () -> Unit,
     onDelete: () -> Unit,
@@ -98,7 +98,7 @@ fun AddProductStatelessScreen(
 
             CakeImageAddition (
                 onAdd = onImageChange,
-                imageUri = state.image
+                imageUrl = state.image
             )
             Spacer(Modifier.height(16.dp))
             NameEditor(

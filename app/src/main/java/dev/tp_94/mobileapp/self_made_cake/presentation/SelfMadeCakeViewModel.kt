@@ -61,9 +61,9 @@ class SelfMadeCakeViewModel @Inject constructor(
             _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageOffset = imageOffset))
     }
 
-    fun updateImage(imageUri: Uri?) {
+    fun updateImage(imageUrl: String?) {
         _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUrl = imageUri.toString()))
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUrl = imageUrl.toString()))
     }
 
     fun updateComment(comment: String) {

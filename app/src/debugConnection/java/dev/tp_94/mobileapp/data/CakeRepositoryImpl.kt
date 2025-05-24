@@ -13,8 +13,8 @@ import java.io.File
 import javax.inject.Inject
 
 class CakeRepositoryImpl @Inject constructor(private val api: CakeApi): CakeRepository {
-    override suspend fun addCustomCake(cakeCustomRequestDTO: CakeCustomRequestDTO, imageUri: String?): CakeResponseDTO {
-        val file = imageUri?.let { File(it) }
+    override suspend fun addCustomCake(cakeCustomRequestDTO: CakeCustomRequestDTO, imageUrl: String?): CakeResponseDTO {
+        val file = imageUrl?.let { File(it) }
         val requestBody = file?.asRequestBody("image/*".toMediaTypeOrNull())
         val multipartBody = file?.let { requestBody?.let {MultipartBody.Part.createFormData("image", file.name, requestBody) }}
 

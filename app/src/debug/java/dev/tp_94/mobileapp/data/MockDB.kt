@@ -63,7 +63,7 @@ class MockDB {
                     diameter = 10f,
                     text = "TODO()",
                     textOffset = Offset(0f,0f),
-                    imageUri = null,
+                    imageUrl = null,
                     imageOffset = Offset(0f,0f),
                     fillings = listOf(),
                     preparation = 3,

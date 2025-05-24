@@ -48,7 +48,7 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(price = price)
     }
 
-    fun updateImage(image: Uri?) {
+    fun updateImage(image: String?) {
         _state.value = _state.value.copy(image = image)
     }
 
