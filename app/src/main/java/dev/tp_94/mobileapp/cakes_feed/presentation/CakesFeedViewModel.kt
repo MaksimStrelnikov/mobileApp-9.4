@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.cakes_feed.domain.LoadMoreCakesUseCase
 import dev.tp_94.mobileapp.cakes_feed.domain.SearchForCakesUseCase
+import dev.tp_94.mobileapp.confectioner_page.domain.MoveToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.User
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class CakesFeedViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val loadMoreCakesUseCase: LoadMoreCakesUseCase,
-    private val searchForCakesUseCase: SearchForCakesUseCase
+    private val searchForCakesUseCase: SearchForCakesUseCase,
+    private val moveToBasketUseCase: MoveToBasketUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow((CakesFeedState()))
     val state = _state.asStateFlow()
@@ -46,8 +48,19 @@ class CakesFeedViewModel @Inject constructor(
         _state.value = _state.value.copy(isLoading = false)
     }
 
-    fun buy(cake: Cake) {
-        //TODO
+    fun buy(it: Cake) {
+        viewModelScope.launch {
+            val cake = state.value.feed.firstOrNull { product ->
+                product.id == it.id
+            }
+            if (cake != null) {
+                val response = moveToBasketUseCase.execute(
+                    cake = cake,
+                    userPhone = getUser()?.phoneNumber ?: ""
+                )
+                //TODO or not: add error message
+            }
+        }
     }
 
     fun selectSort(sorting: Sorting) {
