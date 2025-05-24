@@ -452,6 +452,12 @@ fun CustomOrderViewStatelessScreen(
                             onApprove = onOpenPriceEditor,
                             onDone = onDone,
                         )
+                        if (!(state.error == null || state.error == "")) {
+                            Text(
+                                state.error,
+                                style = TextStyles.regular(colorResource(R.color.dark_accent))
+                            )
+                        }
                     }
                     ConfectionerBubble(
                         name = state.order.confectioner.name,
@@ -497,6 +503,7 @@ fun PreviewCustomOrderViewStatelessScreen() {
                 imageUrl = null,
                 imageOffset = Offset.Zero,
                 fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
+                confectioner = confectioner
             ),
             date = LocalDate(2024, 12, 31),
             orderStatus = OrderStatus.PENDING_APPROVAL,
