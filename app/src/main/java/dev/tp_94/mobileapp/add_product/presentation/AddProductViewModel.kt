@@ -1,65 +1,77 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.add_product.domain.AddProductUseCase
 import dev.tp_94.mobileapp.add_product.domain.DeleteProductUseCase
 import dev.tp_94.mobileapp.core.SessionCache
+import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.order_view.presentation.OrderState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import java.net.URLDecoder
 import javax.inject.Inject
 
 @HiltViewModel
 class AddProductViewModel  @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val addProductUseCase: AddProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val sessionCache: SessionCache,
 ) : ViewModel() {
 
+    private val _state = MutableStateFlow(
+        AddProductState(
+            savedStateHandle.get<String>("cake")
+                ?.let { URLDecoder.decode(it, "UTF-8") }
+                ?.let { Json { serializersModule = CakeSerializerModule.module }.decodeFromString<CakeGeneral>(it) }
+                ?: CakeGeneral(confectioner = (getUser() as Confectioner)),
+        )
+    )
+
+    val state = _state.asStateFlow()
+
     fun updateName(name: String) {
-        _state.value = _state.value.copy(name = name)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(name = name))
     }
 
     fun updateDescription(description: String) {
-        _state.value = _state.value.copy(description = description)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(description = description))
     }
 
     fun updateDiameter(diameter: String) {
-        _state.value = _state.value.copy(diameter = diameter)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(diameter = diameter.toFloat()))
     }
 
     fun updateWeight(weight: String) {
-        _state.value = _state.value.copy(weight = weight)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(weight = weight.toFloat()))
     }
 
     fun updateWorkPeriod(workPeriod: String) {
-        _state.value = _state.value.copy(workPeriod = workPeriod)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(preparation = workPeriod.toInt()))
     }
 
     fun updatePrice(price: String) {
-        _state.value = _state.value.copy(price = price)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(price = price.toInt()))
     }
 
     fun updateImage(image: String?) {
-        _state.value = _state.value.copy(image = image)
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(imageUrl = image))
     }
 
     fun delete(onMove: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = deleteProductUseCase.execute(
-                name = state.value.name,
-                description = state.value.description,
-                diameter = state.value.diameter,
-                weight = state.value.weight,
-                workPeriod = state.value.workPeriod,
-                price = state.value.price,
-                imageUrl = state.value.image,
-                confectioner = (getUser() as Confectioner)
+                cake = state.value.cakeGeneral
             )
             if (response is AddProductResult.Error) _state.value =
                 _state.value.copy(error = response.message)
@@ -75,16 +87,8 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = addProductUseCase.execute(
-                name = state.value.name,
-                description = state.value.description,
-                diameter = state.value.diameter,
-                weight = state.value.weight,
-                workPeriod = state.value.workPeriod,
-                price = state.value.price,
-                imageUrl = state.value.image,
-                confectioner = (getUser() as Confectioner)
+                cake = state.value.cakeGeneral
             )
-
             if (response is AddProductResult.Error) _state.value =
                 _state.value.copy(error = response.message)
             else if (response is AddProductResult.Success) {
@@ -98,16 +102,4 @@ class AddProductViewModel  @Inject constructor(
     fun getUser(): User? {
         return sessionCache.session?.user
     }
-
-    private val _state = MutableStateFlow(
-        AddProductState(
-            name = "Торт",
-            description = "Это точно торт",
-            diameter = "22",
-            weight = "2",
-            workPeriod = "2",
-            price = "12000",
-            image = null
-    ))
-    val state = _state.asStateFlow()
 }

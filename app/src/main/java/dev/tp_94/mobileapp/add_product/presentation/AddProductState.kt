@@ -1,15 +1,10 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 
 
 data class AddProductState (
-    val name: String = "",
-    val description: String = "",
-    val diameter: String = "",
-    val weight: String = "",
-    val workPeriod: String = "",
-    val price: String = "",
-    val image: String? = null,
+    val cakeGeneral: CakeGeneral,
     val isLoading: Boolean = false,
     val error: String? = null
 )

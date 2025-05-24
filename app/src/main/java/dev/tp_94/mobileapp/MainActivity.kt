@@ -19,6 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tp_94.mobileapp.add_product.presentation.AddProductStatefulScreen
+import dev.tp_94.mobileapp.add_product.presentation.AddProductViewModel
 import dev.tp_94.mobileapp.basket.presentation.BasketStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageViewModel
@@ -516,7 +518,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     },
                     onChangeCustomCake = { /*TODO*/ },
                     onWithdraw = { navController.navigate("withdraw") },
-                    onAddCake = { /*TODO*/ },
+                    onAddCake = { navController.navigate("addProduct") },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
@@ -544,6 +546,28 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                     Log.println(Log.INFO, "Log", "Exit")
                 })
+        }
+
+        composable(
+            "addProduct/{cake}",
+            arguments = listOf(navArgument("cake") {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null })
+        ) { backStackEntry ->
+            val viewModel = hiltViewModel<AddProductViewModel>(backStackEntry)
+            AddProductStatefulScreen (
+                viewModel = viewModel,
+                onMove = {
+                    navController.navigate("profile")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Добавить товар",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+            )
         }
 
         composable("withdraw") {

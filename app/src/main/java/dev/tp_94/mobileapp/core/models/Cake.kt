@@ -99,12 +99,12 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
 @SerialName("general")
 data class CakeGeneral(
     val id: Int = 0,
-    val price: Int,
+    val price: Int = 0,
     val imageUrl: String? = null,
-    override val name: String,
-    override val description: String,
-    override val diameter: Float,
-    val weight: Float,
-    override val preparation: Int,
+    override val name: String = "",
+    override val description: String = "",
+    override val diameter: Float = 0f,
+    val weight: Float = 0f,
+    override val preparation: Int = 0,
     override val confectioner: Confectioner
 ) : Cake
