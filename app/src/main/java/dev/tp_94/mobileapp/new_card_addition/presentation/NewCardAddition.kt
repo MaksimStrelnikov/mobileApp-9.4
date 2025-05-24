@@ -81,6 +81,12 @@ fun NewCardAdditionStatelessScreen(
                     modifier = Modifier
                         .height(12.dp)
                 )
+                if (!(state.error == null || state.error == "")) {
+                    Text(
+                        state.error,
+                        style = TextStyles.regular(colorResource(R.color.dark_accent))
+                    )
+                }
                 ActiveButton(
                     onClick = onDone,
                     modifier = Modifier
