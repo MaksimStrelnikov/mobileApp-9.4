@@ -4,6 +4,8 @@ import dev.tp_94.mobileapp.core.models.Order
 
 data class OrderResponseDTO(
     val id: Long,
+    val customerId: Long,
+    val confectionerId: Long,
 
 )
 

@@ -5,6 +5,7 @@ import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
 import dev.tp_94.mobileapp.orders.data.OrderResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface OrderApi {
@@ -13,4 +14,7 @@ interface OrderApi {
 
     @POST("orders/full")
     suspend fun createOrder(@Body order: OrderFullRequestDTO): Response<OrderResponseDTO>
+
+    @GET("orders")
+    suspend fun getAllOrders(): Response<List<OrderResponseDTO>>
 }
