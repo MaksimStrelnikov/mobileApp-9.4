@@ -47,7 +47,6 @@ fun ProductViewStatefulScreen(
     viewModel: ProductViewModel = hiltViewModel(),
     onConfectionerClick: (Confectioner) -> Unit,
     onError: () -> Unit,
-    onBuy: (CakeGeneral) -> Unit,
     topBar: @Composable () -> Unit
 ) {
     val user = viewModel.getUser()
