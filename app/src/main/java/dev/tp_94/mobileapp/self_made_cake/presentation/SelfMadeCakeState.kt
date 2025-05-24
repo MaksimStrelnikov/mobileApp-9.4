@@ -9,6 +9,6 @@ data class SelfMadeCakeState(
     val cakeCustom: CakeCustom,
     val confectioner: Confectioner,
     val isLoading: Boolean = false,
-    val fillings: List<String> = emptyList()
-
+    val fillings: List<String> = emptyList(),
+    val error: String? = null
 )

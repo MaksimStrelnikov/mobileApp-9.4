@@ -16,9 +16,19 @@ class SendCustomCakeUseCase @Inject constructor(
     suspend fun execute(
         cake: CakeCustom,
         customer: Customer,
-        confectioner: Confectioner
+        confectioner: Confectioner,
+        fillings: List<String>
     ): SelfMadeCakeResult {
         try {
+            if (fillings.isNotEmpty() && confectioner.fillings != cake.fillings) {
+                return SelfMadeCakeResult.Error("Этот кондитер не может приготовить такой торт")
+            }
+            if (cake.diameter <= 0) {
+                return SelfMadeCakeResult.Error("Диаметр должен быть больше 0")
+            }
+            if (cake.preparation <= 0) {
+                return SelfMadeCakeResult.Error("Время приготовления должно быть больше 0")
+            }
             val cakeResponseDTO = cakeRepository.addCustomCake(
                 cakeCustomRequestDTO = CakeCustomRequestDTO(
                     confectionerId = confectioner.id,
@@ -36,6 +46,7 @@ class SendCustomCakeUseCase @Inject constructor(
                 ),
                 imageUrl = cake.imageUrl
             )
+
             orderRepository.placeOrder(
                 OrderRequestDTO(
                     cakeId = cakeResponseDTO.id,

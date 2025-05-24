@@ -1,12 +1,10 @@
 package dev.tp_94.mobileapp.self_made_cake_generator.presentation
 
-import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
@@ -14,6 +12,7 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeResult
+import dev.tp_94.mobileapp.self_made_cake_generator.domain.GenerateImageUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +24,8 @@ import javax.inject.Inject
 class SelfMadeCakeGeneratorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
-    private val sendCustomCakeUseCase: SendCustomCakeUseCase
+    private val sendCustomCakeUseCase: SendCustomCakeUseCase,
+    private val generateImageUseCase: GenerateImageUseCase
 ) : ViewModel() {
 
     fun updateFillings(value: List<String>) = _state.value
@@ -46,20 +46,38 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
             _state.value.copy(prompt = prompt)
     }
 
-    //TODO: make it work
-    /*this should use a proper use case in the viewModelScope*/
     fun generateImage() {
-        _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(imageUrl = null))
+        _state.value = _state.value.copy(isGenerating = true)
+        viewModelScope.launch {
+            val result = generateImageUseCase.execute(
+                _state.value.prompt
+            )
+            if (result is SelfMadeCakeGeneratorResult.Success) {
+                _state.value = _state.value.copy(
+                    cakeCustom = _state.value.cakeCustom.copy(imageUrl = result.imageUrl)
+                )
+                _state.value = _state.value.copy(error = "")
+            } else if (result is SelfMadeCakeGeneratorResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
+            }
+            _state.value = _state.value.copy(isGenerating = false)
+        }
     }
 
     fun sendCustomCake(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val result = sendCustomCakeUseCase.execute(_state.value.cakeCustom, (getUser() as Customer), _state.value.confectioner)
+            val result = sendCustomCakeUseCase.execute(
+                _state.value.cakeCustom,
+                (getUser() as Customer),
+                _state.value.confectioner,
+                _state.value.fillings
+            )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
-                //TODO: add proper error handling
+                _state.value = _state.value.copy(error = "")
+            } else if (result is SelfMadeCakeResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
             }
             _state.value = _state.value.copy(isLoading = false)
         }

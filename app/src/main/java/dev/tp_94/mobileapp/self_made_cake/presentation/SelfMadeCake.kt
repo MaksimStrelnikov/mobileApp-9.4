@@ -313,6 +313,12 @@ fun SelfMadeCakeStatelessScreen(
                 header = "Комментарий кондитеру"
             )
             Spacer(modifier = Modifier.height(8.dp))
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            }
             ActiveButton(
                 onClick = onSend,
                 modifier = Modifier.fillMaxWidth()

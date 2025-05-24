@@ -81,11 +81,14 @@ class SelfMadeCakeViewModel @Inject constructor(
             val result = sendCustomCakeUseCase.execute(
                 _state.value.cakeCustom,
                 (getUser() as Customer),
-                _state.value.confectioner
+                _state.value.confectioner,
+                _state.value.fillings
             )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
-                //TODO: add proper error handling
+                _state.value = _state.value.copy(error = "")
+            } else if (result is SelfMadeCakeResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
             }
             _state.value = _state.value.copy(isLoading = false)
         }

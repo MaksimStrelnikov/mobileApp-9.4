@@ -167,7 +167,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
                     {
-                        Text("Сгенерировать",  style = TextStyles.button(colorResource(R.color.dark_text)))
+                        if (state.isGenerating) Text("Подождите..." ,  style = TextStyles.button(colorResource(R.color.dark_text)))
+                        else Text("Сгенерировать" ,  style = TextStyles.button(colorResource(R.color.dark_text)))
                     }
                     Text(
                         "* Приготовленный торт может не полностью " +
@@ -252,6 +253,12 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                 header = "Комментарий кондитеру"
             )
             Spacer(modifier = Modifier.height(8.dp))
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            }
             ActiveButton(
                 onClick = onSend,
                 modifier = Modifier.fillMaxWidth()

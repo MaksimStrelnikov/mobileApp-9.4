@@ -7,6 +7,8 @@ data class SelfMadeCakeGeneratorState (
     val cakeCustom: CakeCustom,
     val confectioner: Confectioner,
     val isLoading: Boolean = false,
+    val isGenerating: Boolean = false,
     val prompt: String = "",
-    val fillings: List<String> = emptyList()
+    val fillings: List<String> = emptyList(),
+    val error: String? = null
 )
