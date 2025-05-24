@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.add_product.domain.AddProductUseCase
+import dev.tp_94.mobileapp.add_product.domain.DeleteProductUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddProductViewModel  @Inject constructor(
     private val addProductUseCase: AddProductUseCase,
+    private val deleteProductUseCase: DeleteProductUseCase,
     private val sessionCache: SessionCache,
 ) : ViewModel() {
 
@@ -49,7 +51,7 @@ class AddProductViewModel  @Inject constructor(
     fun delete(onMove: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = addProductUseCase.deleteProduct(
+            val response = deleteProductUseCase.execute(
                 name = state.value.name,
                 description = state.value.description,
                 diameter = state.value.diameter,
@@ -72,7 +74,7 @@ class AddProductViewModel  @Inject constructor(
     fun save(onMove: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = addProductUseCase.addProduct(
+            val response = addProductUseCase.execute(
                 name = state.value.name,
                 description = state.value.description,
                 diameter = state.value.diameter,

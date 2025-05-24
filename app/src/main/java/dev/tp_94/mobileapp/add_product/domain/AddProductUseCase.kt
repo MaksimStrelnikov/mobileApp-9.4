@@ -10,7 +10,7 @@ class AddProductUseCase @Inject constructor(
     private val userRepository: UserRepository,
     //TODO
 ) {
-    suspend fun addProduct(
+    suspend fun execute(
         name: String,
         description: String,
         diameter: String,
@@ -59,36 +59,4 @@ class AddProductUseCase @Inject constructor(
         }
     }
 
-    suspend fun deleteProduct(
-        name: String,
-        description: String,
-        diameter: String,
-        weight: String,
-        workPeriod: String,
-        price: String,
-        imageUrl: String?,
-        confectioner: Confectioner
-    ): AddProductResult {
-
-        if (name.isEmpty() || description.isEmpty() || diameter.isEmpty() ||
-            weight.isEmpty() || workPeriod.isEmpty() || price.isEmpty()) {
-            return AddProductResult.Error("Пожалуйста не очищайте параметры при удалении")
-        }
-        try {
-            val cake = CakeGeneral(
-                name = name,
-                description = description,
-                diameter = diameter.toFloat(),
-                weight = weight.toFloat(),
-                preparation = workPeriod.toInt(),
-                price = price.toInt(),
-                imageUrl = imageUrl,
-                confectioner = confectioner
-            )
-            /*TODO: tokenization - delete from the bd here*/
-            return AddProductResult.Success(cake)
-        } catch (e: Exception) {
-            return AddProductResult.Error(e.message ?: "Возникла непредвиденная ошибка")
-        }
-    }
 }
