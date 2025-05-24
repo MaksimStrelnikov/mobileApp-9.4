@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -67,15 +68,18 @@ fun ConfectionerCard(
                 }
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(8.dp, 8.dp, 8.dp, 0.dp).weight(1f)
                 ) {
                     Text(
                         text = name,
                         style = TextStyles.header(colorResource(R.color.dark_text)),
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
                     )
                     if (onMyProfileClick != null) {
                         DiscardButton(
-                            onMyProfileClick
+                            onMyProfileClick,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 text = "Мой профиль",
@@ -99,7 +103,7 @@ fun ConfectionerCard(
             )
             ActiveButton(
                 onClick = onButtonClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
                 Text(
                     text = customOrdersText,
@@ -117,6 +121,7 @@ fun PreviewConfectionerCard() {
         name = "Веснушка",
         address = "asdflkgjhljkfsdhnljk;",
         description = "IHBKIJGRHUIGNTRLUOINTGHOINLHTINLIKFSGgfhlnjikftrdbuyioetruoibUOIHGUOINRInFHTJKnhtfoilk",
+        onMyProfileClick = {},
         onButtonClick = {}
     )
 }

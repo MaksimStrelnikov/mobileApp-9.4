@@ -1,11 +1,18 @@
 package dev.tp_94.mobileapp.confectioner_page.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,15 +25,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
+import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.confectioner_page.presentation.components.ConfectionerCard
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
 
 @Composable
 fun ConfectionerPageStatefulScreen(
     viewModel: ConfectionerPageViewModel = hiltViewModel(),
     onCakeCreation: (Confectioner) -> Unit,
+    onNavigateToProduct: (CakeGeneral) -> Unit,
     onError: () -> Unit,
     topBar: @Composable () -> Unit,
 ) {
@@ -41,6 +52,8 @@ fun ConfectionerPageStatefulScreen(
     ConfectionerPageStatelessScreen(
         state = state,
         onCakeCreation = { onCakeCreation(state.confectioner) },
+        onNavigateToProduct = onNavigateToProduct,
+        onProductBuy = { viewModel.addToBasket(it) },
         topBar = topBar
     )
 }
@@ -50,6 +63,8 @@ fun ConfectionerPageStatelessScreen(
     state: ConfectionerPageState,
     onCakeCreation: () -> Unit,
     topBar: @Composable () -> Unit,
+    onNavigateToProduct: (CakeGeneral) -> Unit,
+    onProductBuy: (CakeGeneral) -> Unit,
 ) {
     Scaffold(
         topBar = topBar
@@ -74,6 +89,30 @@ fun ConfectionerPageStatelessScreen(
                     description = state.confectioner.description,
                     onButtonClick = onCakeCreation
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+                SectionHeader("Каталог")
+                Spacer(modifier = Modifier.width(8.dp))
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.products) { product ->
+                        CakeFeedItem(
+                            name = product.name,
+                            weight = product.weight,
+                            preparation = product.preparation,
+                            price = product.price,
+                            onBuy = { onProductBuy(product) },
+                            onOpen = { onNavigateToProduct(product) },
+                            image = null
+                        )
+                    }
+                }
             }
         }
     }
@@ -93,8 +132,75 @@ fun PreviewConfectionerPageStatelessScreen() {
                 description = "TODO()",
                 address = "TODO()"
             ),
-            products = arrayListOf()
+            products = arrayListOf(
+                CakeGeneral(
+                    price = 1000,
+                    name = "TODO(1)",
+                    description = "TODO()",
+                    diameter = 1f,
+                    weight = 1f,
+                    preparation = 1,
+                    confectioner = Confectioner(
+                        id = 1,
+                        name = "TODO(1)",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    )
+                ),
+                CakeGeneral(
+                    price = 2300,
+                    name = "TODO(2)",
+                    description = "TODO()",
+                    diameter = 1f,
+                    weight = 1f,
+                    preparation = 1,
+                    confectioner = Confectioner(
+                        id = 2,
+                        name = "TODO(2)",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    )
+                ),
+                CakeGeneral(
+                    price = 10000,
+                    name = "TODO(1)",
+                    description = "TODO()",
+                    diameter = 1f,
+                    weight = 1f,
+                    preparation = 1,
+                    confectioner = Confectioner(
+                        id = 1,
+                        name = "TODO(1)",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    )
+                ),
+                CakeGeneral(
+                    price = 2850,
+                    name = "TODO(2)",
+                    description = "TODO()",
+                    diameter = 1f,
+                    weight = 1f,
+                    preparation = 1,
+                    confectioner = Confectioner(
+                        id = 2,
+                        name = "TODO(2)",
+                        phoneNumber = "TODO()",
+                        email = "TODO()",
+                        description = "TODO()",
+                        address = "TODO()"
+                    )
+                )
+            )
         ),
+        onNavigateToProduct = {},
+        onProductBuy = {},
         onCakeCreation = {},
     )
 }

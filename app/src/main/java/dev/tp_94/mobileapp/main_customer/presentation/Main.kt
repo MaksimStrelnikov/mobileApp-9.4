@@ -173,7 +173,7 @@ fun MainStatelessScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "В наличии",
+                        text = "Товары",
                         style = TextStyles.header(colorResource(R.color.dark_text)),
                         modifier = Modifier.weight(1f)
                     )
@@ -192,7 +192,6 @@ fun MainStatelessScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(8.dp),
-                    contentPadding = PaddingValues(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

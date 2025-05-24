@@ -66,6 +66,11 @@ fun ProfileScreen(
                 viewModel.logout()
                 onLogout()
             },
+            onDeleteAccount = {
+                viewModel.deleteAccount()
+                onLogout()
+            },
+            onAddCake = confectionerRoutes.onAddCake,
             topBar = topBar
         )
 
@@ -76,6 +81,10 @@ fun ProfileScreen(
             onViewOrders = customerRoutes.onViewOrders,
             onLogout = {
                 viewModel.logout()
+                onLogout()
+            },
+            onDeleteAccount = {
+                viewModel.deleteAccount()
                 onLogout()
             },
             topBar = topBar,
@@ -100,6 +109,7 @@ fun ProfileCustomerStatelessScreen(
     onChangePersonalData: () -> Unit,
     onViewOrders: () -> Unit,
     onLogout: () -> Unit,
+    onDeleteAccount: () -> Unit,
     topBar: @Composable () -> Unit,
     bottomBar: @Composable () -> Unit
 ) {
@@ -113,7 +123,7 @@ fun ProfileCustomerStatelessScreen(
                 .padding(it)
                 .background(color = colorResource(R.color.background))
                 .fillMaxSize()
-                .padding(12.dp)
+                .padding(0.dp, 12.dp)
         ) {
             Box {
                 Row(
@@ -154,7 +164,7 @@ fun ProfileCustomerStatelessScreen(
                 onClick = onViewOrders,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(6.dp),
+                    .padding(4.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
@@ -176,16 +186,27 @@ fun ProfileCustomerStatelessScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(
-                onClick = onLogout,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp)
-            ) {
-                Text(
-                    "Выйти из аккаунта",
-                    style = TextStyles.button(color = colorResource(R.color.dark_accent))
-                )
+            Column(modifier = Modifier.fillMaxWidth()
+                .align(Alignment.CenterHorizontally)) {
+                TextButton(
+                    onClick = onLogout,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        "Выйти из аккаунта",
+                        style = TextStyles.button(color = colorResource(R.color.dark_accent))
+                    )
+                }
+                TextButton(
+                    onClick = onDeleteAccount,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        "Удалить аккаунт",
+                        style = TextStyles.button(color = colorResource(R.color.light_text))
+                    )
+                }
             }
         }
     }
@@ -200,6 +221,7 @@ fun PreviewProfileCustomerStatelessScreen() {
         onChangePersonalData = { },
         onViewOrders = { },
         onLogout = { },
+        onDeleteAccount = { },
         topBar = {
             TopNameBar(
                 name = "Профиль"
@@ -225,7 +247,9 @@ fun ProfileConfectionerStatelessScreen(
     onChangePersonalData: () -> Unit,
     onViewOrders: () -> Unit,
     onChangeCustomCake: () -> Unit,
+    onDeleteAccount: () -> Unit,
     onLogout: () -> Unit,
+    onAddCake: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
     Scaffold(
@@ -275,7 +299,8 @@ fun ProfileConfectionerStatelessScreen(
             BlockButton(
                 onClick = onWithdraw,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
@@ -296,38 +321,12 @@ fun ProfileConfectionerStatelessScreen(
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            BlockButton(
-                onClick = onChangeCustomCake,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp, 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Настройка индивидуальных заказов",
-                        modifier = Modifier
-                            .weight(1f),
-                        style = TextStyles.regular(color = colorResource(R.color.dark_text))
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.forward),
-                        contentDescription = "Дальше",
-                        tint = colorResource(R.color.dark_text)
-                    )
-                }
-            }
-            Spacer(Modifier.height(8.dp))
             BlockButton(
                 onClick = onViewOrders,
                 modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                padding = PaddingValues(6.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp,),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -347,17 +346,79 @@ fun ProfileConfectionerStatelessScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(
-                onClick = onLogout,
+            Spacer(Modifier.height(16.dp))
+            BlockButton(
+                onClick = onChangeCustomCake,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                shape = RoundedCornerShape(8.dp),
             ) {
-                Text(
-                    "Выйти из аккаунта",
-                    style = TextStyles.button(color = colorResource(R.color.dark_accent))
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp, 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Настройка индивидуальных заказов",
+                        modifier = Modifier
+                            .weight(1f),
+                        style = TextStyles.regular(color = colorResource(R.color.dark_text))
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.forward),
+                        contentDescription = "Дальше",
+                        tint = colorResource(R.color.dark_text)
+                    )
+                }
+            }
+            BlockButton(
+                onClick = onAddCake,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp, 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Добавить товар",
+                        modifier = Modifier
+                            .weight(1f),
+                        style = TextStyles.regular(color = colorResource(R.color.dark_text))
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.forward),
+                        contentDescription = "Дальше",
+                        tint = colorResource(R.color.dark_text)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Column(modifier = Modifier.fillMaxWidth()
+                .align(Alignment.CenterHorizontally)) {
+                TextButton(
+                    onClick = onLogout,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        "Выйти из аккаунта",
+                        style = TextStyles.button(color = colorResource(R.color.dark_accent))
+                    )
+                }
+                TextButton(
+                    onClick = onDeleteAccount,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        "Удалить аккаунт",
+                        style = TextStyles.button(color = colorResource(R.color.light_text))
+                    )
+                }
             }
 
         }
@@ -376,6 +437,8 @@ fun PreviewProfileConfectionerStatelessScreen() {
         onViewOrders = { },
         onChangeCustomCake = { },
         onLogout = { },
+        onDeleteAccount = { },
+        onAddCake = { },
         topBar = {
             TopNameBar(
                 name = "Профиль"

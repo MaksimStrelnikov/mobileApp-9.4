@@ -156,6 +156,12 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                         Log.println(Log.INFO, "Log", "Navigate to profile")
                     }
+                },
+                onSkip = {
+                    //TODO: Переход как незарегистрированный пользователь
+                    navController.navigate("main") {
+                        popUpTo(0)
+                    }
                 }
             )
         }
@@ -170,7 +176,19 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                         Log.println(Log.INFO, "Log", "Navigate to profile")
                     }
-                })
+                },
+                onSkip = {
+                    //TODO: Переход как незарегистрированный пользователь
+                    navController.navigate("main") {
+                        popUpTo(0)
+                    }
+                },
+                onLogin = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                }
+            )
         }
         composable("basket") {
             BasketStatefulScreen(
@@ -232,6 +250,11 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 onCustomOrdersClick = {
                     navController.navigate("confectionerOrders")
                 },
+                onNavigateToProductEdit = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    // TODO:navController.navigate("/$encoded")
+                }
             )
         }
         composable(
@@ -272,6 +295,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     val json = Json.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("makecake/$encoded")
+                },
+                onNavigateToProduct = {
+                    //TODO
                 },
                 onError = {
                     navController.navigate("login") {
@@ -489,7 +515,8 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         navController.navigate("confectionerOrders")
                     },
                     onChangeCustomCake = { /*TODO*/ },
-                    onWithdraw = { navController.navigate("withdraw") }
+                    onWithdraw = { navController.navigate("withdraw") },
+                    onAddCake = { /*TODO*/ },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")

@@ -182,9 +182,10 @@ fun ProfileEditorStatelessConfectionerScreen(
             NameEditor(
                 onChange = { onNameChange(it) },
                 text = state.name,
-                defaultText = "Фамилия Имя / Название организации",
+                defaultText = "Название (Имя)",
                 backgroundColor = colorResource(R.color.dark_background)
             )
+            Spacer(Modifier.height(8.dp))
             AddressEditor(
                 onChange = { onAddressChange(it) },
                 text = state.address,
@@ -201,15 +202,17 @@ fun ProfileEditorStatelessConfectionerScreen(
                 text = state.phoneNumber,
                 backgroundColor = colorResource(R.color.dark_background)
             )
+            Spacer(Modifier.height(8.dp))
             EmailEditor(
                 onChange = { onEmailChange(it) },
                 text = state.email,
                 backgroundColor = colorResource(R.color.dark_background)
             )
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(8.dp))
             DescriptionEditor(
                 onChange = { onDescriptionChange(it) },
                 text = state.description,
+                modifier = Modifier.height(108.dp),
                 backgroundColor = colorResource(R.color.dark_background)
             )
             if (!(state.error == null || state.error == "")) {
