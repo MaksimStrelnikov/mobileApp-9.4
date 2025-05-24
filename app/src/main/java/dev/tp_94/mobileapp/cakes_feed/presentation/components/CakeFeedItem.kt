@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -45,13 +47,19 @@ fun CakeFeedItem(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(0.dp, 0.dp, 0.dp, 30.dp),
+            .padding(0.dp, 0.dp, 0.dp, 16.dp)
+            .graphicsLayer {
+                shadowElevation = 4f
+                shape = RoundedCornerShape(8.dp)
+                clip = true
+            }
+            .clip(RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier
-                .padding(18.dp, 20.dp, 18.dp, 5.dp),
+                .padding(4.dp, 8.dp),
         ) {
             if (image == null) {
                 Box(
@@ -120,6 +128,98 @@ fun PreviewItem() {
         preparation = 1,
         price = 1,
         onBuy = { },
+        onOpen = { }
+    )
+}
+
+@Composable
+fun CakeFeedItemEditable(
+    name: String,
+    weight: Float,
+    preparation: Int,
+    price: Int,
+    onOpen: () -> Unit,
+    image: Painter? = null
+) {
+    BlockButton(
+        onClick = onOpen,
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(0.dp, 0.dp, 0.dp, 16.dp)
+            .graphicsLayer {
+                shadowElevation = 4f
+                shape = RoundedCornerShape(8.dp)
+                clip = true
+            }
+            .clip(RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(4.dp, 8.dp),
+        ) {
+            if (image == null) {
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 5.dp)
+                        .background(
+                            color = colorResource(R.color.dark_background),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.nocake),
+                        contentDescription = null,
+                        tint = colorResource(R.color.light_text),
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+            }
+            image?.let {
+                Image(
+                    painter = it,
+                    contentDescription = "Торт",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .padding(bottom = 5.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Text(
+                text = name,
+                style = TextStyles.secondHeader(colorResource(R.color.dark_text))
+            )
+            Text(
+                text = "$weight кг/ от $preparation " + (if (preparation == 1) "дня" else "дней"),
+                style = TextStyles.regular(colorResource(R.color.middle_text))
+            )
+            Spacer(Modifier.height(12.dp))
+            Box(modifier = Modifier.fillMaxWidth().size(48.dp), contentAlignment = Alignment.CenterEnd) {
+                Icon(
+                    painter = painterResource(R.drawable.edit_pencil),
+                    contentDescription = null,
+                    tint = colorResource(R.color.light_text),
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewEditableItem() {
+    CakeFeedItemEditable(
+        name = "TODO()",
+        weight = 1f,
+        preparation = 1,
+        price = 1,
         onOpen = { }
     )
 }

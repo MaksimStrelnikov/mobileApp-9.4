@@ -5,6 +5,7 @@ data class ProfileConfectionerRoutes(
     val onWithdraw: () -> Unit,
     val onViewOrders: () -> Unit,
     val onChangeCustomCake: () -> Unit,
+    val onAddCake: () -> Unit
 )
 
 data class ProfileCustomerRoutes(

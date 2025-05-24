@@ -28,18 +28,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.tp_94.mobileapp.R
+import dev.tp_94.mobileapp.core.themes.AddressEditor
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.login.presentation.components.PasswordTextEditor
-import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
+import dev.tp_94.mobileapp.core.themes.PasswordTextEditor
+import dev.tp_94.mobileapp.core.themes.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.EmailEditor
+import dev.tp_94.mobileapp.core.themes.NameEditor
+import dev.tp_94.mobileapp.core.themes.TextButton
+import dev.tp_94.mobileapp.custom_order_settings.presentation.components.LabeledCheckbox
 
 @Composable
 fun SignUpStatefulScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     onSuccessCustomer: () -> Unit,
-    onSuccessConfectioner: () -> Unit
+    onSuccessConfectioner: () -> Unit,
+    onLogin: () -> Unit,
+    onSkip: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     SignUpStatelessScreen(
@@ -48,8 +53,11 @@ fun SignUpStatefulScreen(
         onEmailChange = { viewModel.updateEmail(it) },
         onPasswordChange = { viewModel.updatePassword(it) },
         onNameChange = { viewModel.updateName(it) },
+        onAddressChange = { viewModel.updateAddress(it) },
         onConfectioner = { viewModel.updateConfectioner(it) },
-        onSignUp = { viewModel.signUp(onSuccessCustomer, onSuccessConfectioner) }
+        onSignUp = { viewModel.signUp(onSuccessCustomer, onSuccessConfectioner) },
+        onLogin = onLogin,
+        onSkip = onSkip
     )
 }
 
@@ -60,8 +68,11 @@ fun SignUpStatelessScreen(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
     onConfectioner: (Boolean) -> Unit,
-    onSignUp: () -> Unit
+    onSignUp: () -> Unit,
+    onLogin: () -> Unit,
+    onSkip:  () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -79,7 +90,7 @@ fun SignUpStatelessScreen(
             contentDescription = null,
             alignment = Alignment.Center
         )
-        Spacer(Modifier.height(111.dp))
+        Spacer(Modifier.height(53.dp))
         Text(
             text = "Регистрация",
             style = TextStyles.header(colorResource(R.color.dark_text), fontSize = 32.sp),
@@ -92,52 +103,40 @@ fun SignUpStatelessScreen(
                 style = TextStyles.regular(colorResource(R.color.dark_accent))
             )
         }
-        Spacer(Modifier.height(26.dp))
+        Spacer(Modifier.height(16.dp))
         PhoneEditor(
             onChange = onPhoneNumberChange,
             text = state.phoneNumber,
         )
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(8.dp))
         PasswordTextEditor(
             onChange = onPasswordChange,
             text = state.password,
         )
+        Spacer(Modifier.height(8.dp))
         NameEditor(
             onChange = onNameChange,
             text = state.name
         )
+        Spacer(Modifier.height(8.dp))
         EmailEditor(
             onChange = onEmailChange,
             text = state.email,
         )
-        Spacer(Modifier.height(18.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = state.isConfectioner,
-                onCheckedChange = onConfectioner,
-                colors = CheckboxColors(
-                    checkedCheckmarkColor = colorResource(R.color.background),
-                    uncheckedCheckmarkColor = colorResource(R.color.background),
-                    checkedBoxColor = colorResource(R.color.dark_accent),
-                    uncheckedBoxColor = colorResource(R.color.background),
-                    disabledCheckedBoxColor = colorResource(R.color.middle_text),
-                    disabledUncheckedBoxColor = colorResource(R.color.light_text),
-                    disabledIndeterminateBoxColor = colorResource(R.color.middle_text),
-                    checkedBorderColor = colorResource(R.color.dark_accent),
-                    uncheckedBorderColor = colorResource(R.color.dark_accent),
-                    disabledBorderColor = colorResource(R.color.middle_text),
-                    disabledUncheckedBorderColor = colorResource(R.color.middle_text),
-                    disabledIndeterminateBorderColor = colorResource(R.color.middle_text)
-                )
+        Spacer(Modifier.height(8.dp))
+        if (state.isConfectioner) {
+            AddressEditor(
+                onChange = onAddressChange,
+                text = state.email,
             )
-            Text(
-                text = "Я хочу быть кондитером здесь",
-                style = TextStyles.secondHeader(colorResource(R.color.dark_accent))
-            )
+            Spacer(Modifier.height(8.dp))
         }
-        Spacer(Modifier.height(18.dp))
+        LabeledCheckbox(
+            checked = state.isConfectioner,
+            onCheckedChange = onConfectioner,
+            label = "Я хочу быть кондитером здесь",
+        )
+        Spacer(Modifier.height(8.dp))
         DiscardButton(
             onClick = onSignUp,
             modifier = Modifier
@@ -146,7 +145,34 @@ fun SignUpStatelessScreen(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                if (!state.isLoading) "Зарегистрироваться" else "Регистрируем..."
+                if (!state.isLoading) "Зарегистрироваться" else "Регистрируем...",
+                style = TextStyles.button(),
+            )
+        }
+        TextButton(
+            onClick = onSkip,
+            modifier = Modifier
+                .width(218.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                "Пропустить",
+                style = TextStyles.regular(colorResource(R.color.light_text)),
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        TextButton(
+            onClick = onLogin,
+            modifier = Modifier
+                .width(218.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                "Войти",
+                style = TextStyles.secondHeader(colorResource(R.color.dark_accent),
+                    fontSize = 16.sp),
             )
         }
     }
@@ -161,7 +187,30 @@ fun PreviewSignUpStatelessScreen() {
         onEmailChange = { },
         onPasswordChange = { },
         onNameChange = { },
+        onAddressChange = { },
         onConfectioner = { },
-        onSignUp = { }
+        onSignUp = { },
+        onLogin = { },
+        onSkip = { }
+    )
+}
+
+@Preview
+@Composable
+fun PreviewSignUpConfectionerStatelessScreen() {
+    val state = SignUpState(
+        isConfectioner = true
+    );
+    SignUpStatelessScreen(
+        state = state,
+        onPhoneNumberChange = { },
+        onEmailChange = { },
+        onPasswordChange = { },
+        onNameChange = { },
+        onAddressChange = { },
+        onConfectioner = { },
+        onSignUp = { },
+        onLogin = { },
+        onSkip = { }
     )
 }

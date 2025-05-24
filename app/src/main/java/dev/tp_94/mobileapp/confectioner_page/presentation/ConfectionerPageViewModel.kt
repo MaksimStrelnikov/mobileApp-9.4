@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,5 +31,9 @@ class ConfectionerPageViewModel @Inject constructor(savedStateHandle: SavedState
 
     fun exit() {
         return sessionCache.clearSession()
+    }
+
+    fun addToBasket(it: CakeGeneral) {
+        //TODO
     }
 }

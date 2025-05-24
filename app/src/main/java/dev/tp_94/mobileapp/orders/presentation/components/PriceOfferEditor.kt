@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.add_product.presentation.components.PriceEditor
+import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 

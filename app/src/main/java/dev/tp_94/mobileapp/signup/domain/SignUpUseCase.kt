@@ -26,6 +26,7 @@ class SignUpUseCase @Inject constructor(
         password: String,
         name: String,
         email: String,
+        address: String,
         isConfectioner: Boolean
     ): SignUpResult {
         if (!(phoneNumber.matches(Regex("[0-9]*")) && phoneNumber.length == 10)) {
@@ -40,6 +41,11 @@ class SignUpUseCase @Inject constructor(
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return SignUpResult.Error("Некорректный формат адреса электронной почты")
         }
+        if (isConfectioner) {
+            if (address.isEmpty()) {
+                return SignUpResult.Error("Адрес не указан")
+            }
+        }
         try {
             val user: User
             if (isConfectioner) {
@@ -49,7 +55,7 @@ class SignUpUseCase @Inject constructor(
                         phoneNumber = phoneNumber,
                         email = email,
                         description = "",
-                        address = "",
+                        address = address,
                         id = 0,
                         canWithdrawal = 0,
                         inProcess = 0

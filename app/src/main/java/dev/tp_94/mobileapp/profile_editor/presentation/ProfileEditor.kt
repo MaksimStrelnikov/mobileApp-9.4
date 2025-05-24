@@ -28,11 +28,11 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.login.presentation.components.PhoneEditor
-import dev.tp_94.mobileapp.profile_editor.presentation.components.AddressEditor
-import dev.tp_94.mobileapp.profile_editor.presentation.components.DescriptionEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.EmailEditor
-import dev.tp_94.mobileapp.signup.presenatation.components.NameEditor
+import dev.tp_94.mobileapp.core.themes.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.AddressEditor
+import dev.tp_94.mobileapp.core.themes.DescriptionEditor
+import dev.tp_94.mobileapp.core.themes.EmailEditor
+import dev.tp_94.mobileapp.core.themes.NameEditor
 
 @Composable
 fun ProfileEditorStatefulScreen(
@@ -75,7 +75,7 @@ fun ProfileEditorStatelessCustomerScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
         ) {
-
+            Spacer(Modifier.height(16.dp))
             NameEditor(
                 onChange = { onNameChange(it) },
                 text = state.name,
@@ -88,13 +88,13 @@ fun ProfileEditorStatelessCustomerScreen(
                     .padding(0.dp, 23.dp)
             )
             PhoneEditor(
-                { onPhoneNumberChange(it) },
+                onChange = { onPhoneNumberChange(it) },
                 text = state.phoneNumber,
                 backgroundColor = colorResource(R.color.dark_background)
             )
-            Spacer(Modifier.height(9.dp))
+            Spacer(Modifier.height(8.dp))
             EmailEditor(
-                { onEmailChange(it) },
+                onChange = { onEmailChange(it) },
                 text = state.email,
                 backgroundColor = colorResource(R.color.dark_background)
             )
@@ -182,11 +182,12 @@ fun ProfileEditorStatelessConfectionerScreen(
             NameEditor(
                 onChange = { onNameChange(it) },
                 text = state.name,
-                defaultText = "Фамилия Имя / Название организации",
+                defaultText = "Название (Имя)",
                 backgroundColor = colorResource(R.color.dark_background)
             )
+            Spacer(Modifier.height(8.dp))
             AddressEditor(
-                { onAddressChange(it) },
+                onChange = { onAddressChange(it) },
                 text = state.address,
                 backgroundColor = colorResource(R.color.dark_background)
             )
@@ -197,19 +198,21 @@ fun ProfileEditorStatelessConfectionerScreen(
                     .padding(0.dp, 23.dp)
             )
             PhoneEditor(
-                { onPhoneNumberChange(it) },
+                onChange = { onPhoneNumberChange(it) },
                 text = state.phoneNumber,
                 backgroundColor = colorResource(R.color.dark_background)
             )
+            Spacer(Modifier.height(8.dp))
             EmailEditor(
-                { onEmailChange(it) },
+                onChange = { onEmailChange(it) },
                 text = state.email,
                 backgroundColor = colorResource(R.color.dark_background)
             )
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(8.dp))
             DescriptionEditor(
-                { onDescriptionChange(it) },
+                onChange = { onDescriptionChange(it) },
                 text = state.description,
+                modifier = Modifier.height(108.dp),
                 backgroundColor = colorResource(R.color.dark_background)
             )
             if (!(state.error == null || state.error == "")) {

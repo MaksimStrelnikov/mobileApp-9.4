@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.add_product.presentation.components.PriceEditor
+import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -117,8 +117,14 @@ fun WithdrawalStatelessScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 PriceEditor(
-                    text = (if (state.sum == 0) "" else state.sum).toString(),
-                    onChange = { onSumChange(it.toInt()) },
+                    text = if (state.sum == 0) "" else state.sum.toString(),
+                    onChange = {
+                        if (it.isEmpty()) {
+                            onSumChange(0)
+                        } else {
+                            onSumChange(it.toIntOrNull() ?: 0)
+                        }
+                    },
                     defaultText = "Сумма вывода",
                     backgroundColor = colorResource(R.color.dark_background)
                 )
