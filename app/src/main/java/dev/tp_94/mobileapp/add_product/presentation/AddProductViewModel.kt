@@ -1,27 +1,21 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
-import android.net.Uri
-import androidx.compose.ui.graphics.Color
-import androidx.core.net.toUri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.add_product.domain.AddProductUseCase
 import dev.tp_94.mobileapp.core.SessionCache
-import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
-import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeState
+import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.Json
-import java.net.URLDecoder
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddProductViewModel  @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val addProductUseCase: AddProductUseCase,
     private val sessionCache: SessionCache,
-    private val sendCustomCakeUseCase: SendCustomCakeUseCase
 ) : ViewModel() {
 
     fun updateName(name: String) {
@@ -52,17 +46,55 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(image = image)
     }
 
-    //TODO: make this functions
-    fun cancel() {
-
+    fun delete(onMove: () -> Unit) {
+        _state.value = _state.value.copy(isLoading = true)
+        viewModelScope.launch {
+            val response = addProductUseCase.deleteProduct(
+                name = state.value.name,
+                description = state.value.description,
+                diameter = state.value.diameter,
+                weight = state.value.weight,
+                workPeriod = state.value.workPeriod,
+                price = state.value.price,
+                imageUrl = state.value.image,
+                confectioner = (getUser() as Confectioner)
+            )
+            if (response is AddProductResult.Error) _state.value =
+                _state.value.copy(error = response.message)
+            else if (response is AddProductResult.Success) {
+                _state.value = _state.value.copy(error = "")
+                onMove()
+            }
+            _state.value = _state.value.copy(isLoading = false)
+        }
     }
 
-    fun delete() {
+    fun save(onMove: () -> Unit) {
+        _state.value = _state.value.copy(isLoading = true)
+        viewModelScope.launch {
+            val response = addProductUseCase.addProduct(
+                name = state.value.name,
+                description = state.value.description,
+                diameter = state.value.diameter,
+                weight = state.value.weight,
+                workPeriod = state.value.workPeriod,
+                price = state.value.price,
+                imageUrl = state.value.image,
+                confectioner = (getUser() as Confectioner)
+            )
 
+            if (response is AddProductResult.Error) _state.value =
+                _state.value.copy(error = response.message)
+            else if (response is AddProductResult.Success) {
+                _state.value = _state.value.copy(error = "")
+                onMove()
+            }
+            _state.value = _state.value.copy(isLoading = false)
+        }
     }
 
-    fun save(onSave: () -> Unit) {
-
+    fun getUser(): User? {
+        return sessionCache.session?.user
     }
 
     private val _state = MutableStateFlow(

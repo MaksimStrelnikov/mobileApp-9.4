@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,11 +41,9 @@ import dev.tp_94.mobileapp.core.themes.WeightEditor
 @Composable
 fun AddProductStatefulScreen(
     viewModel: AddProductViewModel = hiltViewModel(),
-    onError: () -> Unit,
-    onSave: () -> Unit,
+    onMove: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    //TODO: rewrite onError logic
     val state = viewModel.state.collectAsStateWithLifecycle()
     AddProductStatelessScreen(
         state.value,
@@ -57,10 +54,10 @@ fun AddProductStatefulScreen(
         onWorkPeriodChange = { viewModel.updateWorkPeriod(it) },
         onPriceChange = { viewModel.updatePrice(it) },
         onImageChange = { viewModel.updateImage(it) },
-        onCancellation = { viewModel.cancel() },
-        onDelete = { viewModel.delete() },
+        onCancellation = onMove,
+        onDelete = { viewModel.delete(onMove) },
         onSave = {
-            viewModel.save(onSave)
+            viewModel.save(onMove)
         },
         topBar = topBar
     )
@@ -144,6 +141,12 @@ fun AddProductStatelessScreen(
                 backgroundColor = colorResource(R.color.dark_background),
             )
             Spacer(Modifier.height(16.dp))
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            }
             ActiveButton(
                 onClick = onSave,
                 modifier = Modifier
@@ -180,6 +183,7 @@ fun AddProductStatelessScreen(
                     style = TextStyles.button(color = colorResource(R.color.light_text))
                 )
             }
+
         }
     }
 }
