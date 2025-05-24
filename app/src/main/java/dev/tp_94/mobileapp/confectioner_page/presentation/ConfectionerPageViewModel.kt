@@ -39,18 +39,13 @@ class ConfectionerPageViewModel @Inject constructor(
         return sessionCache.clearSession()
     }
 
-    fun addToBasket(it: CakeGeneral) {
+    fun addToBasket(cake: CakeGeneral) {
         viewModelScope.launch {
-            val cake = state.value.products.firstOrNull { product ->
-                product.id == it.id
-            }
-            if (cake != null) {
-                val response = moveToBasketUseCase.execute(
+            val response = moveToBasketUseCase.execute(
                     cake = cake,
                     userPhone = getUser()?.phoneNumber ?: ""
                 )
-                //TODO or not: add error message
-            }
+            //TODO or not: add error message
         }
     }
 }

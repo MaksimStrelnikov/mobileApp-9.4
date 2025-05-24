@@ -8,6 +8,7 @@ import dev.tp_94.mobileapp.cakes_feed.domain.SearchForCakesUseCase
 import dev.tp_94.mobileapp.confectioner_page.domain.MoveToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,18 +49,13 @@ class CakesFeedViewModel @Inject constructor(
         _state.value = _state.value.copy(isLoading = false)
     }
 
-    fun buy(it: Cake) {
+    fun buy(cake: Cake) {
         viewModelScope.launch {
-            val cake = state.value.feed.firstOrNull { product ->
-                product.id == it.id
-            }
-            if (cake != null) {
-                val response = moveToBasketUseCase.execute(
-                    cake = cake,
+           val response = moveToBasketUseCase.execute(
+                    cake = cake as CakeGeneral,
                     userPhone = getUser()?.phoneNumber ?: ""
-                )
-                //TODO or not: add error message
-            }
+           )
+            //TODO or not: add error message
         }
     }
 
