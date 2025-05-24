@@ -103,8 +103,7 @@ private fun CustomSettingsStatelessScreen(
                             value = state.minWorkPeriod,
                             onValueChange = onUpdateMinWorkPeriod,
                             label = "Минимальный",
-                            backgroundColor = colorResource(R.color.dark_background),
-                            necessary = true
+                            backgroundColor = colorResource(R.color.dark_background)
                         )
                     }
                     Box(modifier = Modifier.weight(1f)) {
@@ -112,8 +111,7 @@ private fun CustomSettingsStatelessScreen(
                             value = state.maxWorkPeriod,
                             onValueChange = onUpdateMaxWorkPeriod,
                             label = "Максимальный",
-                            backgroundColor = colorResource(R.color.dark_background),
-                            necessary = true
+                            backgroundColor = colorResource(R.color.dark_background)
                         )
                     }
                 }
@@ -163,6 +161,12 @@ private fun CustomSettingsStatelessScreen(
                     onCheckedChange = onShapeAccept,
                     label = "Я делаю торты индивидуальной формы"
                 )
+                if (!(state.error == null || state.error == "")) {
+                    Text(
+                        state.error,
+                        style = TextStyles.regular(colorResource(R.color.dark_accent))
+                    )
+                }
             }
         }
     }
@@ -171,7 +175,7 @@ private fun CustomSettingsStatelessScreen(
 @Composable
 fun CustomSettingsStatefulScreen(
     viewModel: CustomSettingsViewModel = hiltViewModel(),
-    onError: () -> Unit,
+    onSave: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -194,7 +198,11 @@ fun CustomSettingsStatefulScreen(
                     .height(48.dp)
                     .fillMaxWidth()
                     .padding(4.dp)
-            )
+            ) {
+                Text(
+                    "Добавить"
+                )
+            }
         }
     )
 }

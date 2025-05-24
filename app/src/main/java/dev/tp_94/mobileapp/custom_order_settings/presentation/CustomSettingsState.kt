@@ -9,5 +9,6 @@ data class CustomSettingsState(
     val minWorkPeriod: String = "",
     val maxWorkPeriod: String = "",
     val newFilling: String = "",
-    val fillings: List<String> = emptyList()
+    val fillings: List<String> = emptyList(),
+    val error: String? = null
 )

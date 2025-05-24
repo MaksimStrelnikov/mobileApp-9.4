@@ -22,7 +22,24 @@ class UpdateRestrictionsUseCase @Inject constructor(
         fillings: List<String>
     ): RestrictionsResult {
         try {
-            if (sessionCache.session!!.user !is Confectioner) throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
+            if (sessionCache.session!!.user !is Confectioner)
+                throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
+
+            if (isCustomAcceptable) {
+                if (minDiameter < 0 || maxDiameter < 0)
+                    return RestrictionsResult
+                        .Error("Диаметр не может быть отрицательным")
+                if (minDiameter > maxDiameter)
+                    return RestrictionsResult
+                        .Error("Минимальная диаметр не может быть больше максимального")
+                if (minPreparationDays < 0 || maxPreparationDays < 0)
+                    return RestrictionsResult
+                        .Error("Количество дней не может быть отрицательным")
+                if (minPreparationDays > maxPreparationDays)
+                    return RestrictionsResult
+                        .Error("Минимальное количество дней не может быть больше максимального")
+            }
+
             val restrictions = Restrictions(
                 isCustomAcceptable = isCustomAcceptable,
                 isImageAcceptable = isImageAcceptable,
