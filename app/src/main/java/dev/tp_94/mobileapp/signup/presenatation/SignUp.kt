@@ -127,7 +127,7 @@ fun SignUpStatelessScreen(
         if (state.isConfectioner) {
             AddressEditor(
                 onChange = onAddressChange,
-                text = state.email,
+                text = state.address,
             )
             Spacer(Modifier.height(8.dp))
         }
