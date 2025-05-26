@@ -1,8 +1,11 @@
 package dev.tp_94.mobileapp.di
 
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.tp_94.mobileapp.core.api.ConfectionerApi
 import dev.tp_94.mobileapp.customers_feed.domain.ConfectionerRepository
@@ -41,8 +44,11 @@ object ConnectionsRepositoryModule {
     }
 
     @Provides
-    fun provideCakeRepository(cakeApi: CakeApi): CakeRepository {
-        return CakeRepositoryImpl(cakeApi)
+    fun provideCakeRepository(
+        @ApplicationContext context: Context,
+        cakeApi: CakeApi
+    ): CakeRepository {
+        return CakeRepositoryImpl(context, cakeApi)
     }
 
     @Provides

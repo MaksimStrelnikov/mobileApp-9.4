@@ -15,11 +15,15 @@ import retrofit2.http.Path
 interface CakeApi {
     @POST("cakes/custom/self")
     @Multipart
-    suspend fun uploadCakeCustom(@PartMap map: Map<String, RequestBody>, @Part image: MultipartBody.Part?): Response<CakeResponseDTO>
+    suspend fun uploadCakeCustom(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
+
+    @POST("cakes/custom/self")
+    @Multipart
+    suspend fun uploadCakeCustomWithoutImage(@PartMap toParts: Map<String, @JvmSuppressWildcards RequestBody>): Response<CakeResponseDTO>
 
     @POST("cakes/regular/self")
     @Multipart
-    suspend fun uploadCakeRegular(@PartMap map: Map<String, RequestBody>, @Part image: MultipartBody.Part?): Response<CakeResponseDTO>
+    suspend fun uploadCakeRegular(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
     @DELETE("cakes/{id}")
     suspend fun deleteCake(@Path("id") id: Long): Response<Unit>
@@ -29,4 +33,6 @@ interface CakeApi {
 
     @GET("cakes/confectioner/{confectionerId}")
     suspend fun getAllByConfectioner(@Path("confectionerId") confectionerId: Long): Response<List<CakeResponseDTO>>
+
+
 }

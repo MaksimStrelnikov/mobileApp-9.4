@@ -19,6 +19,9 @@ class AddProductUseCase @Inject constructor(
         if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) return ProductResult.Error(
             "Недостаточно прав для добавления продукта"
         )
+        if (cake.imageUrl == null) {
+            return ProductResult.Error("Изображение не указано")
+        }
         if (cake.name.isEmpty()) {
             return ProductResult.Error("Название не указано")
         }

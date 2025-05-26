@@ -12,7 +12,7 @@ interface CakeRepository {
 
     suspend fun addGeneralCake(
         cakeGeneralRequestDTO: CakeGeneralRequestDTO,
-        imageUrl: String?
+        imageUrl: String
     ): CakeResponseDTO
 
     suspend fun deleteCake(id: Long)
