@@ -14,7 +14,7 @@ interface UserApi {
     suspend fun updateCustomer(@Body customerUpdateDTO: CustomerUpdateDTO): Response<UserResponseDTO>
 
     @PATCH("users/self")
-    suspend fun updateConfectioner(@Body confectionerUpdateDTO: UserUpdateDTO): Response<UserResponseDTO>
+    suspend fun updateConfectioner(@Body confectionerUpdateDTO: ConfectionerUpdateDTO): Response<UserResponseDTO>
 
     @DELETE("users")
     suspend fun deleteAccount(): Response<Unit>

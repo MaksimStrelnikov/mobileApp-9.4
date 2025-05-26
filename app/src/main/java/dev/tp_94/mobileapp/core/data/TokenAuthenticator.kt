@@ -22,24 +22,14 @@ class TokenAuthenticator @Inject constructor(
             }.getOrNull()
         }
 
-        if (newTokens == null) return null
+        if (newTokens == null || !newTokens.isSuccessful || newTokens.body() == null) {
+            throw Exception("Не удалось обновить токен: ${newTokens?.code()} ${newTokens?.message()}")
+        }
 
-        val cookies = newTokens.headers().values("Set-Cookie")
-
-        val newAccessToken = cookies.find { it.startsWith("accessToken=") }
-            ?.substringAfter("accessToken=")
-            ?.substringBefore(";")
-            ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-        val newRefreshToken = cookies.find { it.startsWith("refreshToken=") }
-            ?.substringAfter("refreshToken=")
-            ?.substringBefore(";")
-            ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-        sessionCache.updateToken(accessToken = newAccessToken, refreshToken = newRefreshToken)
+        sessionCache.updateToken(accessToken = newTokens.body()!!.accessToken, refreshToken = newTokens.body()!!.refreshToken)
 
         return response.request.newBuilder()
-            .header("Authorization", "Bearer $newAccessToken")
+            .header("Authorization", "Bearer ${newTokens.body()!!.accessToken}")
             .build()
     }
 }

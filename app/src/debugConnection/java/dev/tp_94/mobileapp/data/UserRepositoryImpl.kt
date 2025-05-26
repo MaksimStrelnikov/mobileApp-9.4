@@ -7,6 +7,8 @@ import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.core.api.UserApi
+import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
+import dev.tp_94.mobileapp.orders.data.dto.CustomerResponseDTO
 import dev.tp_94.mobileapp.profile_editor.data.dto.ConfectionerUpdateDTO
 import dev.tp_94.mobileapp.profile_editor.data.dto.CustomerUpdateDTO
 import dev.tp_94.mobileapp.profile_editor.data.dto.UserUpdateDTO
@@ -21,19 +23,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun login(loginDTO: UserLoginDTO): UserResponseWithTokensDTO {
         val response = authApi.login(loginDTO)
         if (response.isSuccessful) {
-            val cookies = response.headers().values("Set-Cookie")
-
-            val accessToken = cookies.find { it.startsWith("accessToken=") }
-                ?.substringAfter("accessToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            val refreshToken = cookies.find { it.startsWith("refreshToken=") }
-                ?.substringAfter("refreshToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            return response.body()!!.toUserResponseWithTokensDTO(accessToken, refreshToken)
+            return response.body()!!
         } else if (response.code() == FORBIDDEN.status || response.code() == UNAUTHORIZED.status) {
             throw Exception("Неверный логин или пароль")
         }
@@ -43,19 +33,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun add(confectioner: ConfectionerRegisterDTO): UserResponseWithTokensDTO {
         val response = authApi.registerConfectioner(confectioner)
         if (response.isSuccessful) {
-            val cookies = response.headers().values("Set-Cookie")
-
-            val accessToken = cookies.find { it.startsWith("accessToken=") }
-                ?.substringAfter("accessToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            val refreshToken = cookies.find { it.startsWith("refreshToken=") }
-                ?.substringAfter("refreshToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            return response.body()!!.toUserResponseWithTokensDTO(accessToken, refreshToken)
+            return response.body()!!
         } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
@@ -66,19 +44,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun add(customer: CustomerRegisterDTO): UserResponseWithTokensDTO {
         val response = authApi.registerCustomer(customer)
         if (response.isSuccessful) {
-            val cookies = response.headers().values("Set-Cookie")
-
-            val accessToken = cookies.find { it.startsWith("accessToken=") }
-                ?.substringAfter("accessToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            val refreshToken = cookies.find { it.startsWith("refreshToken=") }
-                ?.substringAfter("refreshToken=")
-                ?.substringBefore(";")
-                ?: throw Exception("Ошибка на стороне сервера! Валидация не прошла успешно")
-
-            return response.body()!!.toUserResponseWithTokensDTO(accessToken, refreshToken)
+            return response.body()!!
         } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
@@ -86,19 +52,19 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun update(customer: CustomerUpdateDTO): UserResponseDTO {
+    override suspend fun update(customer: CustomerUpdateDTO): CustomerResponseDTO {
         val response = userApi.updateCustomer(customerUpdateDTO = customer)
         if (response.isSuccessful) {
-            return response.body()!!
+            return response.body()!!.customer!!
         } else {
             throw Exception(response.message())
         }
     }
 
-    override suspend fun update(confectioner: ConfectionerUpdateDTO): UserResponseDTO {
-        val response = userApi.updateConfectioner(UserUpdateDTO(confectionerUpdateDTO = confectioner))
+    override suspend fun update(confectioner: ConfectionerUpdateDTO): ConfectionerResponseDTO {
+        val response = userApi.updateConfectioner(confectionerUpdateDTO = confectioner)
         if (response.isSuccessful) {
-            return response.body()!!
+            return response.body()!!.confectioner!!
         } else {
             throw Exception(response.message())
         }
