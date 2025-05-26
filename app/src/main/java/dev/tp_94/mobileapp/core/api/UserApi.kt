@@ -8,14 +8,15 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.PATCH
+import retrofit2.http.Path
 
 interface UserApi {
     @PATCH("users/self")
     suspend fun updateCustomer(@Body customerUpdateDTO: CustomerUpdateDTO): Response<UserResponseDTO>
 
     @PATCH("users/self")
-    suspend fun updateConfectioner(@Body confectionerUpdateDTO: UserUpdateDTO): Response<UserResponseDTO>
+    suspend fun updateConfectioner(@Body confectionerUpdateDTO: ConfectionerUpdateDTO): Response<UserResponseDTO>
 
-    @DELETE("users")
+    @DELETE("users/self")
     suspend fun deleteAccount(): Response<Unit>
 }
