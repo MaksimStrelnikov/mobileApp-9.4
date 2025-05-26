@@ -40,9 +40,11 @@ object NetworkModule {
     @Singleton
     @MainApiWithoutAuth
     fun provideMainOkHttpClientWithoutAuth(
-        logging: HttpLoggingInterceptor
+        @BodyLog bodyInterceptor: HttpLoggingInterceptor,
+        @HeadersLog headersInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
+        .addInterceptor(bodyInterceptor)
+        .addInterceptor(headersInterceptor)
         .build()
 
     @Provides
@@ -57,9 +59,17 @@ object NetworkModule {
 
 
     @Provides
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor =
+    @BodyLog
+    fun provideLoggingBodyInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
+        }
+
+    @Provides
+    @HeadersLog
+    fun provideLoggingHeadersInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.HEADERS
         }
 
     @Provides
@@ -70,10 +80,12 @@ object NetworkModule {
     @MainApi
     fun provideMainOkHttpClient(
         authInterceptor: AuthInterceptor,
-        logging: HttpLoggingInterceptor,
+        @BodyLog bodyInterceptor: HttpLoggingInterceptor,
+        @HeadersLog headersInterceptor: HttpLoggingInterceptor,
         tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
+        .addInterceptor(bodyInterceptor)
+        .addInterceptor(headersInterceptor)
         .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
         .build()
@@ -81,9 +93,11 @@ object NetworkModule {
     @Provides
     @StableHordeApi
     fun provideHordeOkHttpClient(
-        logging: HttpLoggingInterceptor
+        @BodyLog bodyInterceptor: HttpLoggingInterceptor,
+        @HeadersLog headersInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
+        .addInterceptor(bodyInterceptor)
+        .addInterceptor(headersInterceptor)
         // TODO: add apikey insertion through interceptor
         .build()
 

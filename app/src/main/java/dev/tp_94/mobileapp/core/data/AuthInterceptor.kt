@@ -19,6 +19,8 @@ class AuthInterceptor @Inject constructor(
                     header("Authorization", "Bearer $it")
                 }
             }.build()
+
+        Log.println(Log.INFO, "Log", request.header("Authorization").toString())
         return chain.proceed(request)
     }
 }

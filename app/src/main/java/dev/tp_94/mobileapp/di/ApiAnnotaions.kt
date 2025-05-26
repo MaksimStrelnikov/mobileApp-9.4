@@ -14,3 +14,11 @@ annotation class MainApi
 @Retention(AnnotationRetention.BINARY)
 annotation class MainApiWithoutAuth
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class HeadersLog
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class BodyLog
+
