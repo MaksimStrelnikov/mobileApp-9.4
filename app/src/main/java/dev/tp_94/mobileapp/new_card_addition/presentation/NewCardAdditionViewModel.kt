@@ -17,14 +17,15 @@ class NewCardAdditionViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun addNewCard(onSuccess: () -> Unit) {
-        lateinit var result: NewCardAdditionResult
         viewModelScope.launch {
-            result = addCardUseCase.execute(state.value)
+            val result = addCardUseCase.execute(state.value)
             if (result is NewCardAdditionResult.Success) {
+                _state.value = _state.value.copy(error = "")
                 onSuccess()
+            } else if (result is NewCardAdditionResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
             }
         }
-        //TODO: add error handling
     }
 
     fun changeNumber(number: String) {

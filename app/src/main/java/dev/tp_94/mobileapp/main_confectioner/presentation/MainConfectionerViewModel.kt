@@ -26,5 +26,7 @@ class MainConfectionerViewModel @Inject constructor(private val sessionCache: Se
         )
     )
 
+    //TODO: add product get
+
     val state = _state.asStateFlow()
 }

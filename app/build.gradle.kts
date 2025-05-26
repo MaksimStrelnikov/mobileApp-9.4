@@ -8,9 +8,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
 }
 
+val apiKey = project.findProperty("API_KEY") ?: System.getenv("API_KEY") ?: ""
+
 android {
     namespace = "dev.tp_94.mobileapp"
     compileSdk = 35
+    android.buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "dev.tp_94.mobileapp"
@@ -18,6 +21,8 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,12 +36,14 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        create("debugConnection") {
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -83,6 +90,10 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
 
+    implementation(libs.squareup.retrofit)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.converter.moshi)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
 
     val composeBom = platform("androidx.compose:compose-bom:2024.03.00")

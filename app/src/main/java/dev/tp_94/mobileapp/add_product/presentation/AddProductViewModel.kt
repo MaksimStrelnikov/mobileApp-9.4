@@ -1,18 +1,19 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
-import android.net.Uri
-import androidx.compose.ui.graphics.Color
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.add_product.domain.AddProductUseCase
+import dev.tp_94.mobileapp.add_product.domain.DeleteProductUseCase
 import dev.tp_94.mobileapp.core.SessionCache
-import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
-import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeState
+import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import javax.inject.Inject
@@ -20,60 +21,83 @@ import javax.inject.Inject
 @HiltViewModel
 class AddProductViewModel  @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val addProductUseCase: AddProductUseCase,
+    private val deleteProductUseCase: DeleteProductUseCase,
     private val sessionCache: SessionCache,
-    private val sendCustomCakeUseCase: SendCustomCakeUseCase
 ) : ViewModel() {
-
-    fun updateName(name: String) {
-        _state.value = _state.value.copy(name = name)
-    }
-
-    fun updateDescription(description: String) {
-        _state.value = _state.value.copy(description = description)
-    }
-
-    fun updateDiameter(diameter: String) {
-        _state.value = _state.value.copy(diameter = diameter)
-    }
-
-    fun updateWeight(weight: String) {
-        _state.value = _state.value.copy(weight = weight)
-    }
-
-    fun updateWorkPeriod(workPeriod: String) {
-        _state.value = _state.value.copy(workPeriod = workPeriod)
-    }
-
-    fun updatePrice(price: String) {
-        _state.value = _state.value.copy(price = price)
-    }
-
-    fun updateImage(image: Uri?) {
-        _state.value = _state.value.copy(image = image)
-    }
-
-    //TODO: make this functions
-    fun cancel() {
-
-    }
-
-    fun delete() {
-
-    }
-
-    fun save(onSave: () -> Unit) {
-
-    }
 
     private val _state = MutableStateFlow(
         AddProductState(
-            name = "Торт",
-            description = "Это точно торт",
-            diameter = "22",
-            weight = "2",
-            workPeriod = "2",
-            price = "12000",
-            image = null
-    ))
+            savedStateHandle.get<String>("cake")
+                ?.let { URLDecoder.decode(it, "UTF-8") }
+                ?.let { Json { serializersModule = CakeSerializerModule.module }.decodeFromString<CakeGeneral>(it) }
+                ?: CakeGeneral(confectioner = (getUser() as Confectioner)),
+        )
+    )
+
     val state = _state.asStateFlow()
+
+    fun updateName(name: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(name = name))
+    }
+
+    fun updateDescription(description: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(description = description))
+    }
+
+    fun updateDiameter(diameter: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(diameter = diameter.toFloat()))
+    }
+
+    fun updateWeight(weight: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(weight = weight.toFloat()))
+    }
+
+    fun updateWorkPeriod(workPeriod: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(preparation = workPeriod.toInt()))
+    }
+
+    fun updatePrice(price: String) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(price = price.toInt()))
+    }
+
+    fun updateImage(image: String?) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(imageUrl = image))
+    }
+
+    fun delete(onMove: () -> Unit) {
+        _state.value = _state.value.copy(isLoading = true)
+        viewModelScope.launch {
+            val response = deleteProductUseCase.execute(
+                cake = state.value.cakeGeneral
+            )
+            if (response is ProductResult.Error) _state.value =
+                _state.value.copy(error = response.message)
+            else if (response is ProductResult.Success) {
+                _state.value = _state.value.copy(error = "")
+                onMove()
+            }
+            _state.value = _state.value.copy(isLoading = false)
+        }
+    }
+
+    fun save(onMove: () -> Unit) {
+        _state.value = _state.value.copy(isLoading = true)
+        viewModelScope.launch {
+            val response = addProductUseCase.execute(
+                cake = state.value.cakeGeneral
+            )
+            if (response is ProductResult.Error) _state.value =
+                _state.value.copy(error = response.message)
+            else if (response is ProductResult.Success) {
+                _state.value = _state.value.copy(error = "")
+                onMove()
+            }
+            _state.value = _state.value.copy(isLoading = false)
+        }
+    }
+
+    fun getUser(): User? {
+        return sessionCache.session?.user
+    }
 }

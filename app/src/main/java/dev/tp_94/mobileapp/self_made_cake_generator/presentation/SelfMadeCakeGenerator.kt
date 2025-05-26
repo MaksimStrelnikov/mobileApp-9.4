@@ -45,6 +45,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -113,7 +114,7 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(8.dp))
-            GeneratedImage(imageUri = state.cakeCustom.imageUri)
+            GeneratedImage(imageUrl = state.cakeCustom.imageUrl)
             Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
@@ -167,7 +168,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
                     {
-                        Text("Сгенерировать",  style = TextStyles.button(colorResource(R.color.dark_text)))
+                        if (state.isGenerating) Text("Подождите..." ,  style = TextStyles.button(colorResource(R.color.dark_text)))
+                        else Text("Сгенерировать" ,  style = TextStyles.button(colorResource(R.color.dark_text)))
                     }
                     Text(
                         "* Приготовленный торт может не полностью " +
@@ -252,6 +254,12 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                 header = "Комментарий кондитеру"
             )
             Spacer(modifier = Modifier.height(8.dp))
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            }
             ActiveButton(
                 onClick = onSend,
                 modifier = Modifier.fillMaxWidth()
@@ -275,22 +283,24 @@ fun SelfMadeCakeGeneratorStatelessScreen(
 @Preview
 @Composable
 fun PreviewSelfMadeCakeGeneratorStatelessScreen() {
+    val c = Confectioner(
+        id = 1,
+        name = "TODO()",
+        phoneNumber = "TODO()",
+        email = "TODO()",
+        description = "TODO()",
+        address = "TODO()"
+    )
     val state = remember {
         mutableStateOf(
             SelfMadeCakeGeneratorState(
-                cakeCustom = CakeCustom(Color.Cyan, 10f),
-                confectioner = Confectioner(
-                    id = 1,
-                    name = "TODO()",
-                    phoneNumber = "TODO()",
-                    email = "TODO()",
-                    description = "TODO()",
-                    address = "TODO()"
-                ),
+                cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
+                confectioner = c,
                 fillings = listOf(
                     "Ягодный", "Ореховый",
                     "Кокосовый", "Клубничный", "Лимонный"
                 ),
+                restrictions = Restrictions()
             )
         )
     }

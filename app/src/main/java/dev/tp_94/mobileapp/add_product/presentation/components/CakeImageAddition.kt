@@ -27,11 +27,12 @@ import dev.tp_94.mobileapp.core.themes.SquareBox
 import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
-fun CakeImageAddition(onAdd: (Uri?) -> Unit, imageUri: Uri? = null) {
+fun CakeImageAddition(onAdd: (String?) -> Unit, imageUrl: String? = null) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        onAdd(uri)
+    ) { uri ->
+        if (uri == null) onAdd(null)
+        else onAdd(uri.toString())
     }
     Column (
         modifier = Modifier
@@ -51,7 +52,7 @@ fun CakeImageAddition(onAdd: (Uri?) -> Unit, imageUri: Uri? = null) {
                     ),
             contentAlignment = Alignment.Center
         ) {
-            if (imageUri == null) {
+            if (imageUrl == null) {
                 val painter = rememberAsyncImagePainter(R.drawable.no_image)
                 Image(
                     painter = painter,
@@ -60,7 +61,7 @@ fun CakeImageAddition(onAdd: (Uri?) -> Unit, imageUri: Uri? = null) {
                         .size(40.dp)
                 )
             }
-            imageUri?.let { uri ->
+            imageUrl?.let { uri ->
                 val painter = rememberAsyncImagePainter(uri)
                 Image(
                     painter = painter,

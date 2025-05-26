@@ -15,6 +15,7 @@ sealed interface Cake {
     val preparation: Int
     val diameter: Float
     val description: String
+    val confectioner: Confectioner
 }
 @Serializable(with=CakeCustomSerializer::class)
 @SerialName("custom")
@@ -23,12 +24,13 @@ data class CakeCustom(
     override val diameter: Float,
     val text: String = "",
     val textOffset: Offset = Offset.Zero,
-    val imageUri: Uri? = null,
+    val imageUrl: String? = null,
     val imageOffset: Offset = Offset.Zero,
     val fillings: List<String> = arrayListOf(),
     override val preparation: Int = 3,
     override val description: String = "",
-    override val name: String = "Индивидуальный торт"
+    override val name: String = "Индивидуальный торт",
+    override val confectioner: Confectioner
 ) : Cake
 
 @Serializable
@@ -37,17 +39,12 @@ data class SerializableColor(val value: Int)
 @Serializable
 data class SerializableOffset(val x: Float, val y: Float)
 
-@Serializable
-data class SerializableUri(val uri: String?)
-
 fun Color.toSerializable() = SerializableColor(this.toArgb())
 fun SerializableColor.toColor() = Color(this.value)
 
 fun Offset.toSerializable() = SerializableOffset(x, y)
 fun SerializableOffset.toOffset() = Offset(x, y)
 
-fun Uri?.toSerializable() = SerializableUri(this?.toString())
-fun SerializableUri.toUri() = this.uri?.let { Uri.parse(it) }
 
 
 @Serializable
@@ -57,11 +54,12 @@ data class CakeCustomSerializable(
     val diameter: Float,
     val text: String = "",
     val textOffset: SerializableOffset = SerializableOffset(0f, 0f),
-    val imageUri: SerializableUri? = null,
+    val imageUrl: String? = null,
     val imageOffset: SerializableOffset = SerializableOffset(0f, 0f),
     val fillings: List<String> = arrayListOf(),
     val preparation: Int = 3,
-    val description: String = ""
+    val description: String = "",
+    val confectioner: Confectioner
 )
 
 fun CakeCustomSerializable.toOriginal(): CakeCustom {
@@ -71,11 +69,12 @@ fun CakeCustomSerializable.toOriginal(): CakeCustom {
         diameter = this.diameter,
         text = this.text,
         textOffset = this.textOffset.toOffset(),
-        imageUri = this.imageUri?.toUri(),
+        imageUrl = this.imageUrl,
         imageOffset = this.imageOffset.toOffset(),
         fillings = this.fillings,
         preparation = this.preparation,
-        description = this.description
+        description = this.description,
+        confectioner = this.confectioner
     )
 }
 
@@ -86,11 +85,12 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
         diameter = this.diameter,
         text = this.text,
         textOffset = this.textOffset.toSerializable(),
-        imageUri = this.imageUri.toSerializable(),
+        imageUrl = this.imageUrl,
         imageOffset = this.imageOffset.toSerializable(),
         fillings = this.fillings,
         preparation = this.preparation,
-        description = this.description
+        description = this.description,
+        confectioner = this.confectioner
     )
 }
 
@@ -98,13 +98,13 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
 @Serializable
 @SerialName("general")
 data class CakeGeneral(
-    val id: Int = 0,
-    val price: Int,
+    val id: Long = 0,
+    val price: Int = 0,
     val imageUrl: String? = null,
-    override val name: String,
-    override val description: String,
-    override val diameter: Float,
-    val weight: Float,
-    override val preparation: Int,
-    val confectioner: Confectioner
+    override val name: String = "",
+    override val description: String = "",
+    override val diameter: Float = 0f,
+    val weight: Float = 0f,
+    override val preparation: Int = 0,
+    override val confectioner: Confectioner
 ) : Cake

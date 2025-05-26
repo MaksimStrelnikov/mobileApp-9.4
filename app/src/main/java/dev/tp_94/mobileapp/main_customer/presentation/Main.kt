@@ -203,7 +203,7 @@ fun MainStatelessScreen(
                             price = product.price,
                             onBuy = { onProductBuy(product) },
                             onOpen = { onNavigateToProduct(product) },
-                            image = null
+                            image = null //TODO: add image
                         )
                     }
                 }

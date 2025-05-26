@@ -19,7 +19,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tp_94.mobileapp.add_product.presentation.AddProductStatefulScreen
+import dev.tp_94.mobileapp.add_product.presentation.AddProductViewModel
 import dev.tp_94.mobileapp.basket.presentation.BasketStatefulScreen
+import dev.tp_94.mobileapp.cakes_feed.presentation.CakesFeedStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageStatefulScreen
 import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageViewModel
 import dev.tp_94.mobileapp.core.SplashNavigationScreen
@@ -29,6 +32,8 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
+import dev.tp_94.mobileapp.custom_order_settings.presentation.CustomSettingsStatefulScreen
+import dev.tp_94.mobileapp.custom_order_settings.presentation.CustomSettingsViewModel
 import dev.tp_94.mobileapp.customers_feed.presentation.CustomersFeedStatefulScreen
 import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
@@ -44,12 +49,16 @@ import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentStatefulScre
 import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentViewModel
 import dev.tp_94.mobileapp.payment_result.ErrorPayment
 import dev.tp_94.mobileapp.payment_result.SuccessfulPayment
+import dev.tp_94.mobileapp.product_view.presentation.ProductViewModel
+import dev.tp_94.mobileapp.product_view.presentation.ProductViewStatefulScreen
 import dev.tp_94.mobileapp.profile.presentation.ProfileConfectionerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileCustomerRoutes
 import dev.tp_94.mobileapp.profile.presentation.ProfileScreen
 import dev.tp_94.mobileapp.profile_editor.presentation.ProfileEditorStatefulScreen
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeStatefulScreen
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeViewModel
+import dev.tp_94.mobileapp.self_made_cake_generator.presentation.SelfMadeCakeGeneratorStatefulScreen
+import dev.tp_94.mobileapp.self_made_cake_generator.presentation.SelfMadeCakeGeneratorViewModel
 import dev.tp_94.mobileapp.signup.presenatation.SignUpStatefulScreen
 import dev.tp_94.mobileapp.withdrawal.presentation.WithdrawalStatefulScreen
 import kotlinx.serialization.encodeToString
@@ -93,7 +102,7 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
                 }
         },
         onBasketClick = {
-            if (currentScreen != Screen.ORDERS)
+            if (currentScreen != Screen.BASKET)
                 navController.navigate("basket") {
                     popUpTo("basket") { inclusive = true }
                 }
@@ -219,7 +228,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("customerfeed")
                 },
                 onNavigateToProducts = {
-                    //TODO
+                    navController.navigate("cakeFeed")
                 },
                 onNavigateToConfectioner = {
                     val json = Json.encodeToString(it)
@@ -227,7 +236,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("confectionerpage/$encoded")
                 },
                 onNavigateToProduct = {
-                    //TODO
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("productView/$encoded")
                 },
                 bottomBar = {
                     AppBottomBar(currentScreen = Screen.MAIN, navController = navController)
@@ -253,7 +264,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 onNavigateToProductEdit = {
                     val json = Json.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
-                    // TODO:navController.navigate("/$encoded")
+                    navController.navigate("addProduct/$encoded")
                 }
             )
         }
@@ -285,6 +296,33 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             )
         }
         composable(
+            "makecakegenerated/{confectionerJson}",
+            arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
+        ) {
+            val viewModel: SelfMadeCakeGeneratorViewModel = hiltViewModel()
+            SelfMadeCakeGeneratorStatefulScreen(
+                viewModel = viewModel,
+                onDone = {
+                    navController.navigate("customerOrders") {
+                        popUpTo("mainCustomer")
+                    }
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Генерация торта",
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                },
+            )
+        }
+        composable(
             "confectionerpage/{confectionerJson}",
             arguments = listOf(navArgument("confectionerJson") { type = NavType.StringType })
         ) {
@@ -297,7 +335,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("makecake/$encoded")
                 },
                 onNavigateToProduct = {
-                    //TODO
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("productView/$encoded")
                 },
                 onError = {
                     navController.navigate("login") {
@@ -514,9 +554,14 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     onViewOrders = {
                         navController.navigate("confectionerOrders")
                     },
-                    onChangeCustomCake = { /*TODO*/ },
+                    onChangeCustomCake = {
+                        navController.navigate("customSettings") },
                     onWithdraw = { navController.navigate("withdraw") },
-                    onAddCake = { /*TODO*/ },
+                    onAddCake = {
+                        val json = Json.encodeToString(it)
+                        val encoded = URLEncoder.encode(json, "UTF-8")
+                        navController.navigate("addProduct/$encoded")
+                                },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
@@ -544,6 +589,28 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                     Log.println(Log.INFO, "Log", "Exit")
                 })
+        }
+
+        composable(
+            "addProduct/{cake}",
+            arguments = listOf(navArgument("cake") {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null })
+        ) { backStackEntry ->
+            val viewModel = hiltViewModel<AddProductViewModel>(backStackEntry)
+            AddProductStatefulScreen (
+                viewModel = viewModel,
+                onMove = {
+                    navController.navigate("profile")
+                },
+                topBar = {
+                    TopNameBar(
+                        name = "Добавить товар",
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+            )
         }
 
         composable("withdraw") {
@@ -598,6 +665,57 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             }, onSave = {
                 navController.popBackStack()
             }, topBar = {
+                TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
+            })
+        }
+
+        composable("cakeFeed") {
+            CakesFeedStatefulScreen (
+                onNavigate = {
+                val json = Json.encodeToString(it)
+                val encoded = URLEncoder.encode(json, "UTF-8")
+                navController.navigate("productView/$encoded")
+            }, onBackClick = {
+                navController.popBackStack()
+            }, onError = {
+                navController.navigate("login") {
+                    popUpTo(0)
+                }
+            })
+        }
+
+        composable(
+            "productView/{cake}",
+            arguments = listOf(navArgument("cake") { type = NavType.StringType })
+        ) {
+            val viewModel = hiltViewModel<ProductViewModel>()
+            ProductViewStatefulScreen (
+                viewModel = viewModel,
+                onConfectionerClick = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("confectionerpage/$encoded")
+                },
+                onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                },
+                topBar = {
+                    TopNameBar("Заказ") {
+                        navController.popBackStack()
+                    }
+                }
+            )
+        }
+
+        composable("customSettings") {
+            val viewModel = hiltViewModel<CustomSettingsViewModel>()
+            CustomSettingsStatefulScreen(
+                viewModel = viewModel,
+                onSave = {
+                    navController.popBackStack()
+                }, topBar = {
                 TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
             })
         }

@@ -41,11 +41,12 @@ fun DiameterSlider(onChange: (Float) -> Unit, diameter: Float, valueRange: Close
                 "Диаметр торта",
                 style = TextStyles.header(colorResource(R.color.dark_text))
             )
+            val steps = ceil((valueRange.endInclusive - valueRange.start) / 5).toInt() - 1
             AccentSlider(
                 diameterState,
                 onChange,
                 valueRange = valueRange,
-                steps = ceil((valueRange.endInclusive - valueRange.start) / 5).toInt() - 1,
+                steps = if (steps <= 0) 0 else steps,
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .padding(23.dp, 0.dp)

@@ -2,13 +2,13 @@ package dev.tp_94.mobileapp.self_made_cake.presentation
 
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Restrictions
 
 data class SelfMadeCakeState(
     var colorPickerOpen: Boolean = false,
-    var textImageEditor: Editor = Editor.IMAGE,
+    var textImageEditor: Editor = Editor.TEXT,
     val cakeCustom: CakeCustom,
-    val confectioner: Confectioner,
     val isLoading: Boolean = false,
-    val fillings: List<String> = emptyList()
-
+    val restrictions: Restrictions,
+    val error: String? = null
 )

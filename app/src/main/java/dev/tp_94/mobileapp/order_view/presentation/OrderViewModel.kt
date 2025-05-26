@@ -50,9 +50,10 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val result = updateOrderStatusUseCase.execute(state.value.order, status, price)
             if (result is OrdersResult.Success.SuccessUpdate) {
-                _state.value = _state.value.copy(order = result.order)
+                _state.value = _state.value.copy(order = result.order, error = "")
+            } else if (result is OrdersResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
             }
-            //TODO: add error handling
         }
     }
 
@@ -61,9 +62,10 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             val result = updateOrderStatusUseCase.execute(state.value.order, status, state.value.order.price)
             if (result is OrdersResult.Success.SuccessUpdate) {
-                _state.value = _state.value.copy(order = result.order)
+                _state.value = _state.value.copy(order = result.order, error = "")
+            } else if (result is OrdersResult.Error) {
+                _state.value = _state.value.copy(error = result.message)
             }
-            //TODO: add error handling
         }
     }
 

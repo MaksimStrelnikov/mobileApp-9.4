@@ -2,15 +2,22 @@ package dev.tp_94.mobileapp.orders.domain
 
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.orders.presentation.OrdersResult
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import javax.inject.Inject
 
 class UpdateOrderStatusUseCase @Inject constructor(private val repository: OrderRepository) {
     suspend fun execute(order: Order, status: OrderStatus, price: Int): OrdersResult {
-        return try{
-            OrdersResult.Success.SuccessUpdate(repository.updateOrderStatus(order, price, status))
+        return try {
+            val dto = repository.updateOrderStatus(
+                orderId = order.id,
+                OrderPatchRequestDTO(
+                    price = price,
+                    orderStatus = status
+                )
+            )
+            OrdersResult.Success.SuccessUpdate(dto.toOrder(order.customer, order.confectioner))
         } catch (e: Exception) {
             OrdersResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

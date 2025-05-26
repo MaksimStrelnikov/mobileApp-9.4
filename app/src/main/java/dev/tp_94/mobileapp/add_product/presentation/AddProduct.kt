@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,16 +36,16 @@ import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.core.themes.NameEditor
 import dev.tp_94.mobileapp.core.themes.NumberEditor
 import dev.tp_94.mobileapp.core.themes.WeightEditor
+import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.Confectioner
 
 
 @Composable
 fun AddProductStatefulScreen(
     viewModel: AddProductViewModel = hiltViewModel(),
-    onError: () -> Unit,
-    onSave: () -> Unit,
+    onMove: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    //TODO: rewrite onError logic
     val state = viewModel.state.collectAsStateWithLifecycle()
     AddProductStatelessScreen(
         state.value,
@@ -57,10 +56,10 @@ fun AddProductStatefulScreen(
         onWorkPeriodChange = { viewModel.updateWorkPeriod(it) },
         onPriceChange = { viewModel.updatePrice(it) },
         onImageChange = { viewModel.updateImage(it) },
-        onCancellation = { viewModel.cancel() },
-        onDelete = { viewModel.delete() },
+        onCancellation = onMove,
+        onDelete = { viewModel.delete(onMove) },
         onSave = {
-            viewModel.save(onSave)
+            viewModel.save(onMove)
         },
         topBar = topBar
     )
@@ -76,7 +75,7 @@ fun AddProductStatelessScreen(
     onWeightChange: (String) -> Unit,
     onWorkPeriodChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
-    onImageChange: (Uri?) -> Unit,
+    onImageChange: (String?) -> Unit,
     onSave: () -> Unit,
     onCancellation: () -> Unit,
     onDelete: () -> Unit,
@@ -98,19 +97,19 @@ fun AddProductStatelessScreen(
 
             CakeImageAddition (
                 onAdd = onImageChange,
-                imageUri = state.image
+                imageUrl = state.cakeGeneral.imageUrl
             )
             Spacer(Modifier.height(16.dp))
             NameEditor(
                 onChange = { onNameChange(it) },
-                text = state.name,
+                text = state.cakeGeneral.name,
                 defaultText = "Название",
                 backgroundColor = colorResource(R.color.dark_background)
             )
             Spacer(Modifier.height(8.dp))
             DescriptionEditor(
                 onChange = { onDescriptionChange(it) },
-                text = state.description,
+                text = state.cakeGeneral.description,
                 defaultText = "Описание",
                 backgroundColor = colorResource(R.color.dark_background),
                 modifier = Modifier.height(108.dp),
@@ -118,7 +117,7 @@ fun AddProductStatelessScreen(
             Spacer(Modifier.height(8.dp))
             NumberEditor(
                 onValueChange = { onDiameterChange(it) },
-                value = state.diameter,
+                value = state.cakeGeneral.diameter.toString(),
                 label = "Диаметр изделия (см)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
@@ -126,13 +125,13 @@ fun AddProductStatelessScreen(
             Spacer(Modifier.height(8.dp))
             WeightEditor(
                 onChange = { onWeightChange(it) },
-                text = state.weight,
+                text = state.cakeGeneral.weight.toString(),
                 backgroundColor = colorResource(R.color.dark_background),
             )
             Spacer(Modifier.height(8.dp))
             NumberEditor(
                 onValueChange = { onWorkPeriodChange(it) },
-                value = state.workPeriod,
+                value = state.cakeGeneral.preparation.toString(),
                 label = "Время работы (дни)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
@@ -140,10 +139,16 @@ fun AddProductStatelessScreen(
             Spacer(Modifier.height(8.dp))
             PriceEditor(
                 onChange = { onPriceChange(it) },
-                text = state.price,
+                text = state.cakeGeneral.price.toString(),
                 backgroundColor = colorResource(R.color.dark_background),
             )
             Spacer(Modifier.height(16.dp))
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
+            }
             ActiveButton(
                 onClick = onSave,
                 modifier = Modifier
@@ -180,6 +185,7 @@ fun AddProductStatelessScreen(
                     style = TextStyles.button(color = colorResource(R.color.light_text))
                 )
             }
+
         }
     }
 }
@@ -192,7 +198,23 @@ fun PreviewAddProductStatelessScreen() {
     val state = remember {
         mutableStateOf(
             AddProductState(
-
+                cakeGeneral = CakeGeneral(
+                    name = "Тестовое название",
+                    description = "Тестовое описание",
+                    weight = 0.0f,
+                    diameter = 0.0f,
+                    preparation = 0,
+                    price = 0,
+                    imageUrl = null,
+                    confectioner = Confectioner(
+                        id = 0,
+                        name = "Тестовое имя",
+                        phoneNumber = "Тестовый номер",
+                        email = "Тестовый email",
+                        description = "Тестовое описание",
+                        address = "Тестовый адрес"
+                    ),
+                )
             )
         )
     }
@@ -200,13 +222,13 @@ fun PreviewAddProductStatelessScreen() {
     MaterialTheme {
         AddProductStatelessScreen(
             state = state.value,
-            onNameChange = { state.value = state.value.copy(name = it) },
-            onDescriptionChange = { state.value = state.value.copy(description = it) },
-            onDiameterChange = { state.value = state.value.copy(diameter = it) },
-            onWeightChange = { state.value = state.value.copy(weight = it) },
-            onWorkPeriodChange = { state.value = state.value.copy(workPeriod = it) },
-            onPriceChange = { state.value = state.value.copy(price = it) },
-            onImageChange = { state.value = state.value.copy(image = it) },
+            onNameChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(name = it)) },
+            onDescriptionChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(description = it)) },
+            onDiameterChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(diameter = it.toFloat())) },
+            onWeightChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(weight = it.toFloat())) },
+            onWorkPeriodChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(preparation = it.toInt())) },
+            onPriceChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(price = it.toInt())) },
+            onImageChange = { state.value = state.value.copy(cakeGeneral = state.value.cakeGeneral.copy(imageUrl = it)) },
             onSave = {},
             onCancellation = {},
             onDelete = {},

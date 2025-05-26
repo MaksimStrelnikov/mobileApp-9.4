@@ -2,18 +2,20 @@ package dev.tp_94.mobileapp.profile_editor.domain
 
 import android.util.Patterns
 import dev.tp_94.mobileapp.core.SessionCache
-import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.toConfectioner
 import dev.tp_94.mobileapp.login.domain.UserRepository
+import dev.tp_94.mobileapp.profile_editor.data.dto.ConfectionerUpdateDTO
 import dev.tp_94.mobileapp.profile_editor.presentation.SaveResult
 import javax.inject.Inject
 
-class ProfileEditorCustomerChangeUseCase @Inject constructor(
+class ConfectionerProfileChangeUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val sc: SessionCache
+    private val sessionCache: SessionCache
 ) {
-    suspend fun execute(name: String, phoneNumber: String, email: String): SaveResult {
-        if (sc.session == null || sc.session!!.user !is Customer) {
-            throw Exception("Has No Rights To Change Customer Profile")
+    suspend fun execute(name: String, phoneNumber: String, email: String, description: String, address: String): SaveResult {
+        if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
+            throw Exception("Has No Rights To Change Confectioner Profile")
         }
         if (name.isEmpty()) {
             return SaveResult.Error("Имя не указано")
@@ -24,15 +26,20 @@ class ProfileEditorCustomerChangeUseCase @Inject constructor(
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return SaveResult.Error("Некорректный формат адреса электронной почты")
         }
+        if (address.isEmpty()) {
+            return SaveResult.Error("Адрес не указано")
+        }
         try {
             val user = userRepository.update(
-                Customer(
-                    id = sc.session!!.user.id,
+                ConfectionerUpdateDTO(
                     name = name,
-                    phoneNumber = phoneNumber,
-                    email = email
+                    phone = phoneNumber,
+                    email = email,
+                    description = description,
+                    address = address,
                 )
-            )
+            ).toConfectioner()
+            sessionCache.updateUser(user)
             return SaveResult.Success(user)
         } catch (e: Exception) {
             return SaveResult.Error(e.message ?: "Возникла непредвиденная ошибка")

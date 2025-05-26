@@ -2,11 +2,15 @@ package dev.tp_94.mobileapp.core.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import dev.tp_94.mobileapp.login.data.dto.UserDTO
+import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
+import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
+import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface User {
-    val id: Int
+    val id: Long
     val name: String
     val phoneNumber: String
     val email: String
@@ -16,7 +20,7 @@ sealed interface User {
 @Json(name = "confectioner")
 @Serializable
 data class Confectioner(
-    override val id: Int,
+    override val id: Long,
     override val name: String,
     override val phoneNumber: String,
     override val email: String,
@@ -30,7 +34,7 @@ data class Confectioner(
 @Json(name = "customer")
 @Serializable
 data class Customer(
-    override val id: Int,
+    override val id: Long,
     override val name: String,
     override val phoneNumber: String,
     override val email: String
@@ -60,4 +64,31 @@ sealed interface UserPassword {
     val name: String
     val phoneNumber: String
     val email: String
+}
+
+fun Confectioner.toDto(password: String): ConfectionerRegisterDTO {
+    return ConfectionerRegisterDTO(
+        name = name,
+        phone = phoneNumber,
+        password = password,
+        email = email,
+        address = address
+    )
+}
+
+fun Customer.toDto(password: String): CustomerRegisterDTO {
+    return CustomerRegisterDTO(
+        name = name,
+        phone = phoneNumber,
+        password = password,
+        email = email
+    )
+}
+
+fun UserDTO.toConfectioner(): Confectioner {
+    return this.confectioner!!.toConfectioner()
+}
+
+fun UserDTO.toCustomer(): Customer {
+    return this.customer!!.toCustomer()
 }

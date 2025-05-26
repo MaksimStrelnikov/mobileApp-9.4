@@ -28,10 +28,15 @@ class SessionCacheImpl @Inject constructor(
 
     init {
         val json = sharedPreferences.getString("session", null)
-        session = json?.let { adapter.fromJson(it) }
+        session = try {
+            json?.let { adapter.fromJson(it) }
+        } catch (e: Exception) {
+            null
+        }
     }
 
 
+    @Synchronized
     override fun saveSession(session: Session) {
         sharedPreferences.edit()
             .putString("session", adapter.toJson(session))
@@ -39,9 +44,23 @@ class SessionCacheImpl @Inject constructor(
         this.session = session
     }
 
+    @Synchronized
+    override fun updateUser(user: User) {
+        if (session != null) {
+            session = session!!.copy(user = user)
+        }
+    }
 
+    @Synchronized
     override fun clearSession() {
         sharedPreferences.edit().remove("session").apply()
         this.session = null
+    }
+
+    @Synchronized
+    override fun updateToken(accessToken: String, refreshToken: String) {
+        if (session != null) {
+            session = session!!.copy(accessToken = accessToken, refreshToken = refreshToken)
+        }
     }
 }

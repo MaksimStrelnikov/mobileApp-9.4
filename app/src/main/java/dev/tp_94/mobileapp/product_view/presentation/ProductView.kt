@@ -47,8 +47,6 @@ fun ProductViewStatefulScreen(
     viewModel: ProductViewModel = hiltViewModel(),
     onConfectionerClick: (Confectioner) -> Unit,
     onError: () -> Unit,
-    //TODO: change when basket is ready (maybe move it to viewModel)
-    onBuy: (CakeGeneral) -> Unit,
     topBar: @Composable () -> Unit
 ) {
     val user = viewModel.getUser()
@@ -64,7 +62,7 @@ fun ProductViewStatefulScreen(
         image = null,
         userType = userType,
         onConfectionerClick = onConfectionerClick,
-        onBuy = if (userType == UserType.CUSTOMER) onBuy else null,
+        onBuy = { viewModel.addToBasket(it) },
         topBar = topBar
     )
 }

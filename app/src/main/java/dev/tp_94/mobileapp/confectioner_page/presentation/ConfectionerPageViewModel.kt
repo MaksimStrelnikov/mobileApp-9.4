@@ -2,19 +2,25 @@ package dev.tp_94.mobileapp.confectioner_page.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.confectioner_page.domain.AddToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import javax.inject.Inject
 
 @HiltViewModel
-class ConfectionerPageViewModel @Inject constructor(savedStateHandle: SavedStateHandle, private val sessionCache: SessionCache) : ViewModel() {
+class ConfectionerPageViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val sessionCache: SessionCache,
+    private val addToBasketUseCase: AddToBasketUseCase) : ViewModel() {
     private val _state = MutableStateFlow(
         ConfectionerPageState(
             savedStateHandle.get<String>("confectionerJson")
@@ -33,7 +39,13 @@ class ConfectionerPageViewModel @Inject constructor(savedStateHandle: SavedState
         return sessionCache.clearSession()
     }
 
-    fun addToBasket(it: CakeGeneral) {
-        //TODO
+    fun addToBasket(cake: CakeGeneral) {
+        viewModelScope.launch {
+            val response = addToBasketUseCase.execute(
+                    cake = cake,
+                    userPhone = getUser()?.phoneNumber ?: ""
+                )
+            //TODO or not: add error message
+        }
     }
 }

@@ -67,8 +67,7 @@ fun ProfileScreen(
                 onLogout()
             },
             onDeleteAccount = {
-                viewModel.deleteAccount()
-                onLogout()
+                viewModel.deleteAccount(onLogout)
             },
             onAddCake = confectionerRoutes.onAddCake,
             topBar = topBar
@@ -84,8 +83,9 @@ fun ProfileScreen(
                 onLogout()
             },
             onDeleteAccount = {
-                viewModel.deleteAccount()
-                onLogout()
+                viewModel.deleteAccount(
+                    onLogout = onLogout
+                )
             },
             topBar = topBar,
             bottomBar = bottomBar,

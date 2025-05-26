@@ -1,11 +1,12 @@
 package dev.tp_94.mobileapp.core.models
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Order(
-    val id: Int = 0,
+    val id: Long = 0,
     val cake: Cake,
     val date: LocalDate,
     val orderStatus: OrderStatus,
@@ -17,12 +18,25 @@ data class Order(
 
 enum class OrderStatus {
     //backend-fronted statuses
+    @SerializedName("pending_approval")
     PENDING_APPROVAL,
+
+    @SerializedName("pending_payment")
     PENDING_PAYMENT,
+
+    @SerializedName("in_progress")
     IN_PROGRESS,
+
+    @SerializedName("done")
     DONE,
+
+    @SerializedName("received")
     RECEIVED,
+
+    @SerializedName("canceled")
     CANCELED,
-    REJECTED,
+
+    @SerializedName("rejected")
+    REJECTED
     //frontend-only statuses
 }

@@ -22,7 +22,7 @@ import dev.tp_94.mobileapp.core.themes.SquareBox
 @Composable
 fun GeneratedImage(
     modifier: Modifier = Modifier,
-    imageUri: Uri?
+    imageUrl: String?
 ) {
     Box(
         modifier = Modifier
@@ -46,7 +46,7 @@ fun GeneratedImage(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (imageUri == null) {
+            if (imageUrl == null) {
                 val painter = rememberAsyncImagePainter(R.drawable.no_image)
                 Image(
                     painter = painter,
@@ -55,7 +55,7 @@ fun GeneratedImage(
                         .size(40.dp)
                 )
             }
-            imageUri?.let { uri ->
+            imageUrl?.let { uri ->
                 val painter = rememberAsyncImagePainter(uri)
                 Image(
                     painter = painter,

@@ -1,16 +1,13 @@
 package dev.tp_94.mobileapp.self_made_cake.domain
 
-import dev.tp_94.mobileapp.core.models.CakeCustom
-import dev.tp_94.mobileapp.core.models.CakeGeneral
-import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.models.Order
-import dev.tp_94.mobileapp.core.models.OrderStatus
-import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.orders.data.dto.OrderResponseDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 
 interface OrderRepository {
-    suspend fun placeCustomCakeOrder(cakeCustom: CakeCustom, customer: Customer, confectioner: Confectioner)
-    suspend fun placeGeneralCakeOrder(cakeGeneral: CakeGeneral, customer: Customer, amount: Int)
-    suspend fun getAllOrders(): List<Order>
-    suspend fun updateOrderStatus(order: Order, price: Int, status: OrderStatus): Order
+    suspend fun placeOrder(orderRequestDTO: OrderRequestDTO)
+    suspend fun placeOrder(orderFullRequestDTO: OrderFullRequestDTO)
+    suspend fun getAllOrders(): List<OrderResponseDTO>
+    suspend fun updateOrderStatus(orderId: Long, request: OrderPatchRequestDTO): OrderResponseDTO
 }

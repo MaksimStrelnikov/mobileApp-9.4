@@ -30,7 +30,7 @@ class OrdersViewModel @Inject constructor(
 
     fun getOrders() {
         viewModelScope.launch {
-            val result = getAllOrdersUseCase.execute(getUser())
+            val result = getAllOrdersUseCase.execute()
             if (result is OrdersResult.Success.SuccessGet) {
                 _state.value = _state.value.copy(orders = result.orders)
             }

@@ -52,19 +52,18 @@ class BasketViewModel @Inject constructor(
         }
     }
 
-    private lateinit var _state: MutableStateFlow<BasketState>
-    lateinit var state: StateFlow<BasketState>
+    private val _state = MutableStateFlow(BasketState())
+    val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
             val result = getBasketUseCase.execute()
-            _state = if (result is BasketResult.Success) {
-                MutableStateFlow(BasketState(items = result.basket))
+            _state.value = _state.value.copy(items = if (result is BasketResult.Success) {
+                result.basket
             } else {
-                MutableStateFlow(BasketState())
+                emptyList()
                 //TODO: add error messaging to user
-            }
-            state = _state.asStateFlow()
+            })
         }
     }
 

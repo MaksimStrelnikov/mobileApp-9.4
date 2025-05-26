@@ -6,8 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.profile_editor.domain.ProfileEditorConfectionerChangeUseCase
-import dev.tp_94.mobileapp.profile_editor.domain.ProfileEditorCustomerChangeUseCase
+import dev.tp_94.mobileapp.profile_editor.domain.ConfectionerProfileChangeUseCase
+import dev.tp_94.mobileapp.profile_editor.domain.CustomerEditorChangeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class ProfileEditorViewModel @Inject constructor(
 @HiltViewModel
 class ProfileEditorCustomerViewModel @Inject constructor(
     sessionCache: SessionCache,
-    private val profileEditorCustomerChangeUseCase: ProfileEditorCustomerChangeUseCase
+    private val customerEditorChangeUseCase: CustomerEditorChangeUseCase
 ) : ViewModel() {
 
     fun updatePhoneNumber(phoneNumber: String) {
@@ -45,7 +45,7 @@ class ProfileEditorCustomerViewModel @Inject constructor(
     fun save(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = profileEditorCustomerChangeUseCase.execute(
+            val response = customerEditorChangeUseCase.execute(
                 phoneNumber = state.value.phoneNumber,
                 name = state.value.name,
                 email = state.value.email
@@ -86,7 +86,7 @@ class ProfileEditorCustomerViewModel @Inject constructor(
 @HiltViewModel
 class ProfileEditorConfectionerViewModel @Inject constructor(
     sessionCache: SessionCache,
-    private val profileEditorConfectionerChangeUseCase: ProfileEditorConfectionerChangeUseCase
+    private val confectionerProfileChangeUseCase: ConfectionerProfileChangeUseCase
 ) : ViewModel() {
 
     fun updatePhoneNumber(phoneNumber: String) {
@@ -112,7 +112,7 @@ class ProfileEditorConfectionerViewModel @Inject constructor(
     fun save(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val response = profileEditorConfectionerChangeUseCase.execute(
+            val response = confectionerProfileChangeUseCase.execute(
                 phoneNumber = state.value.phoneNumber,
                 name = state.value.name,
                 email = state.value.email,
