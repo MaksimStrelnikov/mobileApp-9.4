@@ -30,6 +30,7 @@ import dev.tp_94.mobileapp.confectioner_page.presentation.components.Confectione
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
 
@@ -87,6 +88,7 @@ fun ConfectionerPageStatelessScreen(
                     name = state.confectioner.name,
                     address = state.confectioner.address,
                     description = state.confectioner.description,
+                    restrictions = state.restrictions,
                     onButtonClick = onCakeCreation
                 )
 
@@ -132,6 +134,7 @@ fun PreviewConfectionerPageStatelessScreen() {
                 description = "TODO()",
                 address = "TODO()"
             ),
+            restrictions = Restrictions(true, true, true),
             products = arrayListOf(
                 CakeGeneral(
                     price = 1000,
