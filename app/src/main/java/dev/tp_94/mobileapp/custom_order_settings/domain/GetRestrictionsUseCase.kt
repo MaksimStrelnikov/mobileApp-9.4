@@ -15,7 +15,8 @@ class GetRestrictionsUseCase @Inject constructor(
             if (sessionCache.session == null) {
                 return RestrictionsResult.Error("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
             }
-            return RestrictionsResult.Success(repository.getCustomCakeRestrictions(confectioner.id).toRestrictions())
+            val dto = repository.getCustomCakeRestrictions(confectioner.id)
+            return RestrictionsResult.Success(dto.toRestrictions())
         } catch (e: Exception) {
             return RestrictionsResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }
