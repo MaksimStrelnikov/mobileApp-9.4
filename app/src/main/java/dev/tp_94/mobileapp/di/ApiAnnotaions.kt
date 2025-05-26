@@ -10,3 +10,7 @@ annotation class StableHordeApi
 @Retention(AnnotationRetention.BINARY)
 annotation class MainApi
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MainApiWithoutAuth
+

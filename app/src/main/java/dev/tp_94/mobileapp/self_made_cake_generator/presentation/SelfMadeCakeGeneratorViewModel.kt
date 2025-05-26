@@ -9,7 +9,10 @@ import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
+import dev.tp_94.mobileapp.custom_order_settings.presentation.RestrictionsResult
 import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeResult
 import dev.tp_94.mobileapp.self_made_cake_generator.domain.GenerateImageUseCase
@@ -25,7 +28,8 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
     private val sendCustomCakeUseCase: SendCustomCakeUseCase,
-    private val generateImageUseCase: GenerateImageUseCase
+    private val generateImageUseCase: GenerateImageUseCase,
+    private val getRestrictionsUseCase: GetRestrictionsUseCase
 ) : ViewModel() {
 
     fun updateFillings(value: List<String>) = _state.value
@@ -70,9 +74,8 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
             val result = sendCustomCakeUseCase.execute(
                 _state.value.cakeCustom,
                 (getUser() as Customer),
-                _state.value.confectioner,
-                _state.value.fillings
-            )
+                _state.value.restrictions
+                )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
                 _state.value = _state.value.copy(error = "")
@@ -83,6 +86,16 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
         }
     }
 
+    private fun getRestrictions() {
+        viewModelScope.launch {
+            val result = getRestrictionsUseCase.execute(confectioner)
+            if (result is RestrictionsResult.Success) {
+                _state.value = _state.value.copy(restrictions = result.restrictions)
+            }
+            //TODO: add error handling
+        }
+    }
+
     fun getUser(): User? {
         return sessionCache.session?.user
     }
@@ -90,6 +103,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     fun exit() {
         sessionCache.clearSession()
     }
+
     private val confectioner = savedStateHandle.get<String>("confectionerJson")
         ?.let { URLDecoder.decode(it, "UTF-8") }
         ?.let { Json.decodeFromString<Confectioner>(it) }
@@ -97,8 +111,14 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         SelfMadeCakeGeneratorState(
-        cakeCustom = CakeCustom(Color.Unspecified, 10f, confectioner = confectioner),
-        confectioner = confectioner
-    ))
+            cakeCustom = CakeCustom(Color.Unspecified, 10f, confectioner = confectioner),
+            confectioner = confectioner,
+            restrictions = Restrictions()
+        )
+    )
     val state = _state.asStateFlow()
+
+    init {
+        getRestrictions()
+    }
 }

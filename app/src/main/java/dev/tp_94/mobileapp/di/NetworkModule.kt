@@ -18,9 +18,12 @@ import dev.tp_94.mobileapp.core.data.RetrofitInstance
 import dev.tp_94.mobileapp.core.data.TokenAuthenticator
 import dev.tp_94.mobileapp.core.api.AuthApi
 import dev.tp_94.mobileapp.core.api.CakeApi
+import dev.tp_94.mobileapp.core.api.ConfectionerApi
 import dev.tp_94.mobileapp.core.api.OrderApi
 import dev.tp_94.mobileapp.core.api.RestrictionsApi
 import dev.tp_94.mobileapp.core.api.GenerationApi
+import dev.tp_94.mobileapp.core.api.RefreshApi
+import dev.tp_94.mobileapp.core.api.UserApi
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,6 +36,25 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    @Provides
+    @Singleton
+    @MainApiWithoutAuth
+    fun provideMainOkHttpClientWithoutAuth(
+        logging: HttpLoggingInterceptor
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
+
+    @Provides
+    @Singleton
+    @MainApiWithoutAuth
+    fun provideMainRetrofitWithoutAuth(@MainApiWithoutAuth client: OkHttpClient, gson: Gson): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(RetrofitInstance.MAIN_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
 
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
@@ -84,23 +106,28 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @StableHordeApi
-    fun provideHordeRetrofit(client: OkHttpClient, gson: Gson): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(RetrofitInstance.MAIN_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+    fun provideAuthApi(@MainApi retrofit: Retrofit): AuthApi =
+        retrofit.create(AuthApi::class.java)
 
     @Provides
     @Singleton
-    fun provideUserApi(@MainApi retrofit: Retrofit): AuthApi =
-        retrofit.create(AuthApi::class.java)
+    fun provideRefreshApi(@MainApiWithoutAuth retrofit: Retrofit): RefreshApi =
+        retrofit.create(RefreshApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUserApi(@MainApi retrofit: Retrofit): UserApi =
+        retrofit.create(UserApi::class.java)
 
     @Provides
     @Singleton
     fun provideOrderApi(@MainApi retrofit: Retrofit): OrderApi =
         retrofit.create(OrderApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideConfectionerApi(@MainApi retrofit: Retrofit): ConfectionerApi =
+        retrofit.create(ConfectionerApi::class.java)
 
     @Provides
     @Singleton

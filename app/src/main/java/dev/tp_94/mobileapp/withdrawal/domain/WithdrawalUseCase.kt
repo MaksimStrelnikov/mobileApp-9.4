@@ -15,8 +15,7 @@ class WithdrawalUseCase @Inject constructor(
         card: Card, sum: Int
     ): WithdrawalResult {
         try {
-            val response = repository.withdrawal(card, sum)
-            sessionCache.saveSession(Session(response.toConfectioner(), accessToken = "token" /*TODO: TOKENIZATION*/))
+            repository.withdrawal(card, sum)
             return WithdrawalResult.Success
         } catch (e: Exception) {
             return WithdrawalResult.Error(e.message ?: "Возникла непредвиденная ошибка")

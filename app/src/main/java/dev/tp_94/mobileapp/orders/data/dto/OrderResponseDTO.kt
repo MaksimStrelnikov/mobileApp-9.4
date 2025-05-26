@@ -24,7 +24,7 @@ data class OrderResponseDTO(
     fun toOrder(customer: Customer, confectioner: Confectioner): Order {
         return Order(
             id = this.id,
-            cake = if (this.cake.isCustom) this.cake.toCustom(confectioner) else this.cake.toGeneral(confectioner),
+            cake = if (this.cake.isCustom) this.cake.toCustom() else this.cake.toGeneral(),
             date = createdAt.toLocalDateTime(TimeZone.currentSystemDefault()).date,
             orderStatus = status,
             price = price,

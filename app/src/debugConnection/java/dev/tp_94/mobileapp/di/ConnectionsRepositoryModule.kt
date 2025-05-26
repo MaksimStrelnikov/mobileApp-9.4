@@ -21,8 +21,10 @@ import dev.tp_94.mobileapp.self_made_cake.domain.CakeRepository
 import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import dev.tp_94.mobileapp.self_made_cake.domain.RestrictionsRepository
 import dev.tp_94.mobileapp.core.api.GenerationApi
+import dev.tp_94.mobileapp.data.WithdrawalRepositoryImpl
 import dev.tp_94.mobileapp.self_made_cake_generator.data.GenerationRepositoryImpl
 import dev.tp_94.mobileapp.self_made_cake_generator.domain.GenerationRepository
+import dev.tp_94.mobileapp.withdrawal.domain.WithdrawalRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -56,5 +58,11 @@ object ConnectionsRepositoryModule {
     @Provides
     fun provideGenerationRepository(generationApi: GenerationApi): GenerationRepository {
         return GenerationRepositoryImpl(generationApi)
+    }
+
+    //TODO: await backend
+    @Provides
+    fun provideWithdrawalRepository(): WithdrawalRepository {
+        return WithdrawalRepositoryImpl()
     }
 }

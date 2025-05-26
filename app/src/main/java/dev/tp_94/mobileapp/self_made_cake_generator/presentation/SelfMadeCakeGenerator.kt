@@ -45,6 +45,7 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -299,6 +300,7 @@ fun PreviewSelfMadeCakeGeneratorStatelessScreen() {
                     "Ягодный", "Ореховый",
                     "Кокосовый", "Клубничный", "Лимонный"
                 ),
+                restrictions = Restrictions()
             )
         )
     }

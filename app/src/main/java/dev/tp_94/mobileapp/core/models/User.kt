@@ -86,24 +86,9 @@ fun Customer.toDto(password: String): CustomerRegisterDTO {
 }
 
 fun UserDTO.toConfectioner(): Confectioner {
-    return Confectioner(
-        id = this.id,
-        name = this.name,
-        phoneNumber = this.phone,
-        email = this.email,
-        description = this.description ?: "",
-        address = this.address ?: "",
-        //TODO BACKEND AWAITING
-        canWithdrawal = 0,
-        inProcess = 0
-    )
+    return this.confectioner!!.toConfectioner()
 }
 
 fun UserDTO.toCustomer(): Customer {
-    return Customer(
-        id = this.id,
-        name = this.name,
-        phoneNumber = this.phone,
-        email = this.email
-    )
+    return this.customer!!.toCustomer()
 }

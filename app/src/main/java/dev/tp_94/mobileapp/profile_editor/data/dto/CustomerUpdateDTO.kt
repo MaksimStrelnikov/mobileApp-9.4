@@ -6,5 +6,5 @@ data class CustomerUpdateDTO(
     @SerializedName("name") val name: String,
     @SerializedName("phone") val phone: String,
     @SerializedName("email")  val email: String,
-    @SerializedName("type") val type: String = "customer",
+    @SerializedName("type")  val type: String = "customer",
 )

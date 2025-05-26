@@ -102,7 +102,7 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
                 }
         },
         onBasketClick = {
-            if (currentScreen != Screen.ORDERS)
+            if (currentScreen != Screen.BASKET)
                 navController.navigate("basket") {
                     popUpTo("basket") { inclusive = true }
                 }

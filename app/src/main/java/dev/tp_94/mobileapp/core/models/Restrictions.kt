@@ -16,6 +16,13 @@ data class Restrictions(
 
 fun Restrictions.toDto(): RestrictionsRequestDTO {
     return RestrictionsRequestDTO(
-
+        canMakeCustom = isCustomAcceptable,
+        doImages = isImageAcceptable,
+        doShapes = isShapeAcceptable,
+        minDiameter = minDiameter,
+        maxDiameter = maxDiameter,
+        minEtaDays = minPreparationDays,
+        maxEtaDays = maxPreparationDays,
+        fillings = fillings
     )
 }

@@ -13,9 +13,10 @@ class GenerateImageUseCase @Inject constructor(
             if (prompt.isEmpty()) {
                 return SelfMadeCakeGeneratorResult.Error("Пустой запрос")
             }
-
+            return SelfMadeCakeGeneratorResult.Error("Функция не реализована")
+/*
             val imageUri = //TODO
-            return SelfMadeCakeGeneratorResult.Success(imageUri)
+            return SelfMadeCakeGeneratorResult.Success(imageUri)*/
         } catch (e: Exception) {
             return SelfMadeCakeGeneratorResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

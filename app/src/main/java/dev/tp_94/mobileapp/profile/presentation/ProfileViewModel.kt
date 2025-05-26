@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val sessionCache: SessionCache,
+class ProfileViewModel @Inject constructor(
+    private val sessionCache: SessionCache,
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) : ViewModel() {
 
@@ -32,9 +33,7 @@ class ProfileViewModel @Inject constructor(private val sessionCache: SessionCach
 
     fun deleteAccount(onLogout: () -> Unit) {
         viewModelScope.launch {
-            val response = deleteAccountUseCase.execute(
-                user = sessionCache.session?.user!!
-            )
+            val response = deleteAccountUseCase.execute()
             if (response is DeleteAccountResult.Error)
                 _state.value = _state.value.copy(error = response.message)
             else if (response is DeleteAccountResult.Success) {

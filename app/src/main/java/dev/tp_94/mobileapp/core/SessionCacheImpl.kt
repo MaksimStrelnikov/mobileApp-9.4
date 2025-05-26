@@ -28,7 +28,11 @@ class SessionCacheImpl @Inject constructor(
 
     init {
         val json = sharedPreferences.getString("session", null)
-        session = json?.let { adapter.fromJson(it) }
+        session = try {
+            json?.let { adapter.fromJson(it) }
+        } catch (e: Exception) {
+            null
+        }
     }
 
 

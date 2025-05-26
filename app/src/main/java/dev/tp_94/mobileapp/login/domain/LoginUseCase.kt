@@ -30,7 +30,11 @@ class LoginUseCase @Inject constructor(
             } else {
                 return LoginResult.Error("Пользователь не может быть авторизован")
             }
-            sessionCache.saveSession(Session(user, "token")) //TODO tokenization BACKEND AWAITING
+            sessionCache.saveSession(Session(
+                user = user,
+                accessToken = dto.accessToken,
+                refreshToken = dto.refreshToken
+            ))
             return LoginResult.Success(user)
         } catch (e: Exception) {
             LoginResult.Error(e.message ?: "Возникла непредвиденная ошибка")

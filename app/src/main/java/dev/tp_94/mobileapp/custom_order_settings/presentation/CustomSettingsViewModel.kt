@@ -3,6 +3,8 @@ package dev.tp_94.mobileapp.custom_order_settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tp_94.mobileapp.core.SessionCache
+import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
 import dev.tp_94.mobileapp.custom_order_settings.domain.UpdateRestrictionsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import javax.inject.Inject
 class CustomSettingsViewModel @Inject constructor(
     private val getRestrictionsUseCase: GetRestrictionsUseCase,
     private val updateRestrictionsUseCase: UpdateRestrictionsUseCase,
+    private val sessionCache: SessionCache
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         CustomSettingsState()
@@ -53,7 +56,8 @@ class CustomSettingsViewModel @Inject constructor(
 
     private fun getRestrictions() {
         viewModelScope.launch {
-            val result = getRestrictionsUseCase.execute()
+            //TODO: handle sessionCache.session!!.user is not a confectioner case
+            val result = getRestrictionsUseCase.execute(sessionCache.session!!.user as Confectioner)
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(
                     isCustomAcceptable = result.restrictions.isCustomAcceptable,

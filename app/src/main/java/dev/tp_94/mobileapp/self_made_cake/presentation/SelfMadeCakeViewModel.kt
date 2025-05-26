@@ -101,6 +101,7 @@ class SelfMadeCakeViewModel @Inject constructor(
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(restrictions = result.restrictions)
             }
+            //TODO: add error handling
         }
     }
 

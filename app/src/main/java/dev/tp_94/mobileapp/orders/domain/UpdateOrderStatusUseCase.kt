@@ -2,7 +2,6 @@ package dev.tp_94.mobileapp.orders.domain
 
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
-import dev.tp_94.mobileapp.orders.data.dto.toOrder
 import dev.tp_94.mobileapp.orders.presentation.OrdersResult
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository

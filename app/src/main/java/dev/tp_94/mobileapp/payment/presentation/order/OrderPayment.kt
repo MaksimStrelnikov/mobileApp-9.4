@@ -179,6 +179,7 @@ fun PreviewOrderPaymentStatelessScreen() {
                     imageUrl = null,
                     imageOffset = Offset.Zero,
                     fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
+                    confectioner = confectioner,
                 ),
                 date = LocalDate(2024, 12, 31),
                 orderStatus = OrderStatus.REJECTED,
