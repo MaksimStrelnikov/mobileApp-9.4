@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.core.data
 
+import android.util.Log
 import dev.tp_94.mobileapp.core.SessionCache
 import okhttp3.Interceptor
 import okhttp3.Response
