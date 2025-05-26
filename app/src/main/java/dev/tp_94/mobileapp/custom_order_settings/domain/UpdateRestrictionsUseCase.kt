@@ -24,8 +24,9 @@ class UpdateRestrictionsUseCase @Inject constructor(
         fillings: List<String>
     ): RestrictionsResult {
         try {
-            if (sessionCache.session!!.user !is Confectioner)
+            if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
                 throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
+            }
 
             if (isCustomAcceptable) {
                 if (minDiameter < 0 || maxDiameter < 0)
@@ -40,10 +41,6 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 if (minPreparationDays > maxPreparationDays)
                     return RestrictionsResult
                         .Error("Минимальное количество дней не может быть больше максимального")
-                if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
-                    throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
-                }
-
             }
 
             val restrictions = Restrictions(
