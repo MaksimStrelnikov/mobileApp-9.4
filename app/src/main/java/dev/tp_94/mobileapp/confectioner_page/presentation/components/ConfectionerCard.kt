@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -29,6 +31,7 @@ fun ConfectionerCard(
     name: String,
     address: String,
     description: String,
+    restrictions: Restrictions? = null,
     onMyProfileClick: (() -> Unit)? = null,
     onButtonClick: () -> Unit,
     customOrdersText: String = "Индивидуальный заказ"
@@ -68,7 +71,8 @@ fun ConfectionerCard(
                 }
                 Column(
                     modifier = Modifier
-                        .padding(8.dp, 8.dp, 8.dp, 0.dp).weight(1f)
+                        .padding(8.dp, 8.dp, 8.dp, 0.dp)
+                        .weight(1f)
                 ) {
                     Text(
                         text = name,
@@ -101,14 +105,32 @@ fun ConfectionerCard(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
             )
-            ActiveButton(
-                onClick = onButtonClick,
-                modifier = Modifier.fillMaxWidth().height(48.dp)
-            ) {
-                Text(
-                    text = customOrdersText,
-                    style = TextStyles.button(colorResource(R.color.light_background))
-                )
+            if (restrictions!= null && restrictions.isCustomAcceptable) {
+                ActiveButton(
+                    onClick = onButtonClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text(
+                        text = customOrdersText,
+                        style = TextStyles.button(colorResource(R.color.light_background))
+                    )
+                }
+                if (restrictions.isShapeAcceptable) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = "Можно сгенерировать свою идею",
+                        style = TextStyles.regular(colorResource(R.color.light_text)),
+                    )
+                }
+                if (restrictions.isImageAcceptable) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = "Работает с фото",
+                        style = TextStyles.regular(colorResource(R.color.light_text)),
+                    )
+                }
             }
         }
     }
@@ -122,6 +144,19 @@ fun PreviewConfectionerCard() {
         address = "asdflkgjhljkfsdhnljk;",
         description = "IHBKIJGRHUIGNTRLUOINTGHOINLHTINLIKFSGgfhlnjikftrdbuyioetruoibUOIHGUOINRInFHTJKnhtfoilk",
         onMyProfileClick = {},
-        onButtonClick = {}
+        onButtonClick = {},
+        restrictions = Restrictions(true, true, true)
+    )
+}
+
+@Preview
+@Composable
+fun PreviewConfectionerCard2() {
+    ConfectionerCard(
+        name = "Веснушка",
+        address = "asdflkgjhljkfsdhnljk;",
+        description = "",
+        onMyProfileClick = {},
+        onButtonClick = {},
     )
 }
