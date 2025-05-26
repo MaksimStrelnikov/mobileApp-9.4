@@ -32,9 +32,10 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     private val getRestrictionsUseCase: GetRestrictionsUseCase
 ) : ViewModel() {
 
-    fun updateFillings(value: List<String>) = _state.value
-        .copy(fillings = value).also { _state.value = it }
-
+    fun updateFillings(value: List<String>) {
+        _state.value =
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(fillings = value))
+    }
     fun setDiameter(diameter: Float) {
         _state.value =
             _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter))

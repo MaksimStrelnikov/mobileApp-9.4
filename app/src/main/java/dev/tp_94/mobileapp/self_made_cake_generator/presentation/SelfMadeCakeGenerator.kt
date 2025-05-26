@@ -183,7 +183,7 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             DiameterSlider(
                 onChange = onDiameterChange,
                 diameter = state.cakeCustom.diameter,
-                valueRange = 10f..40f
+                valueRange = state.restrictions.minDiameter..state.restrictions.maxDiameter
             )
             Spacer(modifier = Modifier.height(8.dp))
             val expandedState = remember { mutableStateOf(false) }
@@ -206,9 +206,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                             .fillMaxWidth(0.8f)
                             .background(colorResource(R.color.light_background)),
                     ) {
-                        //TODO: replace with state.confectioner.fillings
-                        val fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
-                        fillings.subtract(state.fillings).toList().forEach { filling ->
+                        val fillings = state.restrictions.fillings
+                        fillings.subtract(state.cakeCustom.fillings).toList().forEach { filling ->
                             DropdownMenuItem(
                                 text = {
                                     Text(
@@ -218,8 +217,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                                     )
                                 },
                                 onClick = {
-                                    if (!state.fillings.contains(filling)) {
-                                        onUpdateFillings(state.fillings + filling)
+                                    if (!state.cakeCustom.fillings.contains(filling)) {
+                                        onUpdateFillings(state.cakeCustom.fillings + filling)
                                     }
                                     updateExpanded(false)
                                 }
@@ -227,26 +226,26 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                         }
                     }
                 }
+
+                SectionHeader("Выбор начинки")
                 LazyRow (
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(state.fillings.size) { index ->
-                        val filling = state.fillings[index]
+                    items(state.cakeCustom.fillings.size) { index ->
+                        val filling = state.cakeCustom.fillings[index]
                         FillingAddEditable(
                             text = filling,
-                            onDelete = { onUpdateFillings(state.fillings - filling) }
+                            onDelete = { onUpdateFillings(state.cakeCustom.fillings - filling) }
                         )
                     }
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            SectionHeader("Выбор начинки")
             DatePickerButton(modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-                //TODO: replace with state.confectioner.workPeriod
-                minDaysFromToday = 2)
+                minDaysFromToday = state.restrictions.minPreparationDays,)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
@@ -294,12 +293,9 @@ fun PreviewSelfMadeCakeGeneratorStatelessScreen() {
     val state = remember {
         mutableStateOf(
             SelfMadeCakeGeneratorState(
-                cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
+                cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c,
+                    fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")),
                 confectioner = c,
-                fillings = listOf(
-                    "Ягодный", "Ореховый",
-                    "Кокосовый", "Клубничный", "Лимонный"
-                ),
                 restrictions = Restrictions()
             )
         )
