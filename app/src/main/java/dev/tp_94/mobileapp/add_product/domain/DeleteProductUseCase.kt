@@ -1,27 +1,25 @@
 package dev.tp_94.mobileapp.add_product.domain
 
-import dev.tp_94.mobileapp.add_product.presentation.AddProductResult
+import dev.tp_94.mobileapp.add_product.presentation.ProductResult
+import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Session
 import dev.tp_94.mobileapp.login.domain.UserRepository
+import dev.tp_94.mobileapp.self_made_cake.domain.CakeRepository
 import javax.inject.Inject
 
 class DeleteProductUseCase @Inject constructor(
-        private val userRepository: UserRepository,
-        //TODO
-    ) {
-        suspend fun execute(
-            cake: CakeGeneral
-        ): AddProductResult {
-
-            if (cake.name.isEmpty() || cake.description.isEmpty() || cake.diameter == 0f ||
-                cake.weight == 0f || cake.preparation == 0 || cake.price == 0) {
-                return AddProductResult.Error("Пожалуйста не очищайте параметры при удалении")
-            }
-            try {
-                /*TODO: tokenization - delete from the bd here*/
-                return AddProductResult.Success(cake)
-            } catch (e: Exception) {
-                return AddProductResult.Error(e.message ?: "Возникла непредвиденная ошибка")
-            }
+    private val sessionCache: SessionCache,
+    private val repository: CakeRepository
+) {
+    suspend fun execute(cake: CakeGeneral): ProductResult {
+        try {
+            if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) return ProductResult.Error("Недостачно прав для удаления продукта")
+            repository.deleteCake(cake.id)
+            return ProductResult.Success
+        } catch (e: Exception) {
+            return ProductResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }
     }
+}

@@ -1,4 +1,4 @@
-package dev.tp_94.mobileapp.confectioner_page.domain
+package dev.tp_94.mobileapp.confectioner_page.presentation
 
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 

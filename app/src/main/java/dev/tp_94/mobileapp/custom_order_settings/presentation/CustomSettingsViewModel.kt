@@ -3,8 +3,6 @@ package dev.tp_94.mobileapp.custom_order_settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.add_product.presentation.AddProductResult
-import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
 import dev.tp_94.mobileapp.custom_order_settings.domain.UpdateRestrictionsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

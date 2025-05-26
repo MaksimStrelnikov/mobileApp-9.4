@@ -46,6 +46,7 @@ import dev.tp_94.mobileapp.core.darken
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.DiscardButton
 import dev.tp_94.mobileapp.core.themes.DualButton
@@ -213,6 +214,7 @@ fun SelfMadeCakeStatelessScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //TODO: make dependent of restrictions isImageAcceptable
                     DualButton(
                         firstTitle = "Фото",
                         onFirstClick = onOpenImageChangeClick,
@@ -245,7 +247,7 @@ fun SelfMadeCakeStatelessScreen(
             DiameterSlider(
                 onChange = onDiameterChange,
                 diameter = state.cakeCustom.diameter,
-                valueRange = 10f..40f
+                valueRange = state.restrictions.minDiameter..state.restrictions.maxDiameter
             )
             Spacer(modifier = Modifier.height(8.dp))
             val expandedState = remember { mutableStateOf(false) }
@@ -268,8 +270,8 @@ fun SelfMadeCakeStatelessScreen(
                         .background(colorResource(R.color.light_background)),
                     ) {
                         //TODO: replace with state.confectioner.fillings
-                        val fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
-                        fillings.subtract(state.fillings).toList().forEach { filling ->
+                        val fillings = state.restrictions.fillings
+                        fillings.subtract(state.cakeCustom.fillings.toSet()).toList().forEach { filling ->
                             DropdownMenuItem(
                                 text = {
                                     Text(
@@ -279,8 +281,8 @@ fun SelfMadeCakeStatelessScreen(
                                     )
                                 },
                                 onClick = {
-                                    if (!state.fillings.contains(filling)) {
-                                        onUpdateFillings(state.fillings + filling)
+                                    if (!state.cakeCustom.fillings.contains(filling)) {
+                                        onUpdateFillings(state.cakeCustom.fillings + filling)
                                     }
                                     updateExpanded(false)
                                 }
@@ -292,11 +294,11 @@ fun SelfMadeCakeStatelessScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(state.fillings.size) { index ->
-                        val filling = state.fillings[index]
+                    items(state.cakeCustom.fillings.size) { index ->
+                        val filling = state.cakeCustom.fillings[index]
                         FillingAddEditable(
                             text = filling,
-                            onDelete = { onUpdateFillings(state.fillings - filling) }
+                            onDelete = { onUpdateFillings(state.cakeCustom.fillings - filling) }
                         )
                     }
                 }
@@ -304,8 +306,7 @@ fun SelfMadeCakeStatelessScreen(
             Spacer(modifier = Modifier.height(8.dp))
             SectionHeader("Выбор начинки")
             DatePickerButton(modifier = Modifier.fillMaxWidth().height(48.dp),
-                //TODO: replace with state.confectioner.workPeriod
-                minDaysFromToday = 2)
+                minDaysFromToday = state.restrictions.minPreparationDays,)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
@@ -363,8 +364,10 @@ fun PreviewSelfMadeCakeStatelessScreen() {
         SelfMadeCakeStatelessScreen(
             state = SelfMadeCakeState(
                 cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
-                confectioner = c,
-                fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный"),
+                restrictions = Restrictions(
+                    isImageAcceptable = true,
+                    fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
+                ),
             ),
             onImageDrag = {},
             onTextDrag = {},

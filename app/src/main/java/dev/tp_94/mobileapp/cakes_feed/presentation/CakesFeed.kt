@@ -136,6 +136,7 @@ fun CakesFeedStatelessScreen(
                             price = item.price,
                             onBuy = { onBuy(item) },
                             onOpen = { onOpen(item) },
+                            image = null //TODO: add image
                         )
                     }
 

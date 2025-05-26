@@ -4,12 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.confectioner_page.domain.MoveToBasketUseCase
+import dev.tp_94.mobileapp.confectioner_page.domain.AddToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
-import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
-import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +20,7 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
-    private val moveToBasketUseCase: MoveToBasketUseCase
+    private val addToBasketUseCase: AddToBasketUseCase
 ) : ViewModel() {
     private val json = Json { serializersModule = CakeSerializerModule.module }
 
@@ -43,7 +41,7 @@ class ProductViewModel @Inject constructor(
 
     fun addToBasket(cake: CakeGeneral) {
         viewModelScope.launch {
-            val response = moveToBasketUseCase.execute(
+            val response = addToBasketUseCase.execute(
                 cake = cake,
                 userPhone = getUser()?.phoneNumber ?: ""
             )

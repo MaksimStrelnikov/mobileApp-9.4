@@ -3,7 +3,7 @@ package dev.tp_94.mobileapp.main_customer.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.confectioner_page.domain.MoveToBasketUseCase
+import dev.tp_94.mobileapp.confectioner_page.domain.AddToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.User
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     getConfectionersUseCase: GetConfectionersUseCase,
-    private val moveToBasketUseCase: MoveToBasketUseCase
+    private val addToBasketUseCase: AddToBasketUseCase
 ) : ViewModel() {
     //TODO: add product request in init
     private val _state = MutableStateFlow(MainState())
@@ -43,7 +43,7 @@ class MainViewModel @Inject constructor(
 
     fun addToBasket(cake: CakeGeneral) {
         viewModelScope.launch {
-            val response = moveToBasketUseCase.execute(
+            val response = addToBasketUseCase.execute(
                     cake = cake,
                     userPhone = getUser()?.phoneNumber ?: ""
                 )

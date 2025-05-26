@@ -10,9 +10,7 @@ import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.order_view.presentation.OrderState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -73,9 +71,9 @@ class AddProductViewModel  @Inject constructor(
             val response = deleteProductUseCase.execute(
                 cake = state.value.cakeGeneral
             )
-            if (response is AddProductResult.Error) _state.value =
+            if (response is ProductResult.Error) _state.value =
                 _state.value.copy(error = response.message)
-            else if (response is AddProductResult.Success) {
+            else if (response is ProductResult.Success) {
                 _state.value = _state.value.copy(error = "")
                 onMove()
             }
@@ -89,9 +87,9 @@ class AddProductViewModel  @Inject constructor(
             val response = addProductUseCase.execute(
                 cake = state.value.cakeGeneral
             )
-            if (response is AddProductResult.Error) _state.value =
+            if (response is ProductResult.Error) _state.value =
                 _state.value.copy(error = response.message)
-            else if (response is AddProductResult.Success) {
+            else if (response is ProductResult.Success) {
                 _state.value = _state.value.copy(error = "")
                 onMove()
             }

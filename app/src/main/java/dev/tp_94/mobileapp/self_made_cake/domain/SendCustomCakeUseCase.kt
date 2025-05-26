@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.toArgb
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeCustomRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.presentation.SelfMadeCakeResult
@@ -16,22 +17,21 @@ class SendCustomCakeUseCase @Inject constructor(
     suspend fun execute(
         cake: CakeCustom,
         customer: Customer,
-        confectioner: Confectioner,
-        fillings: List<String>
+        restrictions: Restrictions
     ): SelfMadeCakeResult {
         try {
-            if (fillings.isNotEmpty() && confectioner.fillings != cake.fillings) {
+            if (cake.fillings.isNotEmpty() && !restrictions.fillings.containsAll(cake.fillings)) {
                 return SelfMadeCakeResult.Error("Этот кондитер не может приготовить такой торт")
             }
-            if (cake.diameter <= 0) {
-                return SelfMadeCakeResult.Error("Диаметр должен быть больше 0")
+            if (restrictions.minDiameter > cake.diameter || restrictions.maxDiameter < cake.diameter) {
+                return SelfMadeCakeResult.Error("Диаметр не соответствует требованиям кондитера")
             }
-            if (cake.preparation <= 0) {
-                return SelfMadeCakeResult.Error("Время приготовления должно быть больше 0")
+            if (cake.preparation < restrictions.minPreparationDays) {
+                return SelfMadeCakeResult.Error("Время приготовления не соответствует минимальным требованиям кондитера")
             }
             val cakeResponseDTO = cakeRepository.addCustomCake(
                 cakeCustomRequestDTO = CakeCustomRequestDTO(
-                    confectionerId = confectioner.id,
+                    confectionerId = cake.confectioner.id,
                     name = cake.name,
                     description = cake.description,
                     fillings = cake.fillings,

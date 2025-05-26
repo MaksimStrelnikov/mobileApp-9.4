@@ -1,22 +1,24 @@
 package dev.tp_94.mobileapp.self_made_cake.data.dto
 
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 data class CakeCustomRequestDTO(
-    val confectionerId: Long,
-    val name: String,
-    val description: String,
-    val fillings: List<String>,
-    val reqTime: Int,
-    val color: String,
-    val diameter: Float,
-    val text: String,
-    val textSize: Int,
-    val textX: Float,
-    val textY: Float,
-    val price: Int,
+    @SerializedName("confectioner_id") val confectionerId: Long,
+    @SerializedName("name") val name: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("fillings") val fillings: List<String>,
+    @SerializedName("req_time") val reqTime: Int,
+    @SerializedName("color") val color: String,
+    @SerializedName("diameter") val diameter: Float,
+    @SerializedName("text") val text: String,
+    @SerializedName("text_size") val textSize: Int,
+    @SerializedName("text_x") val textX: Float,
+    @SerializedName("text_y") val textY: Float,
+    @SerializedName("price") val price: Int,
 )
 
 fun CakeCustomRequestDTO.toParts(): Map<String, RequestBody> {
@@ -24,7 +26,7 @@ fun CakeCustomRequestDTO.toParts(): Map<String, RequestBody> {
         "confectioner_id" to confectionerId.toString().toRequestBody("text/plain".toMediaType()),
         "name" to name.toRequestBody("text/plain".toMediaType()),
         "description" to description.toRequestBody("text/plain".toMediaType()),
-        "fillings" to fillings.joinToString(",").toRequestBody("text/plain".toMediaType()), // если API не принимает массив напрямую
+        "fillings" to Gson().toJson(fillings).toRequestBody("application/json".toMediaType()), // если API не принимает массив напрямую
         "required_time" to reqTime.toString().toRequestBody("text/plain".toMediaType()),
         "color" to color.toRequestBody("text/plain".toMediaType()),
         "diameter" to diameter.toString().toRequestBody("text/plain".toMediaType()),

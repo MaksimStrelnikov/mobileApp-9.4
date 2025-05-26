@@ -1,16 +1,13 @@
 package dev.tp_94.mobileapp.signup.domain
 
 import android.util.Patterns
-import coil.map.Mapper
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Session
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.core.models.toConfectioner
 import dev.tp_94.mobileapp.core.models.toCustomer
 import dev.tp_94.mobileapp.core.models.toDto
-import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.signup.presenatation.SignUpResult
 import javax.inject.Inject
@@ -18,8 +15,6 @@ import javax.inject.Inject
 class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val sessionCache: SessionCache,
-    private val confectionerMapper: Mapper<UserResponseDTO, Confectioner>,
-    private val customerMapper: Mapper<UserResponseDTO, Customer>
 ) {
     suspend fun execute(
         phoneNumber: String,
@@ -47,9 +42,8 @@ class SignUpUseCase @Inject constructor(
             }
         }
         try {
-            val user: User
-            if (isConfectioner) {
-                user = userRepository.add(
+            val dto = if (isConfectioner) {
+                userRepository.add(
                     Confectioner(
                         name = name,
                         phoneNumber = phoneNumber,
@@ -60,18 +54,23 @@ class SignUpUseCase @Inject constructor(
                         canWithdrawal = 0,
                         inProcess = 0
                     ).toDto(password)
-                ).toConfectioner()
+                )
             } else {
-                user = userRepository.add(
+                userRepository.add(
                     Customer(
                         id = 0,
                         name = name,
                         phoneNumber = phoneNumber,
                         email = email
                     ).toDto(password)
-                ).toCustomer()
+                )
             }
-            sessionCache.saveSession(Session(user, "token" /*TODO: tokenization BACKEND AWAITING*/))
+            val user = if (isConfectioner) {
+                dto.toConfectioner()
+            } else {
+                dto.toCustomer()
+            }
+            sessionCache.saveSession(Session(user, dto.accessToken, dto.refreshToken))
             return SignUpResult.Success(user)
         } catch (e: Exception) {
             return SignUpResult.Error(e.message ?: "Возникла непредвиденная ошибка")

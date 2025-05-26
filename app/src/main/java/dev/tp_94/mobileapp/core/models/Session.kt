@@ -2,5 +2,6 @@ package dev.tp_94.mobileapp.core.models
 
 data class Session(
     val user: User,
-    val token: String
+    val accessToken: String,
+    val refreshToken: String
 )

@@ -4,6 +4,7 @@ import dev.tp_94.mobileapp.self_made_cake_generator.presentation.SelfMadeCakeGen
 import javax.inject.Inject
 
 class GenerateImageUseCase @Inject constructor(
+    private val generationRepository: GenerationRepository
 ) {
     suspend fun execute(
        prompt: String

@@ -8,9 +8,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
 }
 
+val apiKey = project.findProperty("API_KEY") ?: System.getenv("API_KEY") ?: ""
+
 android {
     namespace = "dev.tp_94.mobileapp"
     compileSdk = 35
+    android.buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "dev.tp_94.mobileapp"
@@ -18,6 +21,8 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

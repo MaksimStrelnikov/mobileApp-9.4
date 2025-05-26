@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.self_made_cake.presentation
 
-import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
@@ -11,7 +10,10 @@ import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.models.Restrictions
 import dev.tp_94.mobileapp.core.models.User
+import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
+import dev.tp_94.mobileapp.custom_order_settings.presentation.RestrictionsResult
 import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,11 +26,11 @@ import javax.inject.Inject
 class SelfMadeCakeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
-    private val sendCustomCakeUseCase: SendCustomCakeUseCase
+    private val sendCustomCakeUseCase: SendCustomCakeUseCase,
+    private val getRestrictionsUseCase: GetRestrictionsUseCase
 ) : ViewModel() {
 
-    fun updateFillings(value: List<String>) = _state.value
-        .copy(fillings = value).also { _state.value = it }
+    fun updateFillings(value: List<String>) = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(fillings = value)).also { _state.value = it }
 
     fun openColorPicker() {
         _state.value = _state.value.copy(colorPickerOpen = true)
@@ -81,8 +83,7 @@ class SelfMadeCakeViewModel @Inject constructor(
             val result = sendCustomCakeUseCase.execute(
                 _state.value.cakeCustom,
                 (getUser() as Customer),
-                _state.value.confectioner,
-                _state.value.fillings
+                _state.value.restrictions
             )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
@@ -91,6 +92,15 @@ class SelfMadeCakeViewModel @Inject constructor(
                 _state.value = _state.value.copy(error = result.message)
             }
             _state.value = _state.value.copy(isLoading = false)
+        }
+    }
+
+    private fun getRestrictions() {
+        viewModelScope.launch {
+            val result = getRestrictionsUseCase.execute(confectioner)
+            if (result is RestrictionsResult.Success) {
+                _state.value = _state.value.copy(restrictions = result.restrictions)
+            }
         }
     }
 
@@ -115,8 +125,12 @@ class SelfMadeCakeViewModel @Inject constructor(
                 10f,
                 confectioner = confectioner
             ),
-            confectioner = confectioner
+            restrictions = Restrictions()
         )
     )
     val state = _state.asStateFlow()
+
+    init {
+        getRestrictions()
+    }
 }

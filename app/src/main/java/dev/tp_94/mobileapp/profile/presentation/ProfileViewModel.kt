@@ -3,7 +3,6 @@ package dev.tp_94.mobileapp.profile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.add_product.presentation.AddProductResult
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.profile.domain.DeleteAccountUseCase

@@ -3,12 +3,14 @@ package dev.tp_94.mobileapp.custom_order_settings.domain
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.custom_order_settings.presentation.RestrictionsResult
-import dev.tp_94.mobileapp.self_made_cake.domain.RestrictionRepository
+import dev.tp_94.mobileapp.self_made_cake.domain.RestrictionsRepository
 import dev.tp_94.mobileapp.core.models.Restrictions
+import dev.tp_94.mobileapp.core.models.toDto
+import dev.tp_94.mobileapp.custom_order_settings.data.RestrictionsResponseDTO
 import javax.inject.Inject
 
 class UpdateRestrictionsUseCase @Inject constructor(
-    private val repository: RestrictionRepository,
+    private val repository: RestrictionsRepository,
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(
@@ -38,6 +40,10 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 if (minPreparationDays > maxPreparationDays)
                     return RestrictionsResult
                         .Error("Минимальное количество дней не может быть больше максимального")
+                if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
+                    throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
+                }
+
             }
 
             val restrictions = Restrictions(
@@ -48,14 +54,13 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 maxDiameter = maxDiameter,
                 minPreparationDays = minPreparationDays,
                 maxPreparationDays = maxPreparationDays,
-                fillings = fillings,
-                confectioner = sessionCache.session!!.user as Confectioner
+                fillings = fillings
             )
-            if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
-                throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
-            }
-            val result = repository.updateCustomCakeRestrictions(restrictions)
-            return RestrictionsResult.Success(result)
+            val result = repository.updateCustomCakeRestrictions(
+                (sessionCache.session!!.user as Confectioner).id,
+                restrictions.toDto()
+            )
+            return RestrictionsResult.Success(result.toRestrictions())
         } catch (e: Exception) {
             return RestrictionsResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

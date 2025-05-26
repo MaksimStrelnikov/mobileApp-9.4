@@ -1,10 +1,16 @@
 package dev.tp_94.mobileapp.self_made_cake.data.dto
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
 
 data class CakeResponseDTO(
     @SerializedName("id") val id: Long,
-    @SerializedName("confectioner_id") val confectionerId: Long,
+    @SerializedName("confectioner") val confectioner: ConfectionerResponseDTO,
     @SerializedName("name") val name: String,
     @SerializedName("description") val description: String,
     @SerializedName("fillings") val fillings: List<String>,
@@ -19,4 +25,32 @@ data class CakeResponseDTO(
     @SerializedName("text_x") val textX: Float,
     @SerializedName("text_y") val textY: Float,
     @SerializedName("is_custom") val isCustom: Boolean
-)
+) {
+    fun toCustom(): CakeCustom = CakeCustom(
+        name = name,
+        color = Color(color),
+        diameter = diameter,
+        text = text,
+        textOffset = Offset(textX, textY),
+        imageUrl = imageUrl,
+        imageOffset = Offset(0f, 0f),
+        fillings = fillings,
+        preparation = requiredTime,
+        description = description,
+        confectioner = confectioner.toConfectioner()
+    )
+
+
+    fun toGeneral(): CakeGeneral = CakeGeneral(
+        id = id,
+        price = price,
+        imageUrl = imageUrl,
+        name = name,
+        description = description,
+        diameter = diameter,
+        weight = weight,
+        preparation = requiredTime,
+        confectioner = confectioner.toConfectioner()
+    )
+
+}

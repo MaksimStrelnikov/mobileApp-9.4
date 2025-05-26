@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItemEditable
@@ -105,7 +106,7 @@ fun MainConfectionerStatelessScreen(
                             preparation = product.preparation,
                             price = product.price,
                             onOpen = { onEdit(product) },
-                            image = null
+                            image = rememberAsyncImagePainter(product.imageUrl)
                         )
                     }
                 }

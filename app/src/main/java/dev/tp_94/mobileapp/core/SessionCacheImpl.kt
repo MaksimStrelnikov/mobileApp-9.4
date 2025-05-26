@@ -32,6 +32,7 @@ class SessionCacheImpl @Inject constructor(
     }
 
 
+    @Synchronized
     override fun saveSession(session: Session) {
         sharedPreferences.edit()
             .putString("session", adapter.toJson(session))
@@ -39,9 +40,23 @@ class SessionCacheImpl @Inject constructor(
         this.session = session
     }
 
+    @Synchronized
+    override fun updateUser(user: User) {
+        if (session != null) {
+            session = session!!.copy(user = user)
+        }
+    }
 
+    @Synchronized
     override fun clearSession() {
         sharedPreferences.edit().remove("session").apply()
         this.session = null
+    }
+
+    @Synchronized
+    override fun updateToken(accessToken: String, refreshToken: String) {
+        if (session != null) {
+            session = session!!.copy(accessToken = accessToken, refreshToken = refreshToken)
+        }
     }
 }

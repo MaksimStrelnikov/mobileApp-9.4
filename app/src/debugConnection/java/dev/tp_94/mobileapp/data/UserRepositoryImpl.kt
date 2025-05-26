@@ -1,56 +1,74 @@
 package dev.tp_94.mobileapp.data
 
-import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.models.Session
-import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.login.data.UserApi
+import dev.tp_94.mobileapp.core.api.AuthApi
 import dev.tp_94.mobileapp.login.data.dto.UserLoginDTO
 import dev.tp_94.mobileapp.core.data.HttpStatus.*
-import dev.tp_94.mobileapp.core.models.toDto
 import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
+import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
+import dev.tp_94.mobileapp.core.api.UserApi
+import dev.tp_94.mobileapp.profile_editor.data.dto.ConfectionerUpdateDTO
+import dev.tp_94.mobileapp.profile_editor.data.dto.CustomerUpdateDTO
 import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
 import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val api: UserApi
+    private val authApi: AuthApi,
+    private val userApi: UserApi
 ) : UserRepository {
-    override suspend fun login(loginDTO: UserLoginDTO): UserResponseDTO {
-        val response = api.login(loginDTO)
-        if (response.code() == OK.status) {
+    override suspend fun login(loginDTO: UserLoginDTO): UserResponseWithTokensDTO {
+        val response = authApi.login(loginDTO)
+        if (response.isSuccessful) {
             return response.body()!!
-        } else if (response.code() == UNAUTHORIZED.status || response.code() == FORBIDDEN.status) {
+        } else if (response.code() == FORBIDDEN.status || response.code() == UNAUTHORIZED.status) {
             throw Exception("Неверный логин или пароль")
         }
-        throw Exception("Неизвестная ошибка")
+        throw Exception(response.message())
     }
 
-    override suspend fun add(confectioner: ConfectionerRegisterDTO): UserResponseDTO {
-        val response = api.registerConfectioner(confectioner)
-        if (response.code() == CREATED.status) {
+    override suspend fun add(confectioner: ConfectionerRegisterDTO): UserResponseWithTokensDTO {
+        val response = authApi.registerConfectioner(confectioner)
+        if (response.isSuccessful) {
             return response.body()!!
         } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
-            throw Exception("Неизвестная ошибка")
+            throw Exception(response.message())
         }
     }
 
-    override suspend fun add(customer: CustomerRegisterDTO): UserResponseDTO {
-        val response = api.registerCustomer(customer)
-        if (response.code() == CREATED.status) {
+    override suspend fun add(customer: CustomerRegisterDTO): UserResponseWithTokensDTO {
+        val response = authApi.registerCustomer(customer)
+        if (response.isSuccessful) {
             return response.body()!!
         } else if (response.code() == CONFLICT.status) {
             throw Exception("Пользователь с таким номером уже зарегистрирован")
         } else {
-            throw Exception("Неизвестная ошибка")
+            throw Exception(response.message())
         }
     }
 
-    override suspend fun update(user: User): User {
-        TODO("Not yet implemented")
+    override suspend fun update(customer: CustomerUpdateDTO): UserResponseDTO {
+        val response = userApi.updateCustomer(customer)
+        if (response.isSuccessful) {
+            return response.body()!!
+        } else {
+            throw Exception(response.message())
+        }
     }
 
+    override suspend fun update(confectioner: ConfectionerUpdateDTO): UserResponseDTO {
+        val response = userApi.updateConfectioner(confectioner)
+        if (response.isSuccessful) {
+            return response.body()!!
+        } else {
+            throw Exception(response.message())
+        }
+    }
+
+    override suspend fun delete() {
+        val response = userApi.deleteAccount()
+        if (!response.isSuccessful) throw Exception(response.message())
+    }
 }

@@ -2,10 +2,10 @@ package dev.tp_94.mobileapp.core.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
+import dev.tp_94.mobileapp.login.data.dto.UserDTO
+import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
 import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
 import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
-import dev.tp_94.mobileapp.signup.data.UserRegisterDTO
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -85,7 +85,7 @@ fun Customer.toDto(password: String): CustomerRegisterDTO {
     )
 }
 
-fun UserResponseDTO.toConfectioner(): Confectioner {
+fun UserDTO.toConfectioner(): Confectioner {
     return Confectioner(
         id = this.id,
         name = this.name,
@@ -99,7 +99,7 @@ fun UserResponseDTO.toConfectioner(): Confectioner {
     )
 }
 
-fun UserResponseDTO.toCustomer(): Customer {
+fun UserDTO.toCustomer(): Customer {
     return Customer(
         id = this.id,
         name = this.name,
