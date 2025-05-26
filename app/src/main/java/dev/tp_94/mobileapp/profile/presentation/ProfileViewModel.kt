@@ -42,4 +42,8 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteAccount() {
+        // TODO: delete account
+    }
 }

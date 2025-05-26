@@ -285,6 +285,11 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         popUpTo(0)
                     }
                 },
+                onGenerate = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("makecakegenerated/$encoded")
+                },
                 topBar = {
                     TopNameBar(
                         name = "Редактор торта",
@@ -558,9 +563,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         navController.navigate("customSettings") },
                     onWithdraw = { navController.navigate("withdraw") },
                     onAddCake = {
-                        val json = Json.encodeToString(it)
-                        val encoded = URLEncoder.encode(json, "UTF-8")
-                        navController.navigate("addProduct/$encoded")
+                        navController.navigate("addProduct/null")
                                 },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {

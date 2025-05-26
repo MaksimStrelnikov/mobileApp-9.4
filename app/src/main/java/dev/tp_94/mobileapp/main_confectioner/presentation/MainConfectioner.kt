@@ -86,7 +86,7 @@ fun MainConfectionerStatelessScreen(
                     description = state.confectioner.description,
                     onMyProfileClick = onMyProfileClick,
                     onButtonClick = onCustomOrdersClick,
-                    customOrdersText = "Мои заказы",
+                    customOrdersText = "Мои заказы"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 SectionHeader("Каталог")
@@ -112,7 +112,6 @@ fun MainConfectionerStatelessScreen(
                 }
             }
         }
-
     }
 }
 

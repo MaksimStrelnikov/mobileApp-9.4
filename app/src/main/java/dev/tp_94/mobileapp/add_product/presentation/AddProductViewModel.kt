@@ -45,20 +45,20 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(description = description))
     }
 
-    fun updateDiameter(diameter: String) {
-        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(diameter = diameter.toFloat()))
+    fun updateDiameter(diameter: String?) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(diameter = diameter?.trim()?.takeIf { it.isNotEmpty() }?.toFloat() ?: 0f))
     }
 
-    fun updateWeight(weight: String) {
-        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(weight = weight.toFloat()))
+    fun updateWeight(weight: String?) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(weight = weight?.trim()?.takeIf { it.isNotEmpty() }?.toFloat() ?: 0f))
     }
 
-    fun updateWorkPeriod(workPeriod: String) {
-        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(preparation = workPeriod.toInt()))
+    fun updateWorkPeriod(workPeriod: String?) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(preparation = workPeriod?.trim()?.takeIf { it.isNotEmpty() }?.toInt() ?: 0))
     }
 
-    fun updatePrice(price: String) {
-        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(price = price.toInt()))
+    fun updatePrice(price: String?) {
+        _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(price = price?.trim()?.takeIf { it.isNotEmpty() }?.toInt() ?: 0))
     }
 
     fun updateImage(image: String?) {

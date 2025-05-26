@@ -67,6 +67,7 @@ import dev.tp_94.mobileapp.self_made_cake.presentation.components.TextEditor
 fun SelfMadeCakeStatefulScreen(
     viewModel: SelfMadeCakeViewModel = hiltViewModel(),
     onDone: () -> Unit,
+    onGenerate: (Confectioner) -> Unit,
     onError: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -88,6 +89,7 @@ fun SelfMadeCakeStatefulScreen(
             viewModel.setColor(it)
             viewModel.closeColorPicker()
         },
+        onGenerate = { onGenerate(state.cakeCustom.confectioner) },
         onDiameterChange = { viewModel.setDiameter(it) },
         onOpenTextChangeClick = { viewModel.setTextImageEditor(Editor.TEXT) },
         onOpenImageChangeClick = { viewModel.setTextImageEditor(Editor.IMAGE) },
@@ -110,6 +112,7 @@ fun SelfMadeCakeStatelessScreen(
     onColorChangeDialogOpen: () -> Unit,
     onColorChangeDialogDismiss: () -> Unit,
     onColorChangeDialogSave: (Color) -> Unit,
+    onGenerate: () -> Unit,
     onDiameterChange: (Float) -> Unit,
     onOpenTextChangeClick: () -> Unit,
     onOpenImageChangeClick: () -> Unit,
@@ -188,17 +191,19 @@ fun SelfMadeCakeStatelessScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ActiveButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                onClick = onColorChangeDialogOpen,
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    "Генерация торта",
-                    style = TextStyles.button(colorResource(R.color.light_background))
-                )
+            if (state.restrictions.isShapeAcceptable) {
+                ActiveButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    onClick = onGenerate,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Генерация торта",
+                        style = TextStyles.button(colorResource(R.color.light_background))
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Box(
@@ -214,17 +219,18 @@ fun SelfMadeCakeStatelessScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    //TODO: make dependent of restrictions isImageAcceptable
-                    DualButton(
-                        firstTitle = "Фото",
-                        onFirstClick = onOpenImageChangeClick,
-                        secondTitle = "Текст",
-                        onSecondClick = onOpenTextChangeClick,
-                        isFirstActive = state.textImageEditor == Editor.IMAGE,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp)
-                    )
+                    if (state.restrictions.isImageAcceptable) {
+                        DualButton(
+                            firstTitle = "Фото",
+                            onFirstClick = onOpenImageChangeClick,
+                            secondTitle = "Текст",
+                            onSecondClick = onOpenTextChangeClick,
+                            isFirstActive = state.textImageEditor == Editor.IMAGE,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                        )
+                    }
                     when (state.textImageEditor) {
                         Editor.IMAGE -> {
                             ImageAddition(
@@ -266,10 +272,10 @@ fun SelfMadeCakeStatelessScreen(
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { updateExpanded(false) },
-                        modifier = Modifier.fillMaxWidth(0.8f)
-                        .background(colorResource(R.color.light_background)),
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .background(colorResource(R.color.light_background)),
                     ) {
-                        //TODO: replace with state.confectioner.fillings
                         val fillings = state.restrictions.fillings
                         fillings.subtract(state.cakeCustom.fillings.toSet()).toList().forEach { filling ->
                             DropdownMenuItem(
@@ -290,6 +296,7 @@ fun SelfMadeCakeStatelessScreen(
                         }
                     }
                 }
+                SectionHeader("Выбор начинки")
                 LazyRow (
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -304,8 +311,9 @@ fun SelfMadeCakeStatelessScreen(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            SectionHeader("Выбор начинки")
-            DatePickerButton(modifier = Modifier.fillMaxWidth().height(48.dp),
+            DatePickerButton(modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
                 minDaysFromToday = state.restrictions.minPreparationDays,)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
@@ -374,6 +382,7 @@ fun PreviewSelfMadeCakeStatelessScreen() {
             onColorChangeDialogOpen = {},
             onColorChangeDialogDismiss = {},
             onColorChangeDialogSave = {},
+            onGenerate = {},
             onDiameterChange = {},
             onOpenTextChangeClick = {},
             onOpenImageChangeClick = {},

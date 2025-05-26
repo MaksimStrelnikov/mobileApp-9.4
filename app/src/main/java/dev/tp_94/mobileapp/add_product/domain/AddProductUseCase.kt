@@ -25,10 +25,10 @@ class AddProductUseCase @Inject constructor(
         if (cake.description.isEmpty()) {
             return ProductResult.Error("Описание не указано")
         }
-        if (cake.diameter <= 0) {
+        if (cake.diameter <= 0f) {
             return ProductResult.Error("Диаметр указан неверно")
         }
-        if (cake.weight <= 0) {
+        if (cake.weight <= 0f) {
             return ProductResult.Error("Вес указан неверно")
         }
         if (cake.preparation <= 0) {

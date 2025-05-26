@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.core.models.CakeGeneral
@@ -203,7 +204,7 @@ fun MainStatelessScreen(
                             price = product.price,
                             onBuy = { onProductBuy(product) },
                             onOpen = { onNavigateToProduct(product) },
-                            image = null //TODO: add image
+                            image = product.imageUrl?.let{ url -> rememberAsyncImagePainter(url) }
                         )
                     }
                 }
@@ -247,6 +248,7 @@ fun PreviewMainStatelessScreen() {
                 CakeGeneral(
                     price = 1000,
                     name = "TODO(1)",
+                    imageUrl = "https://caker.ralen.top/assets/mock_cake.png",
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
@@ -279,6 +281,7 @@ fun PreviewMainStatelessScreen() {
                 CakeGeneral(
                     price = 10000,
                     name = "TODO(1)",
+                    imageUrl = "https://caker.ralen.top/assets/mock_cake.png",
                     description = "TODO()",
                     diameter = 1f,
                     weight = 1f,
