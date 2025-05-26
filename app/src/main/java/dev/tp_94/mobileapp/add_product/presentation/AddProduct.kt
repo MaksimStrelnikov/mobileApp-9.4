@@ -38,6 +38,7 @@ import dev.tp_94.mobileapp.core.themes.NumberEditor
 import dev.tp_94.mobileapp.core.themes.WeightEditor
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.themes.FloatNumberEditor
 
 
 @Composable
@@ -115,9 +116,10 @@ fun AddProductStatelessScreen(
                 modifier = Modifier.height(108.dp),
             )
             Spacer(Modifier.height(8.dp))
-            NumberEditor(
+            FloatNumberEditor(
                 onValueChange = { onDiameterChange(it) },
-                value = state.cakeGeneral.diameter.toString(),
+                value = if (state.cakeGeneral.diameter != 0f)
+                    state.cakeGeneral.diameter.toString() else "",
                 label = "Диаметр изделия (см)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
@@ -125,13 +127,15 @@ fun AddProductStatelessScreen(
             Spacer(Modifier.height(8.dp))
             WeightEditor(
                 onChange = { onWeightChange(it) },
-                text = state.cakeGeneral.weight.toString(),
+                text = if (state.cakeGeneral.weight != 0f)
+                    state.cakeGeneral.weight.toString() else "",
                 backgroundColor = colorResource(R.color.dark_background),
             )
             Spacer(Modifier.height(8.dp))
             NumberEditor(
                 onValueChange = { onWorkPeriodChange(it) },
-                value = state.cakeGeneral.preparation.toString(),
+                value = if (state.cakeGeneral.preparation != 0)
+                    state.cakeGeneral.preparation.toString() else "",
                 label = "Время работы (дни)",
                 backgroundColor = colorResource(R.color.dark_background),
                 necessary = true,
@@ -139,7 +143,8 @@ fun AddProductStatelessScreen(
             Spacer(Modifier.height(8.dp))
             PriceEditor(
                 onChange = { onPriceChange(it) },
-                text = state.cakeGeneral.price.toString(),
+                text = if (state.cakeGeneral.price != 0)
+                    state.cakeGeneral.price.toString() else "",
                 backgroundColor = colorResource(R.color.dark_background),
             )
             Spacer(Modifier.height(16.dp))

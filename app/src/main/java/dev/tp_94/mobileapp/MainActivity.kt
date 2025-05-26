@@ -558,9 +558,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         navController.navigate("customSettings") },
                     onWithdraw = { navController.navigate("withdraw") },
                     onAddCake = {
-                        val json = Json.encodeToString(it)
-                        val encoded = URLEncoder.encode(json, "UTF-8")
-                        navController.navigate("addProduct/$encoded")
+                        navController.navigate("addProduct/null")
                                 },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {

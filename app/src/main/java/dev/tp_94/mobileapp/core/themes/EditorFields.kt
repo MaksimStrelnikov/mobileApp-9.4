@@ -206,6 +206,38 @@ fun NumberEditor(
 }
 
 @Composable
+fun FloatNumberEditor(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    backgroundColor: Color = colorResource(R.color.dark_background),
+    maxLength: Int? = 10,
+    necessary: Boolean = false,
+) {
+    ValidatedTextField(
+        text = value,
+        onChange = onValueChange,
+        defaultText = label,
+        backgroundColor = backgroundColor,
+        keyboardType = KeyboardType.Decimal,
+        modifier = modifier,
+        singleLine = true,
+        inputFilter = { newText ->
+            val replaced = newText.replace(',', '.')
+            val hasOneDot = replaced.count { it == '.' } <= 1
+            val notOnlyDot = replaced != "."
+            val filtered = replaced.filter { it.isDigit() || it == '.' }
+            if (hasOneDot && notOnlyDot) filtered else value
+        },
+        maxLength = maxLength,
+        validator = {
+            if (it.isEmpty() && necessary) "$label - обязательное поле" else null
+        }
+    )
+    }
+
+@Composable
 fun PriceEditor(
     modifier: Modifier = Modifier,
     text: String,
@@ -240,25 +272,13 @@ fun WeightEditor(
     backgroundColor: Color = colorResource(R.color.dark_background),
     maxLength: Int? = 6
 ) {
-    ValidatedTextField(
-        text = text,
-        onChange = onChange,
-        defaultText = defaultText,
-        backgroundColor = backgroundColor,
-        keyboardType = KeyboardType.Decimal,
+    FloatNumberEditor(
         modifier = modifier,
-        singleLine = true,
-        inputFilter = { newText ->
-            val replaced = newText.replace(',', '.')
-            val hasOneDot = replaced.count { it == '.' } <= 1
-            val notOnlyDot = replaced != "."
-            val filtered = replaced.filter { it.isDigit() || it == '.' }
-            if (hasOneDot && notOnlyDot) filtered else text
-        },
-        maxLength = maxLength,
-        validator = {
-            if (it.isEmpty()) "$defaultText - обязательное поле" else null
-        }
+        value = text,
+        onValueChange = onChange,
+        label = defaultText,
+        backgroundColor = backgroundColor,
+        maxLength = maxLength
     )
 }
 
