@@ -105,7 +105,8 @@ fun ConfectionerCard(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
             )
-            if (restrictions!= null && restrictions.isCustomAcceptable) {
+
+            if (restrictions == null || restrictions.isCustomAcceptable) {
                 ActiveButton(
                     onClick = onButtonClick,
                     modifier = Modifier
@@ -117,6 +118,9 @@ fun ConfectionerCard(
                         style = TextStyles.button(colorResource(R.color.light_background))
                     )
                 }
+            }
+
+            if (restrictions!= null && restrictions.isCustomAcceptable) {
                 if (restrictions.isShapeAcceptable) {
                     Spacer(Modifier.height(4.dp))
                     Text(
@@ -138,7 +142,7 @@ fun ConfectionerCard(
 
 @Preview
 @Composable
-fun PreviewConfectionerCard() {
+fun PreviewConfectionerCard0() {
     ConfectionerCard(
         name = "Веснушка",
         address = "asdflkgjhljkfsdhnljk;",
@@ -146,6 +150,19 @@ fun PreviewConfectionerCard() {
         onMyProfileClick = {},
         onButtonClick = {},
         restrictions = Restrictions(true, true, true)
+    )
+}
+
+@Preview
+@Composable
+fun PreviewConfectionerCard1() {
+    ConfectionerCard(
+        name = "Веснушка",
+        address = "asdflkgjhljkfsdhnljk;",
+        description = "",
+        onMyProfileClick = {},
+        onButtonClick = {},
+        restrictions = Restrictions(false, false, false)
     )
 }
 
