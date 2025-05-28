@@ -7,5 +7,6 @@ data class ConfectionerRegisterDTO(
     @SerializedName("phone") override val phone: String,
     @SerializedName("password") override val password: String,
     @SerializedName("email") override val email: String,
+    @SerializedName("type") val type: String = "confectioner",
     @SerializedName("address") val address: String
 ) : UserRegisterDTO
