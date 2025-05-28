@@ -605,7 +605,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             AddProductStatefulScreen (
                 viewModel = viewModel,
                 onMove = {
-                    navController.navigate("profile")
+                    navController.navigateUp()
                 },
                 topBar = {
                     TopNameBar(
