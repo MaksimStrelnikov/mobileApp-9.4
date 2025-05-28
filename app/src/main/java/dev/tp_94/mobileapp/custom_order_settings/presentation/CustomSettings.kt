@@ -161,12 +161,14 @@ private fun CustomSettingsStatelessScreen(
                     onCheckedChange = onShapeAccept,
                     label = "Я делаю торты индивидуальной формы"
                 )
-                if (!(state.error == null || state.error == "")) {
-                    Text(
-                        state.error,
-                        style = TextStyles.regular(colorResource(R.color.dark_accent))
-                    )
-                }
+
+            }
+
+            if (!(state.error == null || state.error == "")) {
+                Text(
+                    state.error,
+                    style = TextStyles.regular(colorResource(R.color.dark_accent))
+                )
             }
         }
     }
