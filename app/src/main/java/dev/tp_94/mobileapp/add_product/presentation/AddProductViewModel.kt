@@ -67,6 +67,10 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(cakeGeneral = _state.value.cakeGeneral.copy(imageUrl = image))
     }
 
+    fun changeDialogStatus() {
+        _state.value = _state.value.copy(isDialogOpen = !_state.value.isDialogOpen)
+    }
+
     fun delete(onMove: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {

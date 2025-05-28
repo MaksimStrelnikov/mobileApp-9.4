@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.add_product.presentation.components.CakeImageAddition
+import dev.tp_94.mobileapp.add_product.presentation.components.WarningDialog
 import dev.tp_94.mobileapp.core.themes.DescriptionEditor
 import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.themes.ActiveButton
@@ -62,6 +63,7 @@ fun AddProductStatefulScreen(
         onSave = {
             viewModel.save(onMove)
         },
+        onChangeDialog = { viewModel.changeDialogStatus() },
         topBar = topBar
     )
 }
@@ -80,6 +82,7 @@ fun AddProductStatelessScreen(
     onSave: () -> Unit,
     onCancellation: () -> Unit,
     onDelete: () -> Unit,
+    onChangeDialog: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
     Scaffold(topBar = topBar) { internalPadding ->
@@ -179,18 +182,27 @@ fun AddProductStatelessScreen(
                 )
             }
             Spacer(Modifier.height(32.dp))
-            TextButton(
-                onClick = onDelete,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp)
-            ) {
-                Text(
-                    "Удалить товар",
-                    style = TextStyles.button(color = colorResource(R.color.light_text))
+            if (state.isEditing) {
+                TextButton(
+                    onClick = onChangeDialog,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        "Удалить товар",
+                        style = TextStyles.button(color = colorResource(R.color.light_text))
+                    )
+                }
+            }
+        }
+        when {
+            state.isDialogOpen -> {
+                WarningDialog(
+                    onDismiss = onChangeDialog,
+                    onAccept = { onDelete() }
                 )
             }
-
         }
     }
 }
@@ -237,6 +249,7 @@ fun PreviewAddProductStatelessScreen() {
             onSave = {},
             onCancellation = {},
             onDelete = {},
+            onChangeDialog = { state.value = state.value.copy(isDialogOpen = !state.value.isDialogOpen) },
             topBar = { TopNameBar("Добавить товар") { } }
         )
     }

@@ -7,5 +7,6 @@ data class AddProductState (
     val cakeGeneral: CakeGeneral,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isEditing: Boolean = false
+    val isEditing: Boolean = false,
+    val isDialogOpen: Boolean = false
 )
