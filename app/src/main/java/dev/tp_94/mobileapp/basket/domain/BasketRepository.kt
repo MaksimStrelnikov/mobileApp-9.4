@@ -10,14 +10,6 @@ interface BasketRepository {
     suspend fun getBasket(userPhone: String): List<CakeGeneral>
 
     /**
-     * Updates basket in memory by replacing the old list with the new one
-     * @param items list of general cakes
-     * @param userPhone user phone
-     * @return List<CakeGeneral>
-     */
-    suspend fun updateBasket(items: List<CakeGeneral>, userPhone: String): List<CakeGeneral>
-
-    /**
      * Clears the basket
      * @param userPhone user phone
      */
@@ -29,4 +21,11 @@ interface BasketRepository {
      * @param userPhone user phone
      */
     suspend fun addToBasket(item: CakeGeneral, userPhone: String)
+
+    /**
+     * Removes a cake from the basket
+     * @param item general cake
+     * @param userPhone user phone
+     */
+    suspend fun removeFromBasket(item: CakeGeneral, userPhone: String)
 }

@@ -10,16 +10,6 @@ class BasketRepositoryImpl @Inject constructor(basketDatabase: BasketDatabase) :
         return dao.getBasket(userPhone).map { it.cake }
     }
 
-    override suspend fun updateBasket(
-        items: List<CakeGeneral>,
-        userPhone: String
-    ): List<CakeGeneral> {
-        items.forEach {
-            addToBasket(it, userPhone)
-        }
-        return getBasket(userPhone)
-    }
-
     override suspend fun clearBasket(userPhone: String) {
         dao.clearBasket(userPhone)
     }
@@ -31,6 +21,19 @@ class BasketRepositoryImpl @Inject constructor(basketDatabase: BasketDatabase) :
                 cake = item
             )
         )
+    }
+
+    override suspend fun removeFromBasket(item: CakeGeneral, userPhone: String) {
+        val result = dao.findOneBasketEntry(
+            userPhone = userPhone,
+            cake = item
+        )
+        if (result == null) {
+            return;
+        } else {
+            dao.deleteOneBasketEntry(result)
+        }
+
     }
 
 }

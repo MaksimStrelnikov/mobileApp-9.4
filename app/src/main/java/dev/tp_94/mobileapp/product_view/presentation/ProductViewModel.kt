@@ -42,8 +42,7 @@ class ProductViewModel @Inject constructor(
     fun addToBasket(cake: CakeGeneral) {
         viewModelScope.launch {
             val response = addToBasketUseCase.execute(
-                cake = cake,
-                userPhone = getUser()?.phoneNumber ?: ""
+                cake = cake
             )
             //TODO or not: add error message
         }

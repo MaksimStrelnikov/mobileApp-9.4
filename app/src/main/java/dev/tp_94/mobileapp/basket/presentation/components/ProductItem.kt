@@ -116,7 +116,7 @@ fun ProductItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { onAdd(cake) }
+                        onClick = { onRemove(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.minusbutton),
@@ -128,7 +128,7 @@ fun ProductItem(
                         style = TextStyles.secondHeader(colorResource(R.color.dark_text))
                     )
                     IconButton(
-                        onClick = { onRemove(cake) }
+                        onClick = { onAdd(cake) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.plusbutton),

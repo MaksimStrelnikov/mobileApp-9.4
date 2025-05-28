@@ -12,7 +12,7 @@ class ClearBasketUseCase @Inject constructor(
         try {
             if (sessionCache.session == null) return BasketResult.Error("Вы не авторизованы")
             repository.clearBasket(sessionCache.session!!.user.phoneNumber)
-            return BasketResult.Success(emptyList())
+            return BasketResult.Success.Basket(emptyList())
         } catch (e: Exception) {
             return BasketResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

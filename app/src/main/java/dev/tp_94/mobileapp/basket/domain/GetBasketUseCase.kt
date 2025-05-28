@@ -12,7 +12,7 @@ class GetBasketUseCase @Inject constructor(
         try {
             if (sessionCache.session == null) return BasketResult.Error("Вы не авторизованы")
             val result = repository.getBasket(sessionCache.session!!.user.phoneNumber)
-            return BasketResult.Success(result)
+            return BasketResult.Success.Basket(result)
         } catch (e: Exception) {
             return BasketResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

@@ -60,7 +60,6 @@ class ConfectionerPageViewModel @Inject constructor(
         viewModelScope.launch {
             val response = addToBasketUseCase.execute(
                     cake = cake,
-                    userPhone = getUser()?.phoneNumber ?: ""
                 )
             //TODO or not: add error message
         }
