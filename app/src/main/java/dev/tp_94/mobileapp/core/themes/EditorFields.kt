@@ -212,7 +212,6 @@ fun FloatNumberEditor(
     onValueChange: (String) -> Unit,
     label: String,
     backgroundColor: Color = colorResource(R.color.dark_background),
-    maxLength: Int? = 10,
     necessary: Boolean = false,
 ) {
     ValidatedTextField(
@@ -230,7 +229,7 @@ fun FloatNumberEditor(
             val filtered = replaced.filter { it.isDigit() || it == '.' }
             if (hasOneDot && notOnlyDot) filtered else value
         },
-        maxLength = maxLength,
+        maxLength = 3,
         validator = {
             if (it.isEmpty() && necessary) "$label - обязательное поле" else null
         }
@@ -269,16 +268,14 @@ fun WeightEditor(
     text: String,
     onChange: (String) -> Unit,
     defaultText: String = "Вес (в кг)",
-    backgroundColor: Color = colorResource(R.color.dark_background),
-    maxLength: Int? = 6
+    backgroundColor: Color = colorResource(R.color.dark_background)
 ) {
     FloatNumberEditor(
         modifier = modifier,
         value = text,
         onValueChange = onChange,
         label = defaultText,
-        backgroundColor = backgroundColor,
-        maxLength = maxLength
+        backgroundColor = backgroundColor
     )
 }
 
