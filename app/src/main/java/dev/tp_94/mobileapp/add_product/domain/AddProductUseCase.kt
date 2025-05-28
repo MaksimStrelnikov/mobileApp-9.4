@@ -14,7 +14,8 @@ class AddProductUseCase @Inject constructor(
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(
-        cake: CakeGeneral
+        cake: CakeGeneral,
+        isUpdate: Boolean
     ): ProductResult {
         if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) return ProductResult.Error(
             "Недостаточно прав для добавления продукта"
@@ -41,18 +42,23 @@ class AddProductUseCase @Inject constructor(
             return ProductResult.Error("Цена указана неверно")
         }
         try {
-            repository.addGeneralCake(
-                CakeGeneralRequestDTO(
-                    confectionerId = sessionCache.session!!.user.id,
-                    name = cake.name,
-                    description = cake.description,
-                    diameter = cake.diameter,
-                    weight = cake.weight,
-                    reqTime = cake.preparation,
-                    price = cake.price
-                ),
-                imageUrl = cake.imageUrl
-            )
+            if (isUpdate) {
+                //TODO: update
+            }
+            else {
+                repository.addGeneralCake(
+                    CakeGeneralRequestDTO(
+                        confectionerId = sessionCache.session!!.user.id,
+                        name = cake.name,
+                        description = cake.description,
+                        diameter = cake.diameter,
+                        weight = cake.weight,
+                        reqTime = cake.preparation,
+                        price = cake.price
+                    ),
+                    imageUrl = cake.imageUrl
+                )
+            }
             return ProductResult.Success
         } catch (e: Exception) {
             return ProductResult.Error(e.message ?: "Возникла непредвиденная ошибка")

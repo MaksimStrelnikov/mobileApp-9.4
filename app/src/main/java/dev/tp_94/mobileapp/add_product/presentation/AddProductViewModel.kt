@@ -26,12 +26,14 @@ class AddProductViewModel  @Inject constructor(
     private val sessionCache: SessionCache,
 ) : ViewModel() {
 
+    private val initialCake = savedStateHandle.get<String>("cake")
+        ?.let { URLDecoder.decode(it, "UTF-8") }
+        ?.let { Json { serializersModule = CakeSerializerModule.module }.decodeFromString<CakeGeneral>(it) }
+
     private val _state = MutableStateFlow(
         AddProductState(
-            savedStateHandle.get<String>("cake")
-                ?.let { URLDecoder.decode(it, "UTF-8") }
-                ?.let { Json { serializersModule = CakeSerializerModule.module }.decodeFromString<CakeGeneral>(it) }
-                ?: CakeGeneral(confectioner = (getUser() as Confectioner)),
+            cakeGeneral = initialCake ?: CakeGeneral(confectioner = (getUser() as Confectioner)),
+            isEditing = initialCake != null
         )
     )
 
@@ -85,7 +87,7 @@ class AddProductViewModel  @Inject constructor(
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
             val response = addProductUseCase.execute(
-                cake = state.value.cakeGeneral
+                cake = state.value.cakeGeneral, isUpdate = state.value.isEditing
             )
             if (response is ProductResult.Error) _state.value =
                 _state.value.copy(error = response.message)

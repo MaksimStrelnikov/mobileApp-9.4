@@ -6,5 +6,6 @@ import dev.tp_94.mobileapp.core.models.CakeGeneral
 data class AddProductState (
     val cakeGeneral: CakeGeneral,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isEditing: Boolean = false
 )
