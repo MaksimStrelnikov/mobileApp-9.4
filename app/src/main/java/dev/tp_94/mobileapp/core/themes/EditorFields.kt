@@ -229,12 +229,12 @@ fun FloatNumberEditor(
             val filtered = replaced.filter { it.isDigit() || it == '.' }
             if (hasOneDot && notOnlyDot) filtered else value
         },
-        maxLength = 3,
+        maxLength = if (value.isNotEmpty() && value[value.length - 1] == '.') 3 else 4,
         validator = {
             if (it.isEmpty() && necessary) "$label - обязательное поле" else null
         }
     )
-    }
+}
 
 @Composable
 fun PriceEditor(
