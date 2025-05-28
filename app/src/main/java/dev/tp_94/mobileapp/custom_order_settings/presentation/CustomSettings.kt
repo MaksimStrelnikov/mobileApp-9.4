@@ -129,10 +129,15 @@ private fun CustomSettingsStatelessScreen(
                         )
                     }
 
-                    FillingNew(onClick = {
-                        onUpdateFillings(state.fillings + state.newFilling)
-                        onUpdateNewFilling("")
-                    }, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),)
+                    FillingNew(
+                        onClick = {
+                            if (state.newFilling.isNotBlank()) {
+                                onUpdateFillings(state.fillings + state.newFilling)
+                                onUpdateNewFilling("")
+                            }
+                        },
+                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
+                    )
                 }
 
 
