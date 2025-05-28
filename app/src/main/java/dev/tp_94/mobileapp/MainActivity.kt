@@ -206,7 +206,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
                 topBar = {
                     TopNameBar("Корзина") {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }
                 },
                 bottomBar = { AppBottomBar(Screen.BASKET, navController) }
@@ -294,7 +294,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     TopNameBar(
                         name = "Редактор торта",
                         onBackClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }
                     )
                 },
@@ -321,7 +321,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     TopNameBar(
                         name = "Генерация торта",
                         onBackClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }
                     )
                 },
@@ -351,7 +351,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
                 topBar = {
                     TopNameBar("Страница кондитера") {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }
                 },
             )
@@ -375,7 +375,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
                 topBar = {
                     TopNameBar("Заказ") {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }
                 },
                 onPay = {
@@ -414,7 +414,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 topBar = {
                     TopNameBar(
                         name = "Оформление заказа",
-                        onBackClick = { navController.popBackStack() }
+                        onBackClick = { navController.navigateUp() }
                     )
                 }
             )
@@ -444,7 +444,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 topBar = {
                     TopNameBar(
                         name = "Оформление заказа",
-                        onBackClick = { navController.popBackStack() }
+                        onBackClick = { navController.navigateUp() }
                     )
                 },
             )
@@ -452,25 +452,25 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
 
         composable("successfulPayment") {
             SuccessfulPayment({
-                navController.popBackStack()
+                navController.navigateUp()
             })
         }
 
         composable("errorPayment") {
             ErrorPayment({
-                navController.popBackStack()
+                navController.navigateUp()
             })
         }
 
         composable("addNewCard") {
             NewCardAdditionStatefulScreen(
                 onDone = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
                 topBar = {
                     TopNameBar(
                         name = "Добавление новой карты",
-                        onBackClick = { navController.popBackStack() },
+                        onBackClick = { navController.navigateUp() },
                     )
                 }
             )
@@ -493,7 +493,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     TopNameBar(
                         name = "Заказы",
                         onBackClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         },
                     )
                 },
@@ -517,7 +517,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     TopNameBar(
                         name = "Заказы",
                         onBackClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         },
                     )
                 },
@@ -539,7 +539,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 val encoded = URLEncoder.encode(json, "UTF-8")
                 navController.navigate("confectionerpage/$encoded")
             }, onBackClick = {
-                navController.popBackStack()
+                navController.navigateUp()
             }, onError = {
                 navController.navigate("login") {
                     popUpTo(0)
@@ -580,7 +580,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 topBar = {
                     TopNameBar(
                         name = "Профиль",
-                        onBackClick = { navController.popBackStack() },
+                        onBackClick = { navController.navigateUp() },
                     )
                 },
                 bottomBar = {
@@ -610,7 +610,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 topBar = {
                     TopNameBar(
                         name = "Добавить товар",
-                        onBackClick = { navController.popBackStack() }
+                        onBackClick = { navController.navigateUp() }
                     )
                 }
             )
@@ -634,7 +634,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 topBar = {
                     TopNameBar(
                         name = "Мои финансы",
-                        onBackClick = { navController.popBackStack() },
+                        onBackClick = { navController.navigateUp() },
                     )
                 }
             )
@@ -643,7 +643,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         composable("successfulWithdrawal") {
             SuccessfulPayment(
                 onDismissRequest = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
                 mainText = "Все прошло успешно!",
                 description = "Деньги скоро поступят",
@@ -653,7 +653,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         composable("errorWithdrawal") {
             ErrorPayment(
                 onDismissRequest = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
                 mainText = "Вывод не прошел!",
                 description = "Деньги всё ещё у вас.\nПожалуйста, смените способ вывода\nили попробуйте позднее",
@@ -666,9 +666,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     popUpTo(0)
                 }
             }, onSave = {
-                navController.popBackStack()
+                navController.navigateUp()
             }, topBar = {
-                TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
+                TopNameBar(name = "Личные данные", onBackClick = { navController.navigateUp() })
             })
         }
 
@@ -679,7 +679,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 val encoded = URLEncoder.encode(json, "UTF-8")
                 navController.navigate("productView/$encoded")
             }, onBackClick = {
-                navController.popBackStack()
+                navController.navigateUp()
             }, onError = {
                 navController.navigate("login") {
                     popUpTo(0)
@@ -706,7 +706,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 },
                 topBar = {
                     TopNameBar("Заказ") {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }
                 }
             )
@@ -717,9 +717,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             CustomSettingsStatefulScreen(
                 viewModel = viewModel,
                 onSave = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }, topBar = {
-                TopNameBar(name = "Личные данные", onBackClick = { navController.popBackStack() })
+                TopNameBar(name = "Личные данные", onBackClick = { navController.navigateUp() })
             })
         }
     }
