@@ -11,8 +11,8 @@ class RemoveFromBasketUseCase @Inject constructor(
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(cake: CakeGeneral): BasketResult {
-        if (sessionCache.session == null || sessionCache.session!!.user !is Customer) return BasketResult.Error("Недостаточно прав для добавления в корзину")
-        val userPhone = (sessionCache.session!!.user as Customer).phoneNumber
+        if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Customer) return BasketResult.Error("Недостаточно прав для добавления в корзину")
+        val userPhone = (sessionCache.session.value!!.user as Customer).phoneNumber
         try {
             repository.removeFromBasket(cake, userPhone)
             return BasketResult.Success.Empty

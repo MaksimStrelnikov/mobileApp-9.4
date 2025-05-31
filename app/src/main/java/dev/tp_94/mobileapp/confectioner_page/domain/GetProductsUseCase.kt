@@ -12,7 +12,7 @@ class GetProductsUseCase @Inject constructor(
 ) {
     suspend fun execute(confectioner: Confectioner): GetProductsResult {
         try {
-            if (sessionCache.session == null) {
+            if (sessionCache.session.value == null) {
                 return GetProductsResult.Error("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
             }
             return GetProductsResult.Success(

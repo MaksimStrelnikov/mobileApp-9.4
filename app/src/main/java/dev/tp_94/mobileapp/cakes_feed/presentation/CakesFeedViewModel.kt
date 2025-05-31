@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CakesFeedViewModel @Inject constructor(
-    private val sessionCache: SessionCache,
+    sessionCache: SessionCache,
     private val loadMoreCakesUseCase: LoadMoreCakesUseCase,
     private val searchForCakesUseCase: SearchForCakesUseCase,
     private val addToBasketUseCase: AddToBasketUseCase
@@ -26,9 +26,7 @@ class CakesFeedViewModel @Inject constructor(
     private val _state = MutableStateFlow((CakesFeedState()))
     val state = _state.asStateFlow()
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session = sessionCache.session
 
     fun updateSearchText(text: String) {
         _state.value = _state.value.copy(searchText = text)

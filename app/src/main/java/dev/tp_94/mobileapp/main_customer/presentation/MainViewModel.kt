@@ -29,9 +29,7 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session = sessionCache.session
 
     fun exit() {
         sessionCache.clearSession()

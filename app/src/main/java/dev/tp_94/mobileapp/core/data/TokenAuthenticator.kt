@@ -14,7 +14,7 @@ class TokenAuthenticator @Inject constructor(
     private val sessionCache: SessionCache
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
-        val refreshToken = sessionCache.session?.refreshToken ?: return null
+        val refreshToken = sessionCache.session.value?.refreshToken ?: return null
 
         val newTokens = runBlocking {
             runCatching {

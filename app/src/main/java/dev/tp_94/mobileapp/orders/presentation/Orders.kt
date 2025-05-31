@@ -35,16 +35,15 @@ fun ConfectionerOrdersStatefulScreen(
     onError: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    val user = viewModel.getUser()
-    LaunchedEffect(user) {
-        if (user == null || user !is Confectioner) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        if (session.value == null || session.value!!.user !is Confectioner) {
             onError()
             viewModel.exit()
         }
-    }
-    LaunchedEffect(Unit) {
         viewModel.getOrders()
     }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConfectionerOrdersStatelessScreen(
         state = state,
@@ -147,16 +146,15 @@ fun CustomerOrdersStatefulScreen(
     topBar: @Composable () -> Unit,
     bottomBar: @Composable () -> Unit
 ) {
-    val user = viewModel.getUser()
-    LaunchedEffect(user) {
-        if (user == null || user !is Customer) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        if (session.value == null || session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }
-    }
-    LaunchedEffect(Unit) {
         viewModel.getOrders()
     }
+    
     val state by viewModel.state.collectAsStateWithLifecycle()
     CustomerOrdersStatelessScreen(
         state = state,

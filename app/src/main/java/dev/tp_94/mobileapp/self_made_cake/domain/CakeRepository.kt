@@ -22,4 +22,6 @@ interface CakeRepository {
     suspend fun getAll(): List<CakeResponseDTO>
 
     suspend fun getAllByConfectioner(confectionerId: Long): List<CakeResponseDTO>
+
+    suspend fun updateGeneralCake(cakeGeneralRequestDTO: CakeGeneralRequestDTO, imageUrl: String)
 }

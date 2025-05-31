@@ -14,7 +14,7 @@ class ConfectionerProfileChangeUseCase @Inject constructor(
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(name: String, phoneNumber: String, email: String, description: String, address: String): SaveResult {
-        if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
+        if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Confectioner) {
             throw Exception("Has No Rights To Change Confectioner Profile")
         }
         if (name.isEmpty()) {

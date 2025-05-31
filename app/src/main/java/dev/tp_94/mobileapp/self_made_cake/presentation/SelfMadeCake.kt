@@ -41,6 +41,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.darken
 import dev.tp_94.mobileapp.core.models.CakeCustom
@@ -71,9 +72,9 @@ fun SelfMadeCakeStatefulScreen(
     onError: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
-    val user = viewModel.getUser()
-    LaunchedEffect(user) {
-        if (user == null || user !is Customer) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        if (session.value == null || session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }

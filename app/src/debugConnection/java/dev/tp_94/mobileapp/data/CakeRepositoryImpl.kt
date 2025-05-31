@@ -111,4 +111,11 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
             throw Exception(response.message())
         }
     }
+
+    override suspend fun updateGeneralCake(
+        cakeGeneralRequestDTO: CakeGeneralRequestDTO,
+        imageUrl: String
+    ) {
+        TODO("Not yet implemented")
+    }
 }

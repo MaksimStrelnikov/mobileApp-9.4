@@ -35,9 +35,7 @@ class ProductViewModel @Inject constructor(
     )
     val state = _state.asStateFlow()
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session  =sessionCache.session
 
     fun addToBasket(cake: CakeGeneral) {
         viewModelScope.launch {

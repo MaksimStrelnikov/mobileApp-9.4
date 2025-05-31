@@ -1,5 +1,7 @@
 package dev.tp_94.mobileapp.add_product.presentation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,16 +25,17 @@ class AddProductViewModel  @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val addProductUseCase: AddProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
-    private val sessionCache: SessionCache,
+    sessionCache: SessionCache,
 ) : ViewModel() {
 
     private val initialCake = savedStateHandle.get<String>("cake")
         ?.let { URLDecoder.decode(it, "UTF-8") }
         ?.let { Json { serializersModule = CakeSerializerModule.module }.decodeFromString<CakeGeneral>(it) }
 
+    val session = sessionCache.session
     private val _state = MutableStateFlow(
         AddProductState(
-            cakeGeneral = initialCake ?: CakeGeneral(confectioner = (getUser() as Confectioner)),
+            cakeGeneral = initialCake ?: CakeGeneral(confectioner = (session.value!!.user as Confectioner)),
             isEditing = initialCake != null
         )
     )
@@ -101,9 +104,5 @@ class AddProductViewModel  @Inject constructor(
             }
             _state.value = _state.value.copy(isLoading = false)
         }
-    }
-
-    fun getUser(): User? {
-        return sessionCache.session?.user
     }
 }

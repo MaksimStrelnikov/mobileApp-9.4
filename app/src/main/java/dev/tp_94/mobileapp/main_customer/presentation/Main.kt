@@ -61,9 +61,9 @@ fun MainStatefulScreen(
     onNavigateToProduct: (CakeGeneral) -> Unit,
     bottomBar: @Composable () -> Unit
 ) {
-    val user = viewModel.getUser()
-    LaunchedEffect(user) {
-        if (user == null || user !is Customer) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        if (session.value == null || session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }

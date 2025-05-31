@@ -74,7 +74,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
         viewModelScope.launch {
             val result = sendCustomCakeUseCase.execute(
                 _state.value.cakeCustom,
-                (getUser() as Customer),
+                (session.value!!.user as Customer),
                 _state.value.restrictions
                 )
             if (result is SelfMadeCakeResult.Success) {
@@ -97,9 +97,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
         }
     }
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session = sessionCache.session
 
     fun exit() {
         sessionCache.clearSession()

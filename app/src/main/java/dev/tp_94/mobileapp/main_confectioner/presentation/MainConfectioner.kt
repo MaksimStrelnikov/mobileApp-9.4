@@ -31,6 +31,7 @@ import dev.tp_94.mobileapp.confectioner_page.presentation.components.Confectione
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
 import dev.tp_94.mobileapp.main_customer.presentation.MainState
 
@@ -42,9 +43,9 @@ fun MainConfectionerStatefulScreen(
     onNavigateToProductEdit: (CakeGeneral) -> Unit,
     onError: () -> Unit,
 ) {
-    val user = viewModel.getUser()
-    LaunchedEffect(user) {
-        if (user == null || user !is Confectioner) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        if (session.value == null || session.value!!.user !is Confectioner) {
             onError()
             viewModel.exit()
         }

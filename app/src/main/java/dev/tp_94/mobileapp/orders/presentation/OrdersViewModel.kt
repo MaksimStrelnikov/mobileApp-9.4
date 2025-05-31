@@ -20,9 +20,8 @@ class OrdersViewModel @Inject constructor(
     private val getAllOrdersUseCase: GetAllOrdersUseCase,
     private val updateOrderStatusUseCase: UpdateOrderStatusUseCase
 ) : ViewModel() {
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+
+    val session = sessionCache.session
 
     fun exit() {
         sessionCache.clearSession()

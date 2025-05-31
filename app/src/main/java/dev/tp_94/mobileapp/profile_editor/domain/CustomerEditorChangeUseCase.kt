@@ -15,7 +15,7 @@ class CustomerEditorChangeUseCase @Inject constructor(
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(name: String, phoneNumber: String, email: String): SaveResult {
-        if (sessionCache.session == null || sessionCache.session!!.user !is Customer) {
+        if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Customer) {
             throw Exception("Has No Rights To Change Customer Profile")
         }
         if (name.isEmpty()) {

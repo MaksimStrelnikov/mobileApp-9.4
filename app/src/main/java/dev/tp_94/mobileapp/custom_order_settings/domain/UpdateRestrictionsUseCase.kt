@@ -24,7 +24,7 @@ class UpdateRestrictionsUseCase @Inject constructor(
         fillings: List<String>
     ): RestrictionsResult {
         try {
-            if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) {
+            if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Confectioner) {
                 throw Exception("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
             }
 
@@ -54,7 +54,7 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 fillings = fillings
             )
             val result = repository.updateCustomCakeRestrictions(
-                (sessionCache.session!!.user as Confectioner).id,
+                (sessionCache.session.value!!.user as Confectioner).id,
                 restrictions.toDto()
             )
             return RestrictionsResult.Success(result.toRestrictions())

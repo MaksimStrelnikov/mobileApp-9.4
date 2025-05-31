@@ -19,12 +19,12 @@ class CreateOrdersUseCase @Inject constructor(
 ) {
     suspend fun execute(cakes: Map<CakeGeneral, Int>): OrdersResult {
         try {
-            if (sessionCache.session == null) return OrdersResult.Error("Вы не авторизованы")
-            if (sessionCache.session!!.user !is Customer) return OrdersResult.Error("Недостаточно прав для формирования заказа")
+            if (sessionCache.session.value == null) return OrdersResult.Error("Вы не авторизованы")
+            if (sessionCache.session.value!!.user !is Customer) return OrdersResult.Error("Недостаточно прав для формирования заказа")
             for (cake in cakes) {
                 orderRepository.placeOrder(
                     OrderFullRequestDTO(
-                        customerId = sessionCache.session!!.user.id,
+                        customerId = sessionCache.session.value!!.user.id,
                         cakeId = cake.key.id,
                         price = cake.key.price,
                         quantity = cake.value,

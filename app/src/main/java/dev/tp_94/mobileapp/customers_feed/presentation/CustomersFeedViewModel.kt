@@ -25,9 +25,7 @@ class CustomersFeedViewModel @Inject constructor(
         search()
     }
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session = sessionCache.session
 
     fun exit() {
         sessionCache.clearSession()

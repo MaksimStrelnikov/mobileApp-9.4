@@ -30,6 +30,7 @@ import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
+import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
@@ -43,8 +44,9 @@ fun CakesFeedStatefulScreen(
     onBackClick: () -> Unit,
     onError: () -> Unit
 ) {
+    val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (viewModel.getUser() is Confectioner) {
+        if (session.value == null || session.value!!.user !is Customer) {
             onError()
         }
     }

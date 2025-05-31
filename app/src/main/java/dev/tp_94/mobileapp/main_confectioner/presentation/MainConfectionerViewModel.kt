@@ -10,6 +10,7 @@ import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
@@ -18,31 +19,38 @@ import javax.inject.Inject
 @HiltViewModel
 class MainConfectionerViewModel @Inject constructor(
     private val sessionCache: SessionCache,
-    private val getProductsUseCase: GetProductsUseCase,) :
+    private val getProductsUseCase: GetProductsUseCase,
+) :
     ViewModel() {
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+
+    val session = sessionCache.session
 
     fun exit() {
         sessionCache.clearSession()
     }
 
-    private val confectioner = getUser()!! as Confectioner
-
     private val _state = MutableStateFlow(
         MainConfectionerState(
-            confectioner = confectioner,
+            confectioner = session.value!!.user as Confectioner,
             products = emptyList()
         )
     )
+
     init {
+        viewModelScope.launch {
+            sessionCache.session.collect { session ->
+                val user = session?.user as? Confectioner
+                if (user != null) {
+                    _state.update { it.copy(confectioner = user) }
+                }
+            }
+        }
         getProducts()
     }
 
     private fun getProducts() {
         viewModelScope.launch {
-            val result = getProductsUseCase.execute(confectioner)
+            val result = getProductsUseCase.execute(_state.value.confectioner)
             if (result is GetProductsResult.Success) {
                 _state.value = _state.value.copy(products = result.cakes)
             }

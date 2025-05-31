@@ -8,13 +8,19 @@ import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Session
 import dev.tp_94.mobileapp.core.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class SessionCacheImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : SessionCache {
 
-    override var session: Session? = null
+    private val _session = MutableStateFlow<Session?>(null);
+    override val session: StateFlow<Session?>
+        get() = _session.asStateFlow()
 
     private val moshi = Moshi.Builder()
         .add(
@@ -28,10 +34,12 @@ class SessionCacheImpl @Inject constructor(
 
     init {
         val json = sharedPreferences.getString("session", null)
-        session = try {
-            json?.let { adapter.fromJson(it) }
-        } catch (e: Exception) {
-            null
+        _session.update {
+            try {
+                json?.let { adapter.fromJson(it) }
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
@@ -41,26 +49,28 @@ class SessionCacheImpl @Inject constructor(
         sharedPreferences.edit()
             .putString("session", adapter.toJson(session))
             .apply()
-        this.session = session
+        _session.value = session
     }
 
     @Synchronized
     override fun updateUser(user: User) {
-        if (session != null) {
-            session = session!!.copy(user = user)
+        _session.update { old ->
+            old?.copy(user = user)
         }
     }
 
     @Synchronized
     override fun clearSession() {
         sharedPreferences.edit().remove("session").apply()
-        this.session = null
+        _session.update { _ ->
+            null
+        }
     }
 
     @Synchronized
     override fun updateToken(accessToken: String, refreshToken: String) {
-        if (session != null) {
-            session = session!!.copy(accessToken = accessToken, refreshToken = refreshToken)
+        _session.update { old ->
+            old?.copy(accessToken = accessToken, refreshToken = refreshToken)
         }
     }
 }

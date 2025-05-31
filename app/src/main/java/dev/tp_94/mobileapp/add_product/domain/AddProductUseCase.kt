@@ -17,7 +17,7 @@ class AddProductUseCase @Inject constructor(
         cake: CakeGeneral,
         isUpdate: Boolean
     ): ProductResult {
-        if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) return ProductResult.Error(
+        if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Confectioner) return ProductResult.Error(
             "Недостаточно прав для добавления продукта"
         )
         if (cake.imageUrl == null) {
@@ -43,12 +43,23 @@ class AddProductUseCase @Inject constructor(
         }
         try {
             if (isUpdate) {
-                //TODO: update
+                repository.updateGeneralCake(
+                    CakeGeneralRequestDTO(
+                        confectionerId = sessionCache.session.value!!.user.id,
+                        name = cake.name,
+                        description = cake.description,
+                        diameter = cake.diameter,
+                        weight = cake.weight,
+                        reqTime = cake.preparation,
+                        price = cake.price
+                    ),
+                    imageUrl = cake.imageUrl
+                )
             }
             else {
                 repository.addGeneralCake(
                     CakeGeneralRequestDTO(
-                        confectionerId = sessionCache.session!!.user.id,
+                        confectionerId = sessionCache.session.value!!.user.id,
                         name = cake.name,
                         description = cake.description,
                         diameter = cake.diameter,

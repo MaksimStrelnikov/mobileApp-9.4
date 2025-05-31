@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
@@ -46,7 +47,7 @@ fun ProfileScreen(
     topBar: @Composable () -> Unit,
     bottomBar: @Composable () -> Unit
 ) {
-    val user = viewModel.getUser()
+    val user = viewModel.session.collectAsStateWithLifecycle().value?.user
     Log.println(Log.INFO, "Log", user.toString())
 
     LaunchedEffect(user) {
@@ -54,10 +55,10 @@ fun ProfileScreen(
             onError()
         }
     }
-    when (viewModel.getUser()) {
+    when (user) {
         is Confectioner -> ProfileConfectionerStatelessScreen(
-            name = viewModel.getUser()!!.name,
-            phoneNumber = viewModel.getUser()!!.phoneNumber,
+            name = user.name,
+            phoneNumber = user.phoneNumber,
             onWithdraw = confectionerRoutes.onWithdraw,
             onChangePersonalData = confectionerRoutes.onChangePersonalData,
             onViewOrders = confectionerRoutes.onViewOrders,
@@ -74,8 +75,8 @@ fun ProfileScreen(
         )
 
         is Customer -> ProfileCustomerStatelessScreen(
-            name = viewModel.getUser()!!.name,
-            phoneNumber = viewModel.getUser()!!.phoneNumber,
+            name = user.name,
+            phoneNumber = user.phoneNumber,
             onChangePersonalData = customerRoutes.onChangePersonalData,
             onViewOrders = customerRoutes.onViewOrders,
             onLogout = {

@@ -18,7 +18,7 @@ class AddCardUseCase @Inject constructor(private val cardRepository: CardReposit
             if (value.cvcCode.length < 3) {
                 NewCardAdditionResult.Error("CVC-код должен состоять из 3 цифр")
             }
-            val result = cardRepository.addNewCard(value.number, value.expiration, value.cvcCode, sessionCache.session!!.user)
+            val result = cardRepository.addNewCard(value.number, value.expiration, value.cvcCode, sessionCache.session.value!!.user)
             return NewCardAdditionResult.Success(result)
         } catch (e: Exception) {
             return NewCardAdditionResult.Error(e.message ?: "Возникла непредвиденная ошибка")

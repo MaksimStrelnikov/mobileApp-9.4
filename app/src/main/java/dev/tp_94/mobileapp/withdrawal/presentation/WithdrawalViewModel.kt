@@ -48,16 +48,16 @@ class WithdrawalViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         WithdrawalState(
-            available = (sessionCache.session!!.user as Confectioner).canWithdrawal,
-            inProcess = (sessionCache.session!!.user as Confectioner).inProcess
+            available = (sessionCache.session.value!!.user as Confectioner).canWithdrawal,
+            inProcess = (sessionCache.session.value!!.user as Confectioner).inProcess
         )
     )
     val state = _state.asStateFlow()
 
     private suspend fun update() {
         _state.value = _state.value.copy(
-            available = (sessionCache.session!!.user as Confectioner).canWithdrawal,
-            inProcess = (sessionCache.session!!.user as Confectioner).inProcess,
+            available = (sessionCache.session.value!!.user as Confectioner).canWithdrawal,
+            inProcess = (sessionCache.session.value!!.user as Confectioner).inProcess,
             cards = (getAllCardsUseCase.execute() as PaymentMethodsResult.Success).cards
         )
     }

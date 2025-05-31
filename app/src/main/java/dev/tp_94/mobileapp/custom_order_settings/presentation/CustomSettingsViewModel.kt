@@ -56,8 +56,8 @@ class CustomSettingsViewModel @Inject constructor(
 
     private fun getRestrictions() {
         viewModelScope.launch {
-            //TODO: handle sessionCache.session!!.user is not a confectioner case
-            val result = getRestrictionsUseCase.execute(sessionCache.session!!.user as Confectioner)
+            //TODO: handle sessionCache.session.value!!.user is not a confectioner case
+            val result = getRestrictionsUseCase.execute(sessionCache.session.value!!.user as Confectioner)
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(
                     isCustomAcceptable = result.restrictions.isCustomAcceptable,

@@ -18,7 +18,7 @@ class ProfileEditorViewModel @Inject constructor(
     sessionCache: SessionCache
 ) : ViewModel() {
     private val _state = MutableStateFlow(
-        sessionCache.session?.user
+        sessionCache.session.value?.user
     )
 
     val state = _state.asStateFlow()
@@ -62,7 +62,7 @@ class ProfileEditorCustomerViewModel @Inject constructor(
 
     private val _state: MutableStateFlow<ProfileEditorCustomerState>
     init {
-        val session = sessionCache.session
+        val session = sessionCache.session.value
             ?: throw IllegalStateException("No active session found")
 
         val user = session.user
@@ -73,9 +73,9 @@ class ProfileEditorCustomerViewModel @Inject constructor(
         _state = MutableStateFlow(
             ProfileEditorCustomerState(
                 isLoading = false,
-                name = sessionCache.session!!.user.name,
-                phoneNumber = sessionCache.session!!.user.phoneNumber,
-                email = sessionCache.session!!.user.email,
+                name = user.name,
+                phoneNumber = user.phoneNumber,
+                email = user.email,
                 error = "",
             )
         )
@@ -131,7 +131,7 @@ class ProfileEditorConfectionerViewModel @Inject constructor(
 
     private val _state: MutableStateFlow<ProfileEditorConfectionerState>
     init {
-        val session = sessionCache.session
+        val session = sessionCache.session.value
             ?: throw IllegalStateException("No active session found")
 
         val user = session.user

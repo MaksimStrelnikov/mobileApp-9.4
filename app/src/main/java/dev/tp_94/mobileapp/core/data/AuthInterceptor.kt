@@ -12,7 +12,7 @@ class AuthInterceptor @Inject constructor(
 
     @Synchronized
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = sessionCache.session?.accessToken
+        val token = sessionCache.session.value?.accessToken
 
         val request = chain.request().newBuilder()
             .apply {

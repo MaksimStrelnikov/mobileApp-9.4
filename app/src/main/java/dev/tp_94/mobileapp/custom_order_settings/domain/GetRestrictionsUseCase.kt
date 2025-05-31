@@ -12,7 +12,7 @@ class GetRestrictionsUseCase @Inject constructor(
 ) {
     suspend fun execute(confectioner: Confectioner): RestrictionsResult {
         try {
-            if (sessionCache.session == null) {
+            if (sessionCache.session.value == null) {
                 return RestrictionsResult.Error("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
             }
             val dto = repository.getCustomCakeRestrictions(confectioner.id)

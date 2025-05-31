@@ -22,13 +22,10 @@ class ProfileViewModel @Inject constructor(
     )
     val state = _state.asStateFlow()
 
-    fun getUser(): User? {
-        return sessionCache.session?.user
-    }
+    val session = sessionCache.session
 
     fun logout() {
         sessionCache.clearSession()
-
     }
 
     fun deleteAccount(onLogout: () -> Unit) {
@@ -41,9 +38,5 @@ class ProfileViewModel @Inject constructor(
                 onLogout()
             }
         }
-    }
-
-    fun deleteAccount() {
-        // TODO: delete account
     }
 }

@@ -15,7 +15,7 @@ class DeleteProductUseCase @Inject constructor(
 ) {
     suspend fun execute(cake: CakeGeneral): ProductResult {
         try {
-            if (sessionCache.session == null || sessionCache.session!!.user !is Confectioner) return ProductResult.Error("Недостачно прав для удаления продукта")
+            if (sessionCache.session.value == null || sessionCache.session.value!!.user !is Confectioner) return ProductResult.Error("Недостачно прав для удаления продукта")
             repository.deleteCake(cake.id)
             return ProductResult.Success
         } catch (e: Exception) {
