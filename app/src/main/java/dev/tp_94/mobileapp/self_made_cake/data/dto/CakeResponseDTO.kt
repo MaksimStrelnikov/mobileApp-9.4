@@ -3,9 +3,9 @@ package dev.tp_94.mobileapp.self_made_cake.data.dto
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import dev.tp_94.mobileapp.core.data.RetrofitInstance
 import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.CakeGeneral
-import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
 
 data class CakeResponseDTO(
@@ -16,7 +16,7 @@ data class CakeResponseDTO(
     @SerializedName("fillings") val fillings: List<String>,
     @SerializedName("required_time") val requiredTime: Int,
     @SerializedName("color") val color: Int,
-    @SerializedName("image_url") val imageUrl: String,
+    @SerializedName("image_url") val imageUrl: String?,
     @SerializedName("price") val price: Int,
     @SerializedName("diameter") val diameter: Float,
     @SerializedName("weight") val weight: Float,
@@ -32,7 +32,7 @@ data class CakeResponseDTO(
         diameter = diameter,
         text = text,
         textOffset = Offset(textX, textY),
-        imageUrl = imageUrl,
+        imageUrl = imageUrl?.let {RetrofitInstance.IMAGES_URL + it},
         imageOffset = Offset(0f, 0f),
         fillings = fillings,
         preparation = requiredTime,
@@ -44,7 +44,7 @@ data class CakeResponseDTO(
     fun toGeneral(): CakeGeneral = CakeGeneral(
         id = id,
         price = price,
-        imageUrl = imageUrl,
+        imageUrl = imageUrl?.let {RetrofitInstance.IMAGES_URL + it},
         name = name,
         description = description,
         diameter = diameter,

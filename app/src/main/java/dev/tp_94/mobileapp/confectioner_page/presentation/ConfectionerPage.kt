@@ -1,10 +1,10 @@
 package dev.tp_94.mobileapp.confectioner_page.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.confectioner_page.presentation.components.ConfectionerCard
@@ -111,8 +112,9 @@ fun ConfectionerPageStatelessScreen(
                             price = product.price,
                             onBuy = { onProductBuy(product) },
                             onOpen = { onNavigateToProduct(product) },
-                            image = null //TODO: add image
+                            image = product.imageUrl?.let {rememberAsyncImagePainter(product.imageUrl) }
                         )
+                        Log.println(Log.INFO, "ConfectionerPageStatelessScreen", product.imageUrl.toString())
                     }
                 }
             }

@@ -86,6 +86,7 @@ fun CakeFeedItem(
                     contentDescription = "Торт",
                     modifier = Modifier
                         .fillMaxWidth()
+                        .aspectRatio(1f)
                         .clip(RoundedCornerShape(8.dp))
                         .padding(bottom = 5.dp),
                     contentScale = ContentScale.Crop
