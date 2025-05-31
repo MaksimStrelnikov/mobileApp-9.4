@@ -76,7 +76,7 @@ class CustomSettingsViewModel @Inject constructor(
         }
     }
 
-    fun saveCustomSettings() {
+    fun saveCustomSettings(onSuccess: () -> Unit) {
         viewModelScope.launch {
             val result = updateRestrictionsUseCase.execute(
                 isCustomAcceptable = _state.value.isCustomAcceptable,
@@ -90,6 +90,7 @@ class CustomSettingsViewModel @Inject constructor(
             )
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(error = null)
+                onSuccess()
             } else if (result is RestrictionsResult.Error) {
                 _state.value = _state.value.copy(error = result.message)
             }

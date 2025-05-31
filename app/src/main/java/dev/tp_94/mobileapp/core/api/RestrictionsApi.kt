@@ -10,10 +10,10 @@ import retrofit2.http.Path
 
 interface RestrictionsApi {
     @GET("confectioners/{id}/settings")
-    fun getCustomCakeRestrictions(@Path("id") confectionerId: Long): Response<RestrictionsResponseDTO>
+    suspend fun getCustomCakeRestrictions(@Path("id") confectionerId: Long): Response<RestrictionsResponseDTO>
 
     @PUT("confectioners/self/settings")
-    fun updateCustomCakeRestrictions(
+    suspend fun updateCustomCakeRestrictions(
         @Path("id") confectionerId: Long,
         @Body restrictions: RestrictionsRequestDTO
     ): Response<RestrictionsResponseDTO>

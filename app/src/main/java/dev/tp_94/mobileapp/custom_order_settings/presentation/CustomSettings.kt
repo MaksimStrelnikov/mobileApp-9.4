@@ -200,7 +200,7 @@ fun CustomSettingsStatefulScreen(
         topBar = topBar,
         bottomBar = {
             ActiveButton(
-                onClick = { viewModel.saveCustomSettings() },
+                onClick = { viewModel.saveCustomSettings(onSave) },
                 modifier = Modifier
                     .height(48.dp)
                     .fillMaxWidth()
