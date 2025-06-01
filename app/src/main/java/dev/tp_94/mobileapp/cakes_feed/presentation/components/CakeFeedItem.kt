@@ -33,6 +33,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 
 @Composable
 fun CakeFeedItem(
+    modifier: Modifier = Modifier,
     name: String,
     weight: Float,
     preparation: Int,
@@ -43,7 +44,7 @@ fun CakeFeedItem(
 ) {
     BlockButton(
         onClick = onOpen,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(0.dp, 0.dp, 0.dp, 16.dp)

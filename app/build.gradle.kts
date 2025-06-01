@@ -51,8 +51,8 @@ android {
     productFlavors {
         create("dev") {
             dimension = "env"
-            versionCode = 1
-            versionName = "1.0-dev"
+            versionCode = 2
+            versionName = "1.1-dev"
         }
         create("prod") {
             dimension = "env"

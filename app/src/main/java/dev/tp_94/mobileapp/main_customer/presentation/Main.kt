@@ -17,12 +17,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -32,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import coil.imageLoader
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.core.models.CakeGeneral
@@ -94,7 +98,6 @@ fun MainStatelessScreen(
     onProductBuy: (CakeGeneral) -> Unit,
     bottomBar: @Composable () -> Unit,
 ) {
-    val scroll = rememberScrollState()
     Scaffold(
         bottomBar = bottomBar,
     ) { innerPadding ->
@@ -106,108 +109,121 @@ fun MainStatelessScreen(
                     color = colorResource(R.color.background)
                 )
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .padding(12.dp)
-                    .fillMaxSize()
-                    .scrollable(
-                        scroll,
-                        orientation = Orientation.Vertical
-                    )
+                    .fillMaxWidth()
             ) {
-                SearchInput(
-                    text = state.search,
-                    defaultText = "Поиск по кондитерам",
-                    onChange = onSearchTextChange,
-                    onSearch = onSearch
-                )
-                Spacer(Modifier.height(8.dp))
-                val painter = painterResource(R.drawable.banner)
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(
-                            painter.intrinsicSize.width / painter.intrinsicSize.height
-                        )
-                )
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Кондитеры",
-                        style = TextStyles.header(colorResource(R.color.dark_text)),
-                        modifier = Modifier.weight(1f)
+                item {
+                    SearchInput(
+                        text = state.search,
+                        defaultText = "Поиск по кондитерам",
+                        onChange = onSearchTextChange,
+                        onSearch = onSearch
                     )
-                    IconButton(
-                        onClick = onNavigateToConfectioners
+                    Spacer(Modifier.height(8.dp))
+                }
+                item {
+                    val painter = painterResource(R.drawable.banner)
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(
+                                painter.intrinsicSize.width / painter.intrinsicSize.height
+                            )
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.next),
-                            contentDescription = null,
-                            tint = colorResource(R.color.dark_text)
+                        Text(
+                            text = "Кондитеры",
+                            style = TextStyles.header(colorResource(R.color.dark_text)),
+                            modifier = Modifier.weight(1f)
                         )
+                        IconButton(
+                            onClick = onNavigateToConfectioners
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.next),
+                                contentDescription = null,
+                                tint = colorResource(R.color.dark_text)
+                            )
+                        }
                     }
                 }
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    items(state.confectioners) {
-                        ConfectionerFeedItem(
-                            name = it.name,
-                            avatar = null,
-                            imageFirst = null,
-                            imageSecond = null,
-                            onClick = { onNavigateToConfectioner(it) }
+                item {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        items(state.confectioners) {
+                            ConfectionerFeedItem(
+                                name = it.name,
+                                avatar = null,
+                                imageFirst = null,
+                                imageSecond = null,
+                                onClick = { onNavigateToConfectioner(it) }
+                            )
+                            Spacer(Modifier.width(8.dp))
+                        }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Товары",
+                            style = TextStyles.header(colorResource(R.color.dark_text)),
+                            modifier = Modifier.weight(1f)
                         )
-                        Spacer(Modifier.width(8.dp))
+                        IconButton(
+                            onClick = onNavigateToProducts
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.next),
+                                contentDescription = null,
+                                tint = colorResource(R.color.dark_text)
+                            )
+                        }
+                    }
+                }
+                items(state.products.chunked(2)) { row ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        row.forEach { product ->
+                                CakeFeedItem(
+                                    modifier = Modifier.weight(1f),
+                                    name = product.name,
+                                    weight = product.weight,
+                                    preparation = product.preparation,
+                                    price = product.price,
+                                    onBuy = { onProductBuy(product) },
+                                    onOpen = { onNavigateToProduct(product) },
+                                    image = product.imageUrl?.let { url ->
+                                        rememberAsyncImagePainter(
+                                            model = url,
+                                            imageLoader = LocalContext.current.imageLoader
+                                        )
+                                    }
+                                )
+                        }
+                        if (row.size < 2) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Товары",
-                        style = TextStyles.header(colorResource(R.color.dark_text)),
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        onClick = onNavigateToProducts
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.next),
-                            contentDescription = null,
-                            tint = colorResource(R.color.dark_text)
-                        )
-                    }
-                }
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(state.products) { product ->
-                        CakeFeedItem(
-                            name = product.name,
-                            weight = product.weight,
-                            preparation = product.preparation,
-                            price = product.price,
-                            onBuy = { onProductBuy(product) },
-                            onOpen = { onNavigateToProduct(product) },
-                            image = product.imageUrl?.let{ url -> rememberAsyncImagePainter(url) }
-                        )
-                    }
-                }
             }
         }
     }

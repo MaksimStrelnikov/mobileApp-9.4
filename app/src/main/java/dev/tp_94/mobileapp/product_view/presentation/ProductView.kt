@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
@@ -61,7 +62,7 @@ fun ProductViewStatefulScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     GeneralProductViewStatelessScreen(
         state = state,
-        image = null,
+        image = state.cake.imageUrl?.let { rememberAsyncImagePainter(it) },
         userType = userType,
         onConfectionerClick = onConfectionerClick,
         onBuy = { viewModel.addToBasket(it) },
