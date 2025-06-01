@@ -24,6 +24,7 @@ import dev.tp_94.mobileapp.core.api.RestrictionsApi
 import dev.tp_94.mobileapp.core.api.GenerationApi
 import dev.tp_94.mobileapp.core.api.RefreshApi
 import dev.tp_94.mobileapp.core.api.UserApi
+import dev.tp_94.mobileapp.core.api.WithdrawalApi
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -152,6 +153,11 @@ object NetworkModule {
     @Singleton
     fun provideCakeApi(@MainApi retrofit: Retrofit): CakeApi =
         retrofit.create(CakeApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideWithdrawalApi(@MainApi retrofit: Retrofit): WithdrawalApi =
+        retrofit.create(WithdrawalApi::class.java)
 
     @Provides
     @StableHordeApi

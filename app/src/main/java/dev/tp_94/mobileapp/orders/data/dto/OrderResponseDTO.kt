@@ -21,7 +21,7 @@ data class OrderResponseDTO(
     @SerializedName("created_at") val createdAt: Instant,
     @SerializedName("is_custom") val isCustom: Boolean
 ) {
-    fun toOrder(customer: Customer, confectioner: Confectioner): Order {
+    fun toOrder(): Order {
         return Order(
             id = this.id,
             cake = if (this.cake.isCustom) this.cake.toCustom() else this.cake.toGeneral(),
@@ -29,8 +29,8 @@ data class OrderResponseDTO(
             orderStatus = status,
             price = price,
             quantity = quantity,
-            customer = customer,
-            confectioner = confectioner
+            customer = customer.toCustomer(),
+            confectioner = confectioner.toConfectioner()
         )
     }
 }

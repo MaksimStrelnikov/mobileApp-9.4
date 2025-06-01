@@ -15,6 +15,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +25,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.PriceEditor
@@ -42,6 +46,19 @@ fun WithdrawalStatefulScreen(
     onErrorWithdrawal: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.update()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     WithdrawalStatelessScreen(
         state = state,
@@ -113,7 +130,7 @@ fun WithdrawalStatelessScreen(
             ) {
                 WithdrawalSum(
                     canWithdraw = state.available.toString(),
-                    inProcess = state.inProcess.toString(),
+                    inProcess = state.inProgress.toString(),
                 )
                 Spacer(Modifier.height(8.dp))
                 PriceEditor(

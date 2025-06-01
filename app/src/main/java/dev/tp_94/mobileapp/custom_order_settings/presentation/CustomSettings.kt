@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,12 +27,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.FillingField
+import dev.tp_94.mobileapp.core.themes.NumberEditor
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.core.themes.FillingField
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.LabeledCheckbox
-import dev.tp_94.mobileapp.core.themes.NumberEditor
-import dev.tp_94.mobileapp.core.themes.SpecialTextField
 import dev.tp_94.mobileapp.custom_order_settings.presentation.components.SectionHeader
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEditable
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew

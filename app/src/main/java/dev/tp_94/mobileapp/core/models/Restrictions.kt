@@ -7,8 +7,8 @@ data class Restrictions(
     val isCustomAcceptable: Boolean = false,
     val isImageAcceptable: Boolean = false,
     val isShapeAcceptable: Boolean = false,
-    val minDiameter: Float = 0f,
-    val maxDiameter: Float = 0f,
+    val minDiameter: Int = 0,
+    val maxDiameter: Int = 0,
     val minPreparationDays: Int = 0,
     val maxPreparationDays: Int = 0,
     val fillings: List<String> = emptyList()
@@ -19,8 +19,8 @@ fun Restrictions.toDto(): RestrictionsRequestDTO {
         canMakeCustom = isCustomAcceptable,
         doImages = isImageAcceptable,
         doShapes = isShapeAcceptable,
-        minDiameter = minDiameter,
-        maxDiameter = maxDiameter,
+        minDiameter = minDiameter.toFloat(),
+        maxDiameter = maxDiameter.toFloat(),
         minEtaDays = minPreparationDays,
         maxEtaDays = maxPreparationDays,
         fillings = fillings

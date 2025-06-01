@@ -3,6 +3,8 @@ package dev.tp_94.mobileapp.data
 import dev.tp_94.mobileapp.core.data.HttpStatus.*
 import dev.tp_94.mobileapp.orders.data.dto.OrderResponseDTO
 import dev.tp_94.mobileapp.core.api.OrderApi
+import dev.tp_94.mobileapp.payment.data.CardDTO
+import dev.tp_94.mobileapp.payment.data.SeveralOrdersCreationPaymentRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
@@ -41,6 +43,30 @@ class OrderRepositoryImpl @Inject constructor(
     override suspend fun updateOrderStatus(orderId: Long, request: OrderPatchRequestDTO): OrderResponseDTO {
         val response = api.updateStatusOrder(orderId, request)
         if (!response.isSuccessful) throw Exception(response.message())
+        return response.body()!!
+    }
+
+    override suspend fun placeAndPayOrders(severalOrdersCreationPaymentRequestDTO: SeveralOrdersCreationPaymentRequestDTO) {
+        val response = api.createAndPayOrders(severalOrdersCreationPaymentRequestDTO)
+        if (!response.isSuccessful) {
+            throw Exception(response.message())
+        }
+    }
+
+
+
+    override suspend fun payOrder(orderId: Long, cardDTO: CardDTO) {
+        val response = api.payOrder(orderId, cardDTO)
+        if (!response.isSuccessful) {
+            throw Exception(response.message())
+        }
+    }
+
+    override suspend fun receiveOrder(orderId: Long): OrderResponseDTO {
+        val response = api.receiveOrder(orderId)
+        if (!response.isSuccessful) {
+            throw Exception(response.message())
+        }
         return response.body()!!
     }
 

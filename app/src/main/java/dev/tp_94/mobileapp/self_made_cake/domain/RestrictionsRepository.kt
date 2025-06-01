@@ -5,5 +5,5 @@ import dev.tp_94.mobileapp.custom_order_settings.data.RestrictionsResponseDTO
 
 interface RestrictionsRepository {
     suspend fun getCustomCakeRestrictions(id: Long): RestrictionsResponseDTO
-    suspend fun updateCustomCakeRestrictions(confectionerId: Long, restrictions: RestrictionsRequestDTO): RestrictionsResponseDTO
+    suspend fun updateCustomCakeRestrictions(restrictions: RestrictionsRequestDTO): RestrictionsResponseDTO
 }

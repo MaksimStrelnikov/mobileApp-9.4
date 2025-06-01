@@ -14,7 +14,6 @@ interface RestrictionsApi {
 
     @PUT("confectioners/self/settings")
     suspend fun updateCustomCakeRestrictions(
-        @Path("id") confectionerId: Long,
         @Body restrictions: RestrictionsRequestDTO
     ): Response<RestrictionsResponseDTO>
 }

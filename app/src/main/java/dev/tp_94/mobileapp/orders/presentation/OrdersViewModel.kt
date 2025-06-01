@@ -8,6 +8,7 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.orders.domain.GetAllOrdersUseCase
+import dev.tp_94.mobileapp.orders.domain.ReceiveOrderUseCase
 import dev.tp_94.mobileapp.orders.domain.UpdateOrderStatusUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     private val sessionCache: SessionCache,
     private val getAllOrdersUseCase: GetAllOrdersUseCase,
-    private val updateOrderStatusUseCase: UpdateOrderStatusUseCase
+    private val updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private val receiveOrderUseCase: ReceiveOrderUseCase
 ) : ViewModel() {
 
     val session = sessionCache.session
@@ -51,15 +53,29 @@ class OrdersViewModel @Inject constructor(
 
 
     fun changeStatus(order: Order, status: OrderStatus) {
-        viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(order, status, order.price)
-            if (result is OrdersResult.Success.SuccessUpdate) {
-                _state.value =
-                    _state.value.copy(orders = _state.value.orders.filter { it != order } + arrayListOf(
-                        result.order
-                    ))
+        if (status == OrderStatus.RECEIVED) {
+            viewModelScope.launch {
+                val result = receiveOrderUseCase.execute(order)
+                if (result is OrdersResult.Success.SuccessUpdate) {
+                    _state.value =
+                        _state.value.copy(orders = _state.value.orders.filter { it != order } + arrayListOf(
+                            result.order
+                        ))
+                } else if (result is OrdersResult.Error) {
+                    //TODO: add error handling
+                }
             }
-            //TODO: add error handling
+        } else {
+            viewModelScope.launch {
+                val result = updateOrderStatusUseCase.execute(order, status, order.price)
+                if (result is OrdersResult.Success.SuccessUpdate) {
+                    _state.value =
+                        _state.value.copy(orders = _state.value.orders.filter { it != order } + arrayListOf(
+                            result.order
+                        ))
+                }
+                //TODO: add error handling
+            }
         }
     }
 

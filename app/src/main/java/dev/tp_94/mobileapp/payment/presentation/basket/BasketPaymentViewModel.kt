@@ -60,18 +60,6 @@ class BasketPaymentViewModel @Inject constructor(
         //TODO: add error handling
     }
 
-    private fun changeStatus() {
-        viewModelScope.launch {
-            val result = createOrdersUseCase.execute(
-                cakes = state.value.cakes,
-            )
-            if (result is OrdersResult.Success) {
-                getAllCards()
-            }
-            //TODO: error handling
-        }
-    }
-
     fun selectCard(card: Card?) {
         Log.println(Log.INFO, "Log", "Got in selected change $card")
         _state.value = _state.value.copy(selected = card)
@@ -79,13 +67,23 @@ class BasketPaymentViewModel @Inject constructor(
     }
 
 
-    fun onPay(card: Card, onSuccessfulPay: () -> Unit, onErrorPay: () -> Unit) {
-        //TODO: move mock payment for demonstrating screens to back-end
-        if (Random.nextDouble() < 0.88) {
-            changeStatus()
-            onSuccessfulPay()
-        } else {
-            onErrorPay()
+    fun onPay(onSuccessfulPay: () -> Unit, onErrorPay: () -> Unit) {
+        viewModelScope.launch {
+            val result = createOrdersUseCase.execute(
+                cakes = state.value.cakes,
+                card = state.value.selected!!
+            )
+            if (result is OrdersResult.Success) {
+                getAllCards()
+                onSuccessfulPay()
+            } else {
+                onErrorPay()
+            }
+            //TODO: error handling
         }
+    }
+
+    fun refreshCards() {
+        getAllCards()
     }
 }

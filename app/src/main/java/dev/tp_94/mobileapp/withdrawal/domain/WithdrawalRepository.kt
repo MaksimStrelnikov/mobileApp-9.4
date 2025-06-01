@@ -1,13 +1,13 @@
 package dev.tp_94.mobileapp.withdrawal.domain
 
-import dev.tp_94.mobileapp.core.models.Card
-import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
-import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
-import retrofit2.Response
+import dev.tp_94.mobileapp.withdrawal.data.BalanceResponseDTO
+import dev.tp_94.mobileapp.withdrawal.data.WithdrawRequestDTO
 
 interface WithdrawalRepository {
     /**
-     * Performs withdrawal and updates current confectioner in session cache.
+     * Performs withdrawal
      */
-    suspend fun withdrawal(card: Card, sum: Int)
+    suspend fun withdrawal(withdrawRequestDTO: WithdrawRequestDTO): BalanceResponseDTO
+
+    suspend fun getBalance(): BalanceResponseDTO
 }

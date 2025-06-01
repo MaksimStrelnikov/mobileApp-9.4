@@ -16,6 +16,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,6 +26,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.CakeCustom
@@ -51,7 +56,21 @@ fun BasketPaymentStatefulScreen(
     onAddNewCard: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshCards()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     BasketPaymentStatelessScreen(
         state = state,
         actionButtonName = actionButtonName,
@@ -60,8 +79,8 @@ fun BasketPaymentStatefulScreen(
             viewModel.selectCard(it)
             Log.println(Log.INFO, "Log", "Put ${state.selected.toString()}")
         },
-        onPay = { card ->
-            viewModel.onPay(card, onSuccessfulPay, onErrorPay)
+        onPay = {
+            viewModel.onPay(onSuccessfulPay, onErrorPay)
         },
         onAddNewCard = {
             onAddNewCard()
@@ -75,7 +94,7 @@ fun BasketPaymentStatelessScreen(
     state: BasketPaymentState,
     actionButtonName: String,
     onSelect: (Card?) -> Unit,
-    onPay: (Card) -> Unit,
+    onPay: () -> Unit,
     onAddNewCard: () -> Unit,
     topBar: @Composable () -> Unit
 ) {
@@ -85,9 +104,7 @@ fun BasketPaymentStatelessScreen(
             //TODO: generalize bottom payment bar
             ActiveButton(
                 onClick = {
-                    if (state.selected == null) onAddNewCard() else onPay(
-                        state.selected
-                    )
+                    if (state.selected == null) onAddNewCard() else onPay()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

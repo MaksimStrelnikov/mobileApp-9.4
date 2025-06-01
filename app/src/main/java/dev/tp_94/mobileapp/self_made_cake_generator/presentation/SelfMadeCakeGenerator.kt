@@ -184,7 +184,7 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             DiameterSlider(
                 onChange = onDiameterChange,
                 diameter = state.cakeCustom.diameter,
-                valueRange = state.restrictions.minDiameter..state.restrictions.maxDiameter
+                valueRange = state.restrictions.minDiameter.toFloat()..state.restrictions.maxDiameter.toFloat()
             )
             Spacer(modifier = Modifier.height(8.dp))
             val expandedState = remember { mutableStateOf(false) }

@@ -17,7 +17,7 @@ class UpdateOrderStatusUseCase @Inject constructor(private val repository: Order
                     orderStatus = status
                 )
             )
-            OrdersResult.Success.SuccessUpdate(dto.toOrder(order.customer, order.confectioner))
+            OrdersResult.Success.SuccessUpdate(dto.toOrder())
         } catch (e: Exception) {
             OrdersResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }

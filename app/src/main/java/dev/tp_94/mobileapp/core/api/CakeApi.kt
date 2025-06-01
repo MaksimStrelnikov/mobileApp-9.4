@@ -13,11 +13,11 @@ import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface CakeApi {
-    @POST("cakes/custom/self")
+    @POST("cakes/custom")
     @Multipart
     suspend fun uploadCakeCustom(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
-    @POST("cakes/custom/self")
+    @POST("cakes/custom")
     @Multipart
     suspend fun uploadCakeCustomWithoutImage(@PartMap toParts: Map<String, @JvmSuppressWildcards RequestBody>): Response<CakeResponseDTO>
 

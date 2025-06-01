@@ -18,8 +18,8 @@ data class RestrictionsResponseDTO(
         isCustomAcceptable = canMakeCustom,
         isImageAcceptable = doImages,
         isShapeAcceptable = doShapes,
-        minDiameter = minDiameter.toFloat(),
-        maxDiameter = maxDiameter.toFloat(),
+        minDiameter = minDiameter.toInt(),
+        maxDiameter = maxDiameter.toInt(),
         minPreparationDays = minEtaDays,
         maxPreparationDays = maxEtaDays,
         fillings = fillings?: emptyList()

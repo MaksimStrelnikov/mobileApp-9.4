@@ -12,13 +12,13 @@ class RestrictionsRepositoryImpl @Inject constructor(
 ): RestrictionsRepository {
     override suspend fun getCustomCakeRestrictions(id: Long): RestrictionsResponseDTO {
         val response = restrictionsApi.getCustomCakeRestrictions(id)
-        if (response.code() != HttpStatus.OK.status) throw Exception(response.message())
+        if (!response.isSuccessful) throw Exception(response.message())
         return response.body()!!
     }
 
-    override suspend fun updateCustomCakeRestrictions(confectionerId: Long, restrictions: RestrictionsRequestDTO): RestrictionsResponseDTO {
-        val response = restrictionsApi.updateCustomCakeRestrictions(confectionerId, restrictions)
-        if (response.code() != HttpStatus.UPDATED.status) throw Exception(response.message())
+    override suspend fun updateCustomCakeRestrictions(restrictions: RestrictionsRequestDTO): RestrictionsResponseDTO {
+        val response = restrictionsApi.updateCustomCakeRestrictions(restrictions)
+        if (!response.isSuccessful) throw Exception(response.message())
         return response.body()!!
     }
 }

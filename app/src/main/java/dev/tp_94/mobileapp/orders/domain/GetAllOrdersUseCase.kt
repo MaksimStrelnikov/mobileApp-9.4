@@ -17,10 +17,7 @@ class GetAllOrdersUseCase @Inject constructor(
             if (sessionCache.session.value == null) return OrdersResult.Error("Пользователь не существует")
             val dtos = orderRepository.getAllOrders()
             val list = dtos.map {
-                it.toOrder(
-                    customer = it.customer.toCustomer(),
-                    confectioner = it.confectioner.toConfectioner()
-                )
+                it.toOrder()
             }
             return OrdersResult.Success.SuccessGet(list)
         } catch (e: Exception) {

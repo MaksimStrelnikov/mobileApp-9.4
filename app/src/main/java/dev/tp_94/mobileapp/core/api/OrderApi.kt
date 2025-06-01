@@ -3,6 +3,8 @@ package dev.tp_94.mobileapp.core.api
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
 import dev.tp_94.mobileapp.orders.data.dto.OrderResponseDTO
+import dev.tp_94.mobileapp.payment.data.CardDTO
+import dev.tp_94.mobileapp.payment.data.SeveralOrdersCreationPaymentRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 import retrofit2.Response
 import retrofit2.http.Body
@@ -23,4 +25,13 @@ interface OrderApi {
 
     @PATCH("orders/{id}")
     suspend fun updateStatusOrder(@Path("id") orderId: Long, @Body order: OrderPatchRequestDTO): Response<OrderResponseDTO>
+
+    @POST("orders/batchpay")
+    suspend fun createAndPayOrders(@Body severalOrdersCreationPaymentRequestDTO: SeveralOrdersCreationPaymentRequestDTO): Response<Unit>
+
+    @POST("orders/{id}/pay")
+    suspend fun payOrder(@Path("id") orderId: Long, @Body cardDTO: CardDTO): Response<Unit>
+
+    @POST("orders/{id}/receive")
+    suspend fun receiveOrder(@Path("id") orderId: Long): Response<OrderResponseDTO>
 }

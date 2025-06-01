@@ -202,7 +202,9 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         composable("basket") {
             BasketStatefulScreen(
                 onOrder = {
-
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("basketPayment/$encoded")
                 },
                 topBar = {
                     TopNameBar("Корзина") {
@@ -421,8 +423,8 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         }
 
         composable(
-            "basketPayment/{list}",
-            arguments = listOf(navArgument("list") { type = NavType.StringType })
+            "basketPayment/{cakes}",
+            arguments = listOf(navArgument("cakes") { type = NavType.StringType })
         ) { backStackEntry ->
             val viewModel = hiltViewModel<BasketPaymentViewModel>(backStackEntry)
             BasketPaymentStatefulScreen(

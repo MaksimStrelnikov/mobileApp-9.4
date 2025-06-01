@@ -48,7 +48,7 @@ class CustomSettingsViewModel @Inject constructor(
         .also { _state.value = it }
 
     fun updateFillings(value: List<String>) = _state.value
-        .copy(fillings = _state.value.fillings + value).also { _state.value = it }
+        .copy(fillings = value).also { _state.value = it }
 
     init {
         getRestrictions()

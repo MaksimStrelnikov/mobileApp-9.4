@@ -4,17 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tp_94.mobileapp.confectioner_page.presentation.ConfectionerPageState
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
-import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
-import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.orders.domain.GetAllOrdersUseCase
+import dev.tp_94.mobileapp.orders.domain.ReceiveOrderUseCase
 import dev.tp_94.mobileapp.orders.domain.UpdateOrderStatusUseCase
 import dev.tp_94.mobileapp.orders.presentation.OrdersResult
-import dev.tp_94.mobileapp.orders.presentation.OrdersState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +22,8 @@ import javax.inject.Inject
 class OrderViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionCache: SessionCache,
-    private val updateOrderStatusUseCase: UpdateOrderStatusUseCase
+    private val updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private val receiveOrderUseCase: ReceiveOrderUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         OrderState(
@@ -57,12 +54,23 @@ class OrderViewModel @Inject constructor(
 
 
     fun changeStatus(status: OrderStatus) {
-        viewModelScope.launch {
-            val result = updateOrderStatusUseCase.execute(state.value.order, status, state.value.order.price)
-            if (result is OrdersResult.Success.SuccessUpdate) {
-                _state.value = _state.value.copy(order = result.order, error = "")
-            } else if (result is OrdersResult.Error) {
-                _state.value = _state.value.copy(error = result.message)
+        if (status == OrderStatus.RECEIVED)  {
+            viewModelScope.launch {
+                val result = receiveOrderUseCase.execute(state.value.order)
+                if (result is OrdersResult.Success.SuccessUpdate) {
+                    _state.value = _state.value.copy(order = result.order, error = "")
+                } else if (result is OrdersResult.Error) {
+                    _state.value = _state.value.copy(error = result.message)
+                }
+            }
+        } else {
+            viewModelScope.launch {
+                val result = updateOrderStatusUseCase.execute(state.value.order, status, state.value.order.price)
+                if (result is OrdersResult.Success.SuccessUpdate) {
+                    _state.value = _state.value.copy(order = result.order, error = "")
+                } else if (result is OrdersResult.Error) {
+                    _state.value = _state.value.copy(error = result.message)
+                }
             }
         }
     }

@@ -23,24 +23,14 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
         cakeCustomRequestDTO: CakeCustomRequestDTO,
         imageUrl: String?
     ): CakeResponseDTO {
-        val file = imageUrl?.let { File(it) }
-        val requestBody = file?.asRequestBody("image/*".toMediaTypeOrNull())
-        val multipartBody = file?.let {
-            requestBody?.let {
-                MultipartBody.Part.createFormData(
-                    "image",
-                    file.name,
-                    requestBody
-                )
-            }
-        }
-        val response =
-        if (multipartBody == null) {
-            api.uploadCakeCustomWithoutImage(cakeCustomRequestDTO.toParts())
-        } else {
+        val uri = Uri.parse(imageUrl)
 
-            api.uploadCakeCustom(cakeCustomRequestDTO.toParts(), multipartBody)
-        }
+        val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)
+        val requestBody = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+        val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
+
+        val response = api.uploadCakeCustom(cakeCustomRequestDTO.toParts(), part)
+
         if (response.isSuccessful) {
             return response.body()!!
         } else {
@@ -57,18 +47,6 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
         val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)
         val requestBody = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
         val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
-
-        /*val file = File(imageUrl)
-        val requestBody = file.asRequestBody("image".toMediaTypeOrNull())
-        val multipartBody = file.let {
-            requestBody.let {
-                MultipartBody.Part.createFormData(
-                    "image",
-                    file.name,
-                    requestBody
-                )
-            }
-        }*/
 
         val response = api.uploadCakeRegular(cakeGeneralRequestDTO.toParts(), part)
         if (response.isSuccessful) {

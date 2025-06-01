@@ -34,7 +34,7 @@ class UpdateRestrictionsUseCase @Inject constructor(
                         .Error("Диаметр не может быть отрицательным")
                 if (minDiameter > maxDiameter)
                     return RestrictionsResult
-                        .Error("Минимальная диаметр не может быть больше максимального")
+                        .Error("Минимальный диаметр не может быть больше максимального")
                 if (minPreparationDays < 0 || maxPreparationDays < 0)
                     return RestrictionsResult
                         .Error("Количество дней не может быть отрицательным")
@@ -47,14 +47,13 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 isCustomAcceptable = isCustomAcceptable,
                 isImageAcceptable = isImageAcceptable,
                 isShapeAcceptable = isShapeAcceptable,
-                minDiameter = minDiameter,
-                maxDiameter = maxDiameter,
+                minDiameter = minDiameter.toInt(),
+                maxDiameter = maxDiameter.toInt(),
                 minPreparationDays = minPreparationDays,
                 maxPreparationDays = maxPreparationDays,
                 fillings = fillings
             )
             val result = repository.updateCustomCakeRestrictions(
-                (sessionCache.session.value!!.user as Confectioner).id,
                 restrictions.toDto()
             )
             return RestrictionsResult.Success(result.toRestrictions())
