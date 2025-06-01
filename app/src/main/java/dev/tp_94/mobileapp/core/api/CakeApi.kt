@@ -8,6 +8,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
@@ -24,6 +25,11 @@ interface CakeApi {
     @POST("cakes/regular/self")
     @Multipart
     suspend fun uploadCakeRegular(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
+
+    //TODO: not yet implemented in backend
+    @PUT("cakes/regular/self")
+    @Multipart
+    suspend fun updateCakeRegular(): Response<CakeResponseDTO>
 
     @DELETE("cakes/{id}")
     suspend fun deleteCake(@Path("id") id: Long): Response<Unit>

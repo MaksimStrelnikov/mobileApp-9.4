@@ -44,6 +44,7 @@ class AddProductUseCase @Inject constructor(
         try {
             if (isUpdate) {
                 repository.updateGeneralCake(
+                    cake.id,
                     CakeGeneralRequestDTO(
                         confectionerId = sessionCache.session.value!!.user.id,
                         name = cake.name,

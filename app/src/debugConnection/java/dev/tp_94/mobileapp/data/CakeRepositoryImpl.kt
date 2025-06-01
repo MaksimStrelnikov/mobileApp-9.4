@@ -91,9 +91,10 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
     }
 
     override suspend fun updateGeneralCake(
+        id: Long,
         cakeGeneralRequestDTO: CakeGeneralRequestDTO,
         imageUrl: String
     ) {
-        TODO("Not yet implemented")
+        val response = api.updateCakeRegular()
     }
 }
