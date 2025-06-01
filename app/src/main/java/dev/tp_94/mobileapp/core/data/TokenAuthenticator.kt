@@ -23,7 +23,7 @@ class TokenAuthenticator @Inject constructor(
         }
 
         if (newTokens == null || !newTokens.isSuccessful || newTokens.body() == null) {
-            throw Exception("Не удалось обновить токен: ${newTokens?.code()} ${newTokens?.message()}")
+            return null
         }
 
         sessionCache.updateToken(accessToken = newTokens.body()!!.accessToken, refreshToken = newTokens.body()!!.refreshToken)

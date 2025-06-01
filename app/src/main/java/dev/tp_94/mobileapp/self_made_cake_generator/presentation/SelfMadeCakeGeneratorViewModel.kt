@@ -10,7 +10,6 @@ import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Restrictions
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
 import dev.tp_94.mobileapp.custom_order_settings.presentation.RestrictionsResult
 import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
@@ -91,7 +90,10 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getRestrictionsUseCase.execute(confectioner)
             if (result is RestrictionsResult.Success) {
-                _state.value = _state.value.copy(restrictions = result.restrictions)
+                _state.value = _state.value.copy(
+                    restrictions = result.restrictions,
+                    cakeCustom = _state.value.cakeCustom.copy(diameter = result.restrictions.minDiameter.toFloat())
+                )
             }
             //TODO: add error handling
         }

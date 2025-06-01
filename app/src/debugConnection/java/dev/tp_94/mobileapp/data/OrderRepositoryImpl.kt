@@ -28,9 +28,21 @@ class OrderRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllOrders(): List<OrderResponseDTO> {
-        val response = api.getAllOrders()
-        if (response.code() == OK.status) {
+    override suspend fun getAllConfectionerOrders(): List<OrderResponseDTO> {
+        val response = api.getAllConfectionerOrders()
+        if (response.isSuccessful) {
+            return response.body() ?: emptyList()
+        } else if (response.code() == FORBIDDEN.status) {
+            throw Exception("Недостаточно прав для просмотра заказов")
+        } else if (response.code() == SERVER_ERROR.status) {
+            throw Exception("Внутренняя ошибка сервера, повторите позднее")
+        }
+        throw Exception(response.message())
+    }
+
+    override suspend fun getAllCustomerOrders(): List<OrderResponseDTO> {
+        val response = api.getAllCustomerOrders()
+        if (response.isSuccessful) {
             return response.body() ?: emptyList()
         } else if (response.code() == FORBIDDEN.status) {
             throw Exception("Недостаточно прав для просмотра заказов")

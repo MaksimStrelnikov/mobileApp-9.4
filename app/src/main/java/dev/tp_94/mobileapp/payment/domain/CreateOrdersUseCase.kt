@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.payment.domain
 
+import dev.tp_94.mobileapp.basket.domain.BasketRepository
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Card
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 class CreateOrdersUseCase @Inject constructor(
     private val orderRepository: OrderRepository,
+    private val basketRepository: BasketRepository,
     private val sessionCache: SessionCache
 ) {
     suspend fun execute(cakes: Map<CakeGeneral, Int>, card: Card): OrdersResult {
@@ -38,6 +40,7 @@ class CreateOrdersUseCase @Inject constructor(
                     cvc = card.cvcCode
                 )
             )
+            basketRepository.clearBasket(sessionCache.session.value!!.user.phoneNumber)
             return OrdersResult.Success.SuccessAdd
         } catch (e: Exception) {
             return OrdersResult.Error(e.message ?: "Возникла непредвиденная ошибка")

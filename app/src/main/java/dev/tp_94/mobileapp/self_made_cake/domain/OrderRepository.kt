@@ -10,7 +10,8 @@ import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
 interface OrderRepository {
     suspend fun placeOrder(orderRequestDTO: OrderRequestDTO)
     suspend fun placeOrder(orderFullRequestDTO: OrderFullRequestDTO)
-    suspend fun getAllOrders(): List<OrderResponseDTO>
+    suspend fun getAllConfectionerOrders(): List<OrderResponseDTO>
+    suspend fun getAllCustomerOrders(): List<OrderResponseDTO>
     suspend fun updateOrderStatus(orderId: Long, request: OrderPatchRequestDTO): OrderResponseDTO
     suspend fun placeAndPayOrders(severalOrdersCreationPaymentRequestDTO: SeveralOrdersCreationPaymentRequestDTO)
     suspend fun payOrder(orderId: Long, cardDTO: CardDTO)

@@ -114,6 +114,7 @@ fun MainStatelessScreen(
                     .padding(12.dp)
                     .fillMaxWidth()
             ) {
+                /*
                 item {
                     SearchInput(
                         text = state.search,
@@ -123,6 +124,7 @@ fun MainStatelessScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                 }
+                */
                 item {
                     val painter = painterResource(R.drawable.banner)
                     Image(

@@ -30,7 +30,9 @@ class SelfMadeCakeViewModel @Inject constructor(
     private val getRestrictionsUseCase: GetRestrictionsUseCase
 ) : ViewModel() {
 
-    fun updateFillings(value: List<String>) = _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(fillings = value)).also { _state.value = it }
+    fun updateFillings(value: List<String>) =
+        _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(fillings = value))
+            .also { _state.value = it }
 
     fun openColorPicker() {
         _state.value = _state.value.copy(colorPickerOpen = true)
@@ -99,7 +101,10 @@ class SelfMadeCakeViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getRestrictionsUseCase.execute(confectioner)
             if (result is RestrictionsResult.Success) {
-                _state.value = _state.value.copy(restrictions = result.restrictions)
+                _state.value = _state.value.copy(
+                    restrictions = result.restrictions,
+                    cakeCustom = _state.value.cakeCustom.copy(diameter = result.restrictions.minDiameter.toFloat())
+                )
             }
             //TODO: add error handling
         }

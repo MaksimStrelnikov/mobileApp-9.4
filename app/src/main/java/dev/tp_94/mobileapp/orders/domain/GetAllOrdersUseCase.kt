@@ -15,7 +15,15 @@ class GetAllOrdersUseCase @Inject constructor(
     suspend fun execute(): OrdersResult {
         try {
             if (sessionCache.session.value == null) return OrdersResult.Error("Пользователь не существует")
-            val dtos = orderRepository.getAllOrders()
+            val dtos = when (sessionCache.session.value!!.user) {
+                is Confectioner -> {
+                    orderRepository.getAllConfectionerOrders()
+                }
+
+                is Customer -> {
+                    orderRepository.getAllCustomerOrders()
+                }
+            }
             val list = dtos.map {
                 it.toOrder()
             }

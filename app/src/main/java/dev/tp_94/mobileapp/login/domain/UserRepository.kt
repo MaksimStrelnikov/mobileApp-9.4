@@ -16,5 +16,6 @@ interface UserRepository {
     suspend fun add(customer: CustomerRegisterDTO): UserResponseWithTokensDTO
     suspend fun update(customer: CustomerUpdateDTO): CustomerResponseDTO
     suspend fun update(confectioner: ConfectionerUpdateDTO): ConfectionerResponseDTO
+    suspend fun getCurrent(): UserResponseDTO
     suspend fun delete()
 }

@@ -20,8 +20,11 @@ interface OrderApi {
     @POST("orders/full/self")
     suspend fun createOrder(@Body order: OrderFullRequestDTO): Response<OrderResponseDTO>
 
-    @GET("orders")
-    suspend fun getAllOrders(): Response<List<OrderResponseDTO>>
+    @GET("orders/customer/self")
+    suspend fun getAllCustomerOrders(): Response<List<OrderResponseDTO>>
+
+    @GET("orders/confectioner/self")
+    suspend fun getAllConfectionerOrders(): Response<List<OrderResponseDTO>>
 
     @PATCH("orders/{id}")
     suspend fun updateStatusOrder(@Path("id") orderId: Long, @Body order: OrderPatchRequestDTO): Response<OrderResponseDTO>

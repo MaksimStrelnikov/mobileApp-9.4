@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.core.api
 
+import dev.tp_94.mobileapp.core.api.dto.TokenDTO
 import dev.tp_94.mobileapp.login.data.dto.UserLoginDTO
 import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
 import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
@@ -17,5 +18,4 @@ interface AuthApi {
 
     @POST("auth/register/")
     suspend fun registerCustomer(@Body customerRegisterDTO: CustomerRegisterDTO): Response<UserResponseWithTokensDTO>
-    //TODO: add revoke at the start of the app
 }

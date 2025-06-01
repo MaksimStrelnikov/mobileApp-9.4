@@ -151,6 +151,7 @@ fun BasketStatelessScreen(
                         Spacer(Modifier.height(24.dp))
                         ActiveButton(
                             onClick = onOrder,
+                            enabled = state.items.isNotEmpty(),
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(

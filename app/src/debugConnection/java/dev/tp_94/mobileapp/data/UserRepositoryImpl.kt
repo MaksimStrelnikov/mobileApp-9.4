@@ -3,15 +3,15 @@ package dev.tp_94.mobileapp.data
 import dev.tp_94.mobileapp.core.api.AuthApi
 import dev.tp_94.mobileapp.login.data.dto.UserLoginDTO
 import dev.tp_94.mobileapp.core.data.HttpStatus.*
-import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.login.data.dto.UserResponseWithTokensDTO
 import dev.tp_94.mobileapp.login.domain.UserRepository
 import dev.tp_94.mobileapp.core.api.UserApi
+import dev.tp_94.mobileapp.core.api.dto.TokenDTO
+import dev.tp_94.mobileapp.login.data.dto.UserResponseDTO
 import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
 import dev.tp_94.mobileapp.orders.data.dto.CustomerResponseDTO
 import dev.tp_94.mobileapp.profile_editor.data.dto.ConfectionerUpdateDTO
 import dev.tp_94.mobileapp.profile_editor.data.dto.CustomerUpdateDTO
-import dev.tp_94.mobileapp.profile_editor.data.dto.UserUpdateDTO
 import dev.tp_94.mobileapp.signup.data.ConfectionerRegisterDTO
 import dev.tp_94.mobileapp.signup.data.CustomerRegisterDTO
 import javax.inject.Inject
@@ -68,6 +68,12 @@ class UserRepositoryImpl @Inject constructor(
         } else {
             throw Exception(response.message())
         }
+    }
+
+    override suspend fun getCurrent(): UserResponseDTO {
+        val response = userApi.getCurrentUser()
+        if (!response.isSuccessful) throw Exception(response.message())
+        return response.body()!!
     }
 
     override suspend fun delete() {
