@@ -190,6 +190,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             val expandedState = remember { mutableStateOf(false) }
             val expanded = expandedState.value
             fun updateExpanded(newValue: Boolean) { expandedState.value = newValue }
+
+            SectionHeader("Выбор начинки")
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -227,8 +229,6 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                         }
                     }
                 }
-
-                SectionHeader("Выбор начинки")
                 LazyRow (
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically

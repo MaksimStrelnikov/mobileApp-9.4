@@ -260,6 +260,8 @@ fun SelfMadeCakeStatelessScreen(
             val expandedState = remember { mutableStateOf(false) }
             val expanded = expandedState.value
             fun updateExpanded(newValue: Boolean) { expandedState.value = newValue }
+
+            SectionHeader("Выбор начинки")
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -288,7 +290,7 @@ fun SelfMadeCakeStatelessScreen(
                                     )
                                 },
                                 onClick = {
-                                    if (!state.cakeCustom.fillings.contains(filling)) {
+                                    if (true || !state.cakeCustom.fillings.contains(filling)) {
                                         onUpdateFillings(state.cakeCustom.fillings + filling)
                                     }
                                     updateExpanded(false)
@@ -297,7 +299,7 @@ fun SelfMadeCakeStatelessScreen(
                         }
                     }
                 }
-                SectionHeader("Выбор начинки")
+
                 LazyRow (
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
