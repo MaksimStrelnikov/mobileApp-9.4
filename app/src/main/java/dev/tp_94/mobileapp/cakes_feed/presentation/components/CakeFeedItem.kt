@@ -38,6 +38,7 @@ fun CakeFeedItem(
     weight: Float,
     preparation: Int,
     price: Int,
+    onBuyEnabled: Boolean = true,
     onBuy: () -> Unit,
     onOpen: () -> Unit,
     image: Painter? = null
@@ -109,6 +110,7 @@ fun CakeFeedItem(
                     .fillMaxWidth()
                     .align(Alignment.Start),
                 shape = RoundedCornerShape(12.dp),
+                enabled = onBuyEnabled
             ) {
                 Text(
                     text = "от $price ₽",

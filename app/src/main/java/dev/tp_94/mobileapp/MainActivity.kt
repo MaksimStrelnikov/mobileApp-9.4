@@ -6,10 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,8 +37,10 @@ import dev.tp_94.mobileapp.core.SplashNavigationScreen
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
+import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
+import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.custom_order_settings.presentation.CustomSettingsStatefulScreen
 import dev.tp_94.mobileapp.custom_order_settings.presentation.CustomSettingsViewModel
@@ -167,12 +177,54 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                 },
                 onSkip = {
-                    //TODO: Переход как незарегистрированный пользователь
-                    navController.navigate("main") {
-                        popUpTo(0)
-                    }
+                    navController.navigate("mainUnregistered")
                 }
             )
+        }
+        composable("mainUnregistered") {
+            LaunchedEffect(Unit) {
+                isAppInitialized.value = true
+            }
+            MainStatefulScreen(onError = {
+                navController.navigate("login") {
+                    popUpTo(0)
+                }
+            },
+                onSearch = {
+                    //TODO
+                },
+                onNavigateToConfectioners = {
+                    navController.navigate("customerfeed")
+                },
+                onNavigateToProducts = {
+                    navController.navigate("cakeFeed")
+                },
+                onNavigateToConfectioner = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("confectionerpage/$encoded")
+                },
+                onNavigateToProduct = {
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("productView/$encoded")
+                },
+                bottomBar = {
+                    ActiveButton(
+                        onClick = {
+                            navController.navigate("login") {
+                                popUpTo(0)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(12.dp).height(48.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Войти",
+                            style = TextStyles.button(colorResource(R.color.light_background))
+                        )
+                    }
+                })
         }
         composable("signup") {
             SignUpStatefulScreen(onSuccessCustomer = {
@@ -187,10 +239,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     }
                 },
                 onSkip = {
-                    //TODO: Переход как незарегистрированный пользователь
-                    navController.navigate("main") {
-                        popUpTo(0)
-                    }
+                    navController.navigate("mainUnregistered")
                 },
                 onLogin = {
                     navController.navigate("login") {

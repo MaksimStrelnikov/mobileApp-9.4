@@ -8,19 +8,15 @@ import javax.inject.Inject
 
 class GetProductsUseCase @Inject constructor(
     private val repository: CakeRepository,
-    private val sessionCache: SessionCache
 ) {
     suspend fun execute(confectioner: Confectioner): GetProductsResult {
-        try {
-            if (sessionCache.session.value == null) {
-                return GetProductsResult.Error("Данный пользователь не имеет достаточно прав, чтобы изменять данные на этом экране")
-            }
-            return GetProductsResult.Success(
+        return try {
+            GetProductsResult.Success(
                 repository.getAllByConfectioner(confectioner.id).map { it.toGeneral() }
 
             )
         } catch (e: Exception) {
-            return GetProductsResult.Error(e.message ?: "Возникла непредвиденная ошибка")
+            GetProductsResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }
     }
 }

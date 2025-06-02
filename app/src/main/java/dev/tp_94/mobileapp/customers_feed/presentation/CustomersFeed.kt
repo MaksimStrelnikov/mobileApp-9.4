@@ -43,7 +43,7 @@ fun CustomersFeedStatefulScreen(
 ) {
     val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (session.value == null || session.value!!.user !is Customer) {
+        if (session.value != null && session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }
@@ -62,8 +62,7 @@ fun CustomersFeedStatefulScreen(
                 onBackClick = onBackClick
             )
         },
-        onSortSelected = { viewModel.selectSort(it) },
-        bottomBar = { },
+        onSortSelected = { viewModel.selectSort(it) }
     )
 }
 
@@ -75,8 +74,7 @@ fun CustomersFeedStatelessScreen(
     onNavigateToConfectioner: (Confectioner) -> Unit,
     onSortSelected: (Sorting) -> Unit,
     onLoadMore: () -> Unit,
-    topBar: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
     val listState = rememberLazyListState()
     /* TODO: fix endless searching
@@ -96,7 +94,6 @@ fun CustomersFeedStatelessScreen(
 
     Scaffold(
         topBar = topBar,
-        bottomBar = bottomBar,
         containerColor = colorResource(R.color.background)
     ) { innerPadding ->
         Box(
@@ -158,7 +155,6 @@ fun CustomersFeedStatelessScreen(
 fun PreviewCustomersFeedStatelessScreen() {
     CustomersFeedStatelessScreen(
         topBar = { TopNameBar("saldkfj") { } },
-        bottomBar = { BottomNavBar({}, {}, {}, {}, Screen.MAIN) },
         state = CustomersFeedState(
             feed = arrayListOf(
                 Confectioner(

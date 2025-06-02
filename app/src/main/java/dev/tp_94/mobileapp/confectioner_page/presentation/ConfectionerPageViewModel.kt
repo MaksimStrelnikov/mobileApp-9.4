@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.confectioner_page.presentation
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -79,6 +80,7 @@ class ConfectionerPageViewModel @Inject constructor(
             if (result is GetProductsResult.Success) {
                 _state.value = _state.value.copy(products = result.cakes)
             }
+            Log.println(Log.INFO, "ConfectionerPageViewModel", result.toString())
             //TODO: add error handling
         }
     }

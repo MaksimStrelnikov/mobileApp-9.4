@@ -25,14 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.cakes_feed.presentation.components.CakeFeedItem
 import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.themes.BottomNavBar
-import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customers_feed.presentation.components.SearchInput
 import dev.tp_94.mobileapp.customers_feed.presentation.components.SortSelector
@@ -46,7 +45,7 @@ fun CakesFeedStatefulScreen(
 ) {
     val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (session.value == null || session.value!!.user !is Customer) {
+        if (session.value != null && session.value!!.user !is Customer) {
             onError()
         }
     }
@@ -64,9 +63,9 @@ fun CakesFeedStatefulScreen(
                 onBackClick = onBackClick
             )
         },
+        onBuyEnabled = session.value != null,
         onBuy = { viewModel.buy(it) },
-        onSortSelected = { viewModel.selectSort(it) },
-        bottomBar = { },
+        onSortSelected = { viewModel.selectSort(it) }
     )
 }
 
@@ -76,12 +75,12 @@ fun CakesFeedStatelessScreen(
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
     onOpen: (Cake) -> Unit,
+    onBuyEnabled: Boolean = true,
     onBuy: (Cake) -> Unit,
     onSortSelected: (Sorting) -> Unit,
     isLoading: Boolean,
     onLoadMore: () -> Unit,
-    topBar: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit,
+    topBar: @Composable () -> Unit
 ) {
     val listState = rememberLazyGridState()
     LaunchedEffect(listState) {
@@ -96,7 +95,6 @@ fun CakesFeedStatelessScreen(
 
     Scaffold(
         topBar = topBar,
-        bottomBar = bottomBar,
         containerColor = colorResource(R.color.background)
     ) { innerPadding ->
         Box(
@@ -136,9 +134,10 @@ fun CakesFeedStatelessScreen(
                             weight = item.weight,
                             preparation = item.preparation,
                             price = item.price,
+                            onBuyEnabled = onBuyEnabled,
                             onBuy = { onBuy(item) },
                             onOpen = { onOpen(item) },
-                            image = null //TODO: add image
+                            image = item.imageUrl?.let { rememberAsyncImagePainter(it) }
                         )
                     }
 
@@ -164,7 +163,6 @@ fun CakesFeedStatelessScreen(
 fun PreviewCakesFeedStatelessScreen() {
     CakesFeedStatelessScreen(
         topBar = { TopNameBar("saldkfj") { } },
-        bottomBar = { BottomNavBar({}, {}, {}, {}, Screen.MAIN) },
         state = CakesFeedState(
             feed = arrayListOf(
                 CakeGeneral(

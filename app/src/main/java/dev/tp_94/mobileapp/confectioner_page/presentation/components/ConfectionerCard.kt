@@ -33,6 +33,7 @@ fun ConfectionerCard(
     description: String,
     restrictions: Restrictions? = null,
     onMyProfileClick: (() -> Unit)? = null,
+    onButtonEnabled: Boolean = true,
     onButtonClick: () -> Unit,
     customOrdersText: String = "Индивидуальный заказ"
 ) {
@@ -111,7 +112,8 @@ fun ConfectionerCard(
                     onClick = onButtonClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(48.dp),
+                    enabled = onButtonEnabled
                 ) {
                     Text(
                         text = customOrdersText,

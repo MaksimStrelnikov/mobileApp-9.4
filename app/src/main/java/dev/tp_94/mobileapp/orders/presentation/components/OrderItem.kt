@@ -35,7 +35,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
 enum class UserType {
-    CONFECTIONER, CUSTOMER
+    CONFECTIONER, CUSTOMER, UNREGISTERED
 }
 
 @Composable

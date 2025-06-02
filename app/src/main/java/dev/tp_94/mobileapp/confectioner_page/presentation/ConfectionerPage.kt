@@ -45,7 +45,7 @@ fun ConfectionerPageStatefulScreen(
 ) {
     val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (session.value == null || session.value!!.user !is Customer) {
+        if (session.value != null && session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }
@@ -53,8 +53,10 @@ fun ConfectionerPageStatefulScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConfectionerPageStatelessScreen(
         state = state,
+        onCakeCreationEnabled = session.value != null,
         onCakeCreation = { onCakeCreation(state.confectioner) },
         onNavigateToProduct = onNavigateToProduct,
+        onProductBuyEnabled = session.value != null,
         onProductBuy = { viewModel.addToBasket(it) },
         topBar = topBar
     )
@@ -63,10 +65,12 @@ fun ConfectionerPageStatefulScreen(
 @Composable
 fun ConfectionerPageStatelessScreen(
     state: ConfectionerPageState,
+    onCakeCreationEnabled: Boolean = true,
     onCakeCreation: () -> Unit,
-    topBar: @Composable () -> Unit,
     onNavigateToProduct: (CakeGeneral) -> Unit,
+    onProductBuyEnabled: Boolean = true,
     onProductBuy: (CakeGeneral) -> Unit,
+    topBar: @Composable () -> Unit,
 ) {
     Scaffold(
         topBar = topBar
@@ -90,6 +94,7 @@ fun ConfectionerPageStatelessScreen(
                     address = state.confectioner.address,
                     description = state.confectioner.description,
                     restrictions = state.restrictions,
+                    onButtonEnabled = onCakeCreationEnabled,
                     onButtonClick = onCakeCreation
                 )
 
@@ -110,6 +115,7 @@ fun ConfectionerPageStatelessScreen(
                             weight = product.weight,
                             preparation = product.preparation,
                             price = product.price,
+                            onBuyEnabled = onProductBuyEnabled,
                             onBuy = { onProductBuy(product) },
                             onOpen = { onNavigateToProduct(product) },
                             image = product.imageUrl?.let {rememberAsyncImagePainter(product.imageUrl) }

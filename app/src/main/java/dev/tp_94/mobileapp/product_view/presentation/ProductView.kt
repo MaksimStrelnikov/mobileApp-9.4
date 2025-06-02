@@ -52,13 +52,13 @@ fun ProductViewStatefulScreen(
 ) {
     val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (session.value == null || (session.value!!.user !is Customer && session.value!!.user !is Confectioner)) {
+        if (session.value != null && (session.value!!.user !is Customer && session.value!!.user !is Confectioner)) {
             onError()
             viewModel.exit()
         }
     }
     val user = session.value?.user
-    val userType = if (user is Confectioner) UserType.CONFECTIONER else UserType.CUSTOMER
+    val userType = if (user is Confectioner) UserType.CONFECTIONER else if (user is Customer) UserType.CUSTOMER else UserType.UNREGISTERED
     val state by viewModel.state.collectAsStateWithLifecycle()
     GeneralProductViewStatelessScreen(
         state = state,
@@ -136,6 +136,7 @@ fun GeneralProductViewStatelessScreen(
                             .align(Alignment.Start)
                             .height(48.dp),
                         shape = RoundedCornerShape(12.dp),
+                        enabled = userType == UserType.CUSTOMER
                     ) {
                         Text(
                             text = "от ${state.cake.price} ₽",
@@ -167,7 +168,7 @@ fun GeneralProductViewStatelessScreen(
                         )
                     )
 
-                    if (userType == UserType.CUSTOMER) {
+                    if (userType != UserType.CONFECTIONER) {
                         ConfectionerBubble(
                             name = state.cake.confectioner.name,
                             onClick = { onConfectionerClick(state.cake.confectioner) }

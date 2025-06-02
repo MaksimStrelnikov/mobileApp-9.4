@@ -67,7 +67,7 @@ fun MainStatefulScreen(
 ) {
     val session = viewModel.session.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        if (session.value == null || session.value!!.user !is Customer) {
+        if (session.value != null && session.value!!.user !is Customer) {
             onError()
             viewModel.exit()
         }
@@ -81,6 +81,7 @@ fun MainStatefulScreen(
         onNavigateToProducts = onNavigateToProducts,
         onNavigateToConfectioner = onNavigateToConfectioner,
         onNavigateToProduct = onNavigateToProduct,
+        onProductBuyEnabled = session.value != null,
         onProductBuy = { viewModel.addToBasket(it) },
         bottomBar = bottomBar
     )
@@ -95,6 +96,7 @@ fun MainStatelessScreen(
     onNavigateToProducts: () -> Unit,
     onNavigateToConfectioner: (Confectioner) -> Unit,
     onNavigateToProduct: (CakeGeneral) -> Unit,
+    onProductBuyEnabled: Boolean = true,
     onProductBuy: (CakeGeneral) -> Unit,
     bottomBar: @Composable () -> Unit,
 ) {
@@ -210,6 +212,7 @@ fun MainStatelessScreen(
                                     weight = product.weight,
                                     preparation = product.preparation,
                                     price = product.price,
+                                    onBuyEnabled = onProductBuyEnabled,
                                     onBuy = { onProductBuy(product) },
                                     onOpen = { onNavigateToProduct(product) },
                                     image = product.imageUrl?.let { url ->
