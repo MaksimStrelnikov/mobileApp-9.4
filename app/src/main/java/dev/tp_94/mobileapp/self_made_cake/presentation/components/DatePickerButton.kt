@@ -23,15 +23,23 @@ fun DatePickerButton(modifier: Modifier = Modifier,
                      shape: Shape = RoundedCornerShape(8.dp),
                      minDaysFromToday: Int = 1
                      ) {
-    val calendar = remember { Calendar.getInstance() }
-    calendar.add(Calendar.DAY_OF_MONTH, minDaysFromToday + 1)
-    var selectedDate by remember { mutableStateOf(calendar.time) }
+    val calendar = remember(minDaysFromToday) {
+        Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, minDaysFromToday + 1)
+        }
+    }
+
+    var selectedDate by remember(minDaysFromToday) {
+        mutableStateOf(Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, minDaysFromToday + 1)
+        }.time)
+    }
     var showDatePicker by remember { mutableStateOf(false) }
 
-    val minDate = remember {
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_MONTH, minDaysFromToday)
-        cal.time
+    val minDate = remember(minDaysFromToday) {
+        Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, minDaysFromToday)
+        }.time
     }
 
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
