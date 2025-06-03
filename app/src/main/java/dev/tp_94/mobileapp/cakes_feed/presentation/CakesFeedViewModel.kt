@@ -9,8 +9,6 @@ import dev.tp_94.mobileapp.confectioner_page.domain.AddToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
 import dev.tp_94.mobileapp.core.models.CakeGeneral
-import dev.tp_94.mobileapp.core.models.User
-import dev.tp_94.mobileapp.customers_feed.presentation.FeedResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -38,6 +36,7 @@ class CakesFeedViewModel @Inject constructor(
             if (result is CakeFeedResult.Success) {
                 _state.value = _state.value.copy(feed = result.data)
             }
+            //TODO: add error message
             _state.value = _state.value.copy(isLoading = false)
         }
     }
@@ -49,6 +48,7 @@ class CakesFeedViewModel @Inject constructor(
             if (result is CakeFeedResult.Success) {
                 _state.value = _state.value.copy(feed = _state.value.feed + result.data)
             }
+            //TODO: add error message
             _state.value = _state.value.copy(isLoading = false)
         }
     }
@@ -58,11 +58,15 @@ class CakesFeedViewModel @Inject constructor(
            val response = addToBasketUseCase.execute(
                     cake = cake as CakeGeneral
            )
-            //TODO or not: add error message
+            //TODO: add error message
         }
     }
 
     fun selectSort(sorting: Sorting) {
         _state.value = _state.value.copy(currentSorting = sorting)
+    }
+
+    init {
+        search()
     }
 }

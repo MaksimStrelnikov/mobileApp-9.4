@@ -10,7 +10,7 @@ class SearchForCakesUseCase @Inject constructor(
     suspend fun execute(text: String?): CakeFeedResult {
         try {
             val result = if (text.isNullOrEmpty()) {
-                repository.getAll()
+                repository.getAllGeneral()
             } else {
                 repository.getAllByName(text)
             }

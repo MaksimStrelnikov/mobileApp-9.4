@@ -5,7 +5,6 @@ import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.tp_94.mobileapp.core.api.CakeApi
 import dev.tp_94.mobileapp.core.compressImageToMaxSize
-import dev.tp_94.mobileapp.core.uriToRequestBody
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeCustomRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeGeneralRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeResponseDTO
@@ -13,24 +12,29 @@ import dev.tp_94.mobileapp.self_made_cake.data.dto.toParts
 import dev.tp_94.mobileapp.self_made_cake.domain.CakeRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 
-class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context, private val api: CakeApi) : CakeRepository {
+class CakeRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val api: CakeApi
+) : CakeRepository {
     override suspend fun addCustomCake(
         cakeCustomRequestDTO: CakeCustomRequestDTO,
         imageUrl: String?
     ): CakeResponseDTO {
-        val uri = Uri.parse(imageUrl)
+        val response =
+            if (imageUrl == null) {
+                api.uploadCakeCustomWithoutImage(cakeCustomRequestDTO.toParts())
+            } else {
+                val uri = Uri.parse(imageUrl)
 
-        val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)
-        val requestBody = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
-        val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
+                val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)
+                val requestBody = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
 
-        val response = api.uploadCakeCustom(cakeCustomRequestDTO.toParts(), part)
-
+                api.uploadCakeCustom(cakeCustomRequestDTO.toParts(), part)
+            }
         if (response.isSuccessful) {
             return response.body()!!
         } else {
@@ -62,7 +66,7 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
     }
 
     override suspend fun getAllByName(text: String): List<CakeResponseDTO> {
-        return getAll()
+        return getAllGeneral()
         /* TODO: change after it'll be implemented in backend
         val response = api.getAllByName(text)
         if (response.isSuccessful) {
@@ -72,10 +76,10 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
         }*/
     }
 
-    override suspend fun getAll(): List<CakeResponseDTO> {
+    override suspend fun getAllGeneral(): List<CakeResponseDTO> {
         val response = api.getAll()
         if (response.isSuccessful) {
-            return response.body()!!
+            return response.body()!!.filter { !it.isCustom }
         } else {
             throw Exception(response.message())
         }
@@ -95,6 +99,7 @@ class CakeRepositoryImpl @Inject constructor(@ApplicationContext private val con
         cakeGeneralRequestDTO: CakeGeneralRequestDTO,
         imageUrl: String
     ) {
+        //TODO: make dependent on imageUrl (content or https)
         val response = api.updateCakeRegular()
     }
 }

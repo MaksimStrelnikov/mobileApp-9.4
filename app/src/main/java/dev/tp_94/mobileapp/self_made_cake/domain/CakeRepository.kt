@@ -19,7 +19,7 @@ interface CakeRepository {
 
     suspend fun getAllByName(text: String): List<CakeResponseDTO>
 
-    suspend fun getAll(): List<CakeResponseDTO>
+    suspend fun getAllGeneral(): List<CakeResponseDTO>
 
     suspend fun getAllByConfectioner(confectionerId: Long): List<CakeResponseDTO>
 

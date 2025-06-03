@@ -9,8 +9,8 @@ class GetCakesUseCase @Inject constructor(private val repository: CakeRepository
         if (amount <= 0) return MainResult.Error("Неверное количество продуктов")
         try {
             //TODO: force backend to add new api for getting specific amount of products
-            val result = repository.getAll()
-            val safeAmount = amount.coerceIn(0, result.size - 1)
+            val result = repository.getAllGeneral()
+            val safeAmount = amount.coerceIn(0, result.size)
             return MainResult.Success.Products(result.subList(0, safeAmount).map { it.toGeneral() })
         } catch (e: Exception) {
             return MainResult.Error(e.message ?: "Возникла непредвиденная ошибка")

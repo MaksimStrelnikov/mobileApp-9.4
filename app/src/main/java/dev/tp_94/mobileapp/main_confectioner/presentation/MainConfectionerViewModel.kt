@@ -58,5 +58,9 @@ class MainConfectionerViewModel @Inject constructor(
         }
     }
 
+    fun update() {
+        getProducts()
+    }
+
     val state = _state.asStateFlow()
 }

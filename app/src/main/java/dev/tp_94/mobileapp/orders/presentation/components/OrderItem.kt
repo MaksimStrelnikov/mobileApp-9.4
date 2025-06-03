@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.orders.presentation.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,11 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TextStyles
@@ -41,6 +44,7 @@ enum class UserType {
 @Composable
 fun OrderItem(
     modifier: Modifier = Modifier,
+    image: Painter? = null,
     onClick: () -> Unit,
     cakeName: String,
     customersPhone: String,
@@ -73,20 +77,30 @@ fun OrderItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                Box(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .background(
-                            color = colorResource(R.color.dark_background),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.nocake),
+                if (image == null) {
+                    Box(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .background(
+                                color = colorResource(R.color.dark_background),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.nocake),
+                            contentDescription = null,
+                            modifier = Modifier.size(50.dp),
+                            tint = colorResource(R.color.light_text)
+                        )
+                    }
+                } else {
+                    Image(
+                        painter = image,
                         contentDescription = null,
-                        modifier = Modifier.size(50.dp),
-                        tint = colorResource(R.color.light_text)
+                        modifier = Modifier
+                            .size(150.dp),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                     )
                 }
                 Column(

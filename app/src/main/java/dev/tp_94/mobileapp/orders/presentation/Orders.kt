@@ -18,7 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
+import dev.tp_94.mobileapp.core.models.CakeCustom
+import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Order
@@ -86,6 +89,11 @@ fun ConfectionerOrdersStatelessScreen(
                 items(state.orders) { order ->
                     OrderItem(
                         cakeName = order.cake.name,
+                        image = if (order.cake is CakeGeneral) order.cake.imageUrl?.let {
+                            rememberAsyncImagePainter(
+                                it
+                            )
+                        } else null,
                         customersPhone = order.customer.phoneNumber,
                         orderDate = order.date,
                         preparation = order.cake.preparation,
@@ -154,7 +162,7 @@ fun CustomerOrdersStatefulScreen(
         }
         viewModel.getOrders()
     }
-    
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     CustomerOrdersStatelessScreen(
         state = state,
@@ -191,6 +199,11 @@ fun CustomerOrdersStatelessScreen(
                 items(state.orders) { order ->
                     OrderItem(
                         cakeName = order.cake.name,
+                        image = if (order.cake is CakeGeneral) order.cake.imageUrl?.let {
+                            rememberAsyncImagePainter(
+                                it
+                            )
+                        } else null,
                         customersPhone = order.confectioner.phoneNumber,
                         orderDate = order.date,
                         preparation = order.cake.preparation,

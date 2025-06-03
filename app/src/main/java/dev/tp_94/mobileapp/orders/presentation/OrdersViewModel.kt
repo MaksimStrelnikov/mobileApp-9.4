@@ -35,6 +35,7 @@ class OrdersViewModel @Inject constructor(
             if (result is OrdersResult.Success.SuccessGet) {
                 _state.value = _state.value.copy(orders = result.orders)
             }
+            //TODO: add error message
         }
     }
 
@@ -89,4 +90,8 @@ class OrdersViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(OrdersState())
     val state = _state.asStateFlow()
+
+    init {
+        getOrders()
+    }
 }

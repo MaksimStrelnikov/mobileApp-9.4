@@ -12,7 +12,7 @@ data class CakeResponseDTO(
     @SerializedName("id") val id: Long,
     @SerializedName("confectioner") val confectioner: ConfectionerResponseDTO,
     @SerializedName("name") val name: String,
-    @SerializedName("description") val description: String,
+    @SerializedName("description") val description: String?,
     @SerializedName("fillings") val fillings: List<String>,
     @SerializedName("required_time") val requiredTime: Int,
     @SerializedName("color") val color: Int,
@@ -36,7 +36,7 @@ data class CakeResponseDTO(
         imageOffset = Offset(0f, 0f),
         fillings = fillings,
         preparation = requiredTime,
-        description = description,
+        description = description ?: "",
         confectioner = confectioner.toConfectioner()
     )
 
@@ -46,7 +46,7 @@ data class CakeResponseDTO(
         price = price,
         imageUrl = imageUrl?.let {RetrofitInstance.IMAGES_URL + it},
         name = name,
-        description = description,
+        description = description!!,
         diameter = diameter,
         weight = weight,
         preparation = requiredTime,

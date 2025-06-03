@@ -83,7 +83,7 @@ fun CakesFeedStatelessScreen(
     topBar: @Composable () -> Unit
 ) {
     val listState = rememberLazyGridState()
-    LaunchedEffect(listState) {
+    /*LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
                 val lastVisibleItemIndex = visibleItems.lastOrNull()?.index ?: return@collect
@@ -91,7 +91,7 @@ fun CakesFeedStatelessScreen(
                     onLoadMore()
                 }
             }
-    }
+    }*/
 
     Scaffold(
         topBar = topBar,
