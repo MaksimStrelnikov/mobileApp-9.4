@@ -136,14 +136,9 @@ fun GeneralProductViewStatelessScreen(
                             .align(Alignment.Start)
                             .height(48.dp),
                         shape = RoundedCornerShape(12.dp),
+                        text = "от ${state.cake.price} ₽",
                         enabled = userType == UserType.CUSTOMER
-                    ) {
-                        Text(
-                            text = "от ${state.cake.price} ₽",
-                            style = TextStyles.button(colorResource(R.color.dark_text)),
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    )
                     Spacer(Modifier.height(12.dp))
                 }
 

@@ -110,14 +110,9 @@ fun CakeFeedItem(
                     .fillMaxWidth()
                     .align(Alignment.Start),
                 shape = RoundedCornerShape(12.dp),
-                enabled = onBuyEnabled
-            ) {
-                Text(
-                    text = "от $price ₽",
-                    style = TextStyles.button(colorResource(R.color.dark_text)),
-                    textAlign = TextAlign.Center
-                )
-            }
+                enabled = onBuyEnabled,
+                text = "от $price ₽"
+            )
         }
     }
 }

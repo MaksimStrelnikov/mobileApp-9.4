@@ -18,7 +18,10 @@ import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -139,21 +142,28 @@ fun BuyButton(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     backgroundColor: Color = colorResource(id = R.color.dark_background),
     textColor: Color = colorResource(id = R.color.middle_text),
-    content: @Composable () -> Unit = {}
+    text: String = "Цена не задана",
 ) {
-    val buttonColors = ButtonColors(
-        backgroundColor,
-        contentColor = textColor,
-        backgroundColor,
-        disabledContentColor = textColor
-    )
+
+    var isClicked by remember { mutableStateOf(false) }
+
+    val currentBackgroundColor = if (isClicked) textColor else backgroundColor
+    val currentTextColor = if (isClicked) backgroundColor else textColor
 
     Button(
-        onClick,
+        onClick = {
+            onClick()
+            if (!isClicked) isClicked = true
+        },
         modifier,
         enabled,
         shape,
-        buttonColors,
+        colors = ButtonColors(
+            containerColor = currentBackgroundColor,
+            contentColor = currentTextColor,
+            disabledContainerColor = currentBackgroundColor,
+            disabledContentColor = currentTextColor
+        ),
         elevation,
         border,
         contentPadding,
@@ -164,9 +174,9 @@ fun BuyButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(R.drawable.busket),
+                painter = if (!isClicked) painterResource(R.drawable.busket) else painterResource(R.drawable.plus),
                 contentDescription = null,
-                tint = colorResource(R.color.dark_text),
+                tint = if (isClicked) backgroundColor else textColor,
                 modifier = Modifier.padding(start = 8.dp)
             )
 
@@ -176,7 +186,9 @@ fun BuyButton(
                     .padding(end = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                content()
+                Text(text = if (isClicked) "В корзине" else text,
+                    color = if (isClicked) backgroundColor else textColor,
+                    textAlign = TextAlign.Center)
             }
         }
     }
@@ -187,10 +199,9 @@ fun BuyButton(
 fun PreviewBuyButton() {
     BuyButton(
         {},
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Text("от 1000 р")
-    }
+        shape = RoundedCornerShape(12.dp),
+        text = "от 1000 р",
+    )
 }
 
 @Composable
