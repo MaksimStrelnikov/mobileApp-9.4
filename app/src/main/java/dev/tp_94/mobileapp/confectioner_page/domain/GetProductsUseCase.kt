@@ -12,7 +12,8 @@ class GetProductsUseCase @Inject constructor(
     suspend fun execute(confectioner: Confectioner): GetProductsResult {
         return try {
             GetProductsResult.Success(
-                repository.getAllByConfectioner(confectioner.id).map { it.toGeneral() }
+                repository.getAllByConfectioner(confectioner.id)
+                    .mapNotNull { if (!it.isCustom) it.toGeneral() else null }
 
             )
         } catch (e: Exception) {
