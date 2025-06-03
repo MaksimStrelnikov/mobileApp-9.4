@@ -27,19 +27,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.add_product.presentation.components.CakeImageAddition
 import dev.tp_94.mobileapp.add_product.presentation.components.WarningDialog
-import dev.tp_94.mobileapp.core.themes.DescriptionEditor
-import dev.tp_94.mobileapp.core.themes.PriceEditor
+import dev.tp_94.mobileapp.core.models.CakeGeneral
+import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.DescriptionEditor
 import dev.tp_94.mobileapp.core.themes.DiscardButton
+import dev.tp_94.mobileapp.core.themes.FloatNumberEditor
+import dev.tp_94.mobileapp.core.themes.NameEditor
+import dev.tp_94.mobileapp.core.themes.NumberEditor
+import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.themes.TextButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.core.themes.NameEditor
-import dev.tp_94.mobileapp.core.themes.NumberEditor
 import dev.tp_94.mobileapp.core.themes.WeightEditor
-import dev.tp_94.mobileapp.core.models.CakeGeneral
-import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.themes.FloatNumberEditor
 
 
 @Composable

@@ -30,9 +30,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.themes.ActiveButton
+import dev.tp_94.mobileapp.core.themes.PriceEditor
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.payment.presentation.components.CardsList

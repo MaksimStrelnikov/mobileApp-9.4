@@ -20,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
@@ -28,8 +27,8 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.orders.presentation.components.OrderItem
-import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 
 @Composable
 fun ConfectionerOrdersStatefulScreen(

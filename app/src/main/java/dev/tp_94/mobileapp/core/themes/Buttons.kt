@@ -188,7 +188,8 @@ fun BuyButton(
             ) {
                 Text(text = if (isClicked) "В корзине" else text,
                     color = if (isClicked) backgroundColor else textColor,
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center,
+                    style = TextStyles.button(color = colorResource(R.color.middle_text)))
             }
         }
     }

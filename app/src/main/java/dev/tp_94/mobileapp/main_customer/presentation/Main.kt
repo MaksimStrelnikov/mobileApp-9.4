@@ -2,12 +2,8 @@ package dev.tp_94.mobileapp.main_customer.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,12 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -51,8 +42,8 @@ import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.BottomNavBar
 import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customers_feed.presentation.components.ConfectionerFeedItem
-import dev.tp_94.mobileapp.customers_feed.presentation.components.SearchInput
 
 @Composable
 fun MainStatefulScreen(
@@ -101,7 +92,8 @@ fun MainStatelessScreen(
     bottomBar: @Composable () -> Unit,
 ) {
     Scaffold(
-        bottomBar = bottomBar,
+        topBar = { TopNameBar(name = "Главная", onBackClick = null)  },
+        bottomBar = bottomBar
     ) { innerPadding ->
         Box(
             modifier = Modifier

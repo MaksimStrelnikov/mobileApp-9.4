@@ -1,24 +1,33 @@
 package dev.tp_94.mobileapp
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -49,14 +58,14 @@ import dev.tp_94.mobileapp.login.presentation.LoginStatefulScreen
 import dev.tp_94.mobileapp.main_confectioner.presentation.MainConfectionerStatefulScreen
 import dev.tp_94.mobileapp.main_customer.presentation.MainStatefulScreen
 import dev.tp_94.mobileapp.new_card_addition.presentation.NewCardAdditionStatefulScreen
-import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentStatefulScreen
-import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentViewModel
 import dev.tp_94.mobileapp.order_view.presentation.OrderViewModel
+import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.ConfectionerOrdersStatefulScreen
 import dev.tp_94.mobileapp.orders.presentation.CustomerOrdersStatefulScreen
-import dev.tp_94.mobileapp.order_view.presentation.OrderViewStatefulScreen
 import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentStatefulScreen
 import dev.tp_94.mobileapp.payment.presentation.basket.BasketPaymentViewModel
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentStatefulScreen
+import dev.tp_94.mobileapp.payment.presentation.order.OrderPaymentViewModel
 import dev.tp_94.mobileapp.payment_result.ErrorPayment
 import dev.tp_94.mobileapp.payment_result.SuccessfulPayment
 import dev.tp_94.mobileapp.product_view.presentation.ProductViewModel
@@ -83,6 +92,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
             !isAppInitialized.value
@@ -131,7 +141,26 @@ fun AppBottomBar(currentScreen: Screen, navController: NavController) {
 @Composable
 fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "main") {
+    val view = LocalView.current
+    val window = (view.context as? Activity)?.window
+    val background = colorResource(R.color.background)
+    val lightBackground = colorResource(R.color.light_background)
+
+    SideEffect {
+        window?.statusBarColor = background.toArgb()
+        window?.navigationBarColor = lightBackground.toArgb()
+        WindowCompat.getInsetsController(window!!, view)
+            .isAppearanceLightStatusBars = true
+    }
+    NavHost(
+        navController,
+        startDestination = "main",
+        modifier = Modifier
+            .padding(
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            )
+    ) {
         composable("main") {
             SplashNavigationScreen(
                 onResult = {
@@ -216,7 +245,10 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                                 popUpTo(0)
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().padding(12.dp).height(48.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .height(48.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
@@ -611,16 +643,17 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                         navController.navigate("confectionerOrders")
                     },
                     onChangeCustomCake = {
-                        navController.navigate("customSettings") },
+                        navController.navigate("customSettings")
+                    },
                     onWithdraw = { navController.navigate("withdraw") },
                     onAddCake = {
                         navController.navigate("addProduct/null")
-                                },
+                    },
                 ),
                 customerRoutes = ProfileCustomerRoutes(onChangePersonalData = {
                     navController.navigate("changeProfile")
                 },
-                    onViewOrders = { }),
+                    onViewOrders = { navController.navigate("customerOrders") }),
                 onError = {
                     Log.println(Log.INFO, "Log", "Error")
                     Log.println(Log.INFO, "Log", navController.graph.nodes.toString())
@@ -650,10 +683,11 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             arguments = listOf(navArgument("cake") {
                 type = NavType.StringType
                 nullable = true
-                defaultValue = null })
+                defaultValue = null
+            })
         ) { backStackEntry ->
             val viewModel = hiltViewModel<AddProductViewModel>(backStackEntry)
-            AddProductStatefulScreen (
+            AddProductStatefulScreen(
                 viewModel = viewModel,
                 onMove = {
                     navController.navigateUp()
@@ -724,18 +758,18 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
         }
 
         composable("cakeFeed") {
-            CakesFeedStatefulScreen (
+            CakesFeedStatefulScreen(
                 onNavigate = {
-                val json = Json.encodeToString(it)
-                val encoded = URLEncoder.encode(json, "UTF-8")
-                navController.navigate("productView/$encoded")
-            }, onBackClick = {
-                navController.navigateUp()
-            }, onError = {
-                navController.navigate("login") {
-                    popUpTo(0)
-                }
-            })
+                    val json = Json.encodeToString(it)
+                    val encoded = URLEncoder.encode(json, "UTF-8")
+                    navController.navigate("productView/$encoded")
+                }, onBackClick = {
+                    navController.navigateUp()
+                }, onError = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                })
         }
 
         composable(
@@ -743,7 +777,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
             arguments = listOf(navArgument("cake") { type = NavType.StringType })
         ) {
             val viewModel = hiltViewModel<ProductViewModel>()
-            ProductViewStatefulScreen (
+            ProductViewStatefulScreen(
                 viewModel = viewModel,
                 onConfectionerClick = {
                     val json = Json.encodeToString(it)
@@ -770,8 +804,8 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 onSave = {
                     navController.navigateUp()
                 }, topBar = {
-                TopNameBar(name = "Личные данные", onBackClick = { navController.navigateUp() })
-            })
+                    TopNameBar(name = "Личные данные", onBackClick = { navController.navigateUp() })
+                })
         }
     }
 }

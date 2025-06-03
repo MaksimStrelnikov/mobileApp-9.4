@@ -26,13 +26,13 @@ import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.themes.ActiveButton
-import dev.tp_94.mobileapp.core.themes.TextStyles
-import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.core.themes.PhoneEditor
 import dev.tp_94.mobileapp.core.themes.AddressEditor
 import dev.tp_94.mobileapp.core.themes.DescriptionEditor
 import dev.tp_94.mobileapp.core.themes.EmailEditor
 import dev.tp_94.mobileapp.core.themes.NameEditor
+import dev.tp_94.mobileapp.core.themes.PhoneEditor
+import dev.tp_94.mobileapp.core.themes.TextStyles
+import dev.tp_94.mobileapp.core.themes.TopNameBar
 
 @Composable
 fun ProfileEditorStatefulScreen(

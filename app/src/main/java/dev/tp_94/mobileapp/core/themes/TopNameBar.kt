@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 
 @Composable
-fun TopNameBar(name: String, onBackClick: () -> Unit) {
+fun TopNameBar(name: String, onBackClick: (() -> Unit)?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,17 +38,18 @@ fun TopNameBar(name: String, onBackClick: () -> Unit) {
                     .wrapContentWidth(),
                 textAlign = TextAlign.Center
             )
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.back),
-                    contentDescription = "Назад",
-                    tint = colorResource(R.color.dark_text)
-                )
+            if (onBackClick != null) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.back),
+                        contentDescription = "Назад",
+                        tint = colorResource(R.color.dark_text)
+                    )
+                }
             }
-
         }
     }
 }

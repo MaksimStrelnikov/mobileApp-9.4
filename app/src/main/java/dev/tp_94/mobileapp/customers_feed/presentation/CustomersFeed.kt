@@ -27,8 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.themes.BottomNavBar
-import dev.tp_94.mobileapp.core.themes.Screen
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.customers_feed.presentation.components.ConfectionerFeedItem
 import dev.tp_94.mobileapp.customers_feed.presentation.components.SearchInput

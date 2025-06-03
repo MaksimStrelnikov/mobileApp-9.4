@@ -49,13 +49,13 @@ import dev.tp_94.mobileapp.core.models.Order
 import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
-import dev.tp_94.mobileapp.orders.presentation.components.OrderStatusChangeVertical
-import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.order_view.presentation.components.ConfectionerBubble
 import dev.tp_94.mobileapp.order_view.presentation.components.PhoneText
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPart
 import dev.tp_94.mobileapp.order_view.presentation.components.TextPartWithPairs
+import dev.tp_94.mobileapp.orders.presentation.components.OrderStatusChangeVertical
 import dev.tp_94.mobileapp.orders.presentation.components.PriceOfferEditor
+import dev.tp_94.mobileapp.orders.presentation.components.UserType
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddUneditable
 import kotlinx.datetime.LocalDate
 

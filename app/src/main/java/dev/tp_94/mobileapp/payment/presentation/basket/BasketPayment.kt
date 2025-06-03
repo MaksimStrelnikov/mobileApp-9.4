@@ -17,11 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,20 +28,14 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.tp_94.mobileapp.R
-import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.Card
 import dev.tp_94.mobileapp.core.models.Confectioner
-import dev.tp_94.mobileapp.core.models.Customer
-import dev.tp_94.mobileapp.core.models.Order
-import dev.tp_94.mobileapp.core.models.OrderStatus
 import dev.tp_94.mobileapp.core.themes.ActiveButton
 import dev.tp_94.mobileapp.core.themes.TextStyles
 import dev.tp_94.mobileapp.core.themes.TopNameBar
 import dev.tp_94.mobileapp.payment.presentation.components.CardsList
-import dev.tp_94.mobileapp.payment.presentation.components.TotalCost
 import dev.tp_94.mobileapp.payment.presentation.components.TotalCostSummary
-import kotlinx.datetime.LocalDate
 
 //TODO: unite with OrderPayment
 @Composable
