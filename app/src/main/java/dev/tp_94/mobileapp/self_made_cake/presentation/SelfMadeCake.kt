@@ -290,7 +290,7 @@ fun SelfMadeCakeStatelessScreen(
                                     )
                                 },
                                 onClick = {
-                                    if (true || !state.cakeCustom.fillings.contains(filling)) {
+                                    if (!state.cakeCustom.fillings.contains(filling)) {
                                         onUpdateFillings(state.cakeCustom.fillings + filling)
                                     }
                                     updateExpanded(false)
@@ -377,7 +377,7 @@ fun PreviewSelfMadeCakeStatelessScreen() {
                 cakeCustom = CakeCustom(Color.Cyan, 10f, confectioner = c),
                 restrictions = Restrictions(
                     isImageAcceptable = true,
-                    fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный")
+                    fillings = listOf("Ягодный", "Ореховый", "Кокосовый", "Клубничный", "Лимонный"),
                 ),
             ),
             onImageDrag = {},
