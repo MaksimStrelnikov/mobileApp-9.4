@@ -57,6 +57,7 @@ import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingAddEdit
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.FillingNew
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.TextEditor
 import dev.tp_94.mobileapp.self_made_cake_generator.presentation.components.GeneratedImage
+import java.util.Date
 
 
 @Composable
@@ -79,6 +80,7 @@ fun SelfMadeCakeGeneratorStatefulScreen(
         onDiameterChange = { viewModel.setDiameter(it) },
         onGenerate = { viewModel.generateImage() },
         onPromptChange = { viewModel.updatePrompt(it) },
+        onDateChange = { viewModel.updatePreparation(it)},
         onCommentChange = { viewModel.updateComment(it) },
         topBar = topBar,
         onSend = {
@@ -94,6 +96,7 @@ fun SelfMadeCakeGeneratorStatelessScreen(
     onDiameterChange: (Float) -> Unit,
     onGenerate: () -> Unit,
     onPromptChange: (String) -> Unit,
+    onDateChange: (Date) -> Unit,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
     onUpdateFillings: (List<String>) -> Unit,
@@ -245,7 +248,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
             DatePickerButton(modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-                minDaysFromToday = state.restrictions.minPreparationDays,)
+                minDaysFromToday = state.restrictions.minPreparationDays,
+                onChange = onDateChange,)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
@@ -305,13 +309,14 @@ fun PreviewSelfMadeCakeGeneratorStatelessScreen() {
         SelfMadeCakeGeneratorStatelessScreen(
             state = state.value,
             onDiameterChange = {},
-            onPromptChange = {state.value = state.value.copy(prompt = it)},
+            onPromptChange = { state.value = state.value.copy(prompt = it) },
             //TODO: make onGenerate work at the ViewModel
             onGenerate = { state.value = state.value.copy(prompt = "Я сгенерировал торт") },
             onCommentChange = {},
             onSend = { },
             topBar = { TopNameBar("Дизайн торта") { } },
-            onUpdateFillings = {}
+            onUpdateFillings = {},
+            onDateChange = {  }
         )
     }
 

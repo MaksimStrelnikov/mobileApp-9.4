@@ -12,7 +12,6 @@ import dev.tp_94.mobileapp.core.models.CakeCustom
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.core.models.Customer
 import dev.tp_94.mobileapp.core.models.Restrictions
-import dev.tp_94.mobileapp.core.models.User
 import dev.tp_94.mobileapp.custom_order_settings.domain.GetRestrictionsUseCase
 import dev.tp_94.mobileapp.custom_order_settings.presentation.RestrictionsResult
 import dev.tp_94.mobileapp.self_made_cake.domain.SendCustomCakeUseCase
@@ -21,6 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
+import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,7 +51,11 @@ class SelfMadeCakeViewModel @Inject constructor(
 
     fun setDiameter(diameter: Float) {
         _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter.fastRoundToInt().toFloat()))
+            _state.value.copy(
+                cakeCustom = _state.value.cakeCustom.copy(
+                    diameter = diameter.fastRoundToInt().toFloat()
+                )
+            )
     }
 
     fun updateText(text: String) {
@@ -80,6 +86,31 @@ class SelfMadeCakeViewModel @Inject constructor(
         _state.value = _state.value.copy(textImageEditor = textImageEditor)
     }
 
+    fun updatePreparation(date: Date) {
+        val nowCal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val targetCal = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val diffMillis = targetCal.timeInMillis - nowCal.timeInMillis
+
+        _state.value = _state.value.copy(
+            cakeCustom = _state.value.cakeCustom.copy(
+                preparation = TimeUnit.MILLISECONDS.toDays(diffMillis).toInt()
+            )
+        )
+    }
+
     fun sendCustomCake(onSuccess: () -> Unit) {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
@@ -104,7 +135,10 @@ class SelfMadeCakeViewModel @Inject constructor(
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(
                     restrictions = result.restrictions,
-                    cakeCustom = _state.value.cakeCustom.copy(diameter = result.restrictions.minDiameter.toFloat())
+                    cakeCustom = _state.value.cakeCustom.copy(
+                        diameter = result.restrictions.minDiameter.toFloat(),
+                        preparation = result.restrictions.minPreparationDays
+                    )
                 )
             }
             //TODO: add error handling

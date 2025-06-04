@@ -26,6 +26,9 @@ class SendCustomCakeUseCase @Inject constructor(
             if (restrictions.minDiameter > cake.diameter || restrictions.maxDiameter < cake.diameter) {
                 return SelfMadeCakeResult.Error("Диаметр не соответствует требованиям кондитера")
             }
+            if (cake.fillings.isEmpty()) {
+                return SelfMadeCakeResult.Error("Начинка не выбрана")
+            }
             if (cake.preparation < restrictions.minPreparationDays) {
                 return SelfMadeCakeResult.Error("Время приготовления не соответствует минимальным требованиям кондитера")
             }

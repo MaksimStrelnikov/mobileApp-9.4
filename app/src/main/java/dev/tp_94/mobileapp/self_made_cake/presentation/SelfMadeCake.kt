@@ -62,6 +62,7 @@ import dev.tp_94.mobileapp.self_made_cake.presentation.components.ImageAddition
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.InteractableImage
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.InteractableText
 import dev.tp_94.mobileapp.self_made_cake.presentation.components.TextEditor
+import java.util.Date
 
 @Composable
 fun SelfMadeCakeStatefulScreen(
@@ -95,6 +96,7 @@ fun SelfMadeCakeStatefulScreen(
         onOpenImageChangeClick = { viewModel.setTextImageEditor(Editor.IMAGE) },
         onTextChange = { viewModel.updateText(it) },
         onImageChange = { viewModel.updateImage(it) },
+        onDateChange = { viewModel.updatePreparation(it) },
         onCommentChange = { viewModel.updateComment(it) },
         topBar = topBar,
         onSend = {
@@ -118,6 +120,7 @@ fun SelfMadeCakeStatelessScreen(
     onOpenImageChangeClick: () -> Unit,
     onTextChange: (String) -> Unit,
     onImageChange: (String?) -> Unit,
+    onDateChange: (Date) -> Unit,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
     onUpdateFillings: (List<String>) -> Unit,
@@ -316,7 +319,8 @@ fun SelfMadeCakeStatelessScreen(
             DatePickerButton(modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-                minDaysFromToday = state.restrictions.minPreparationDays,)
+                minDaysFromToday = state.restrictions.minPreparationDays,
+                onChange = { onDateChange(it) },)
             Spacer(modifier = Modifier.height(8.dp))
             TextEditor(
                 onChange = onCommentChange,
@@ -393,7 +397,8 @@ fun PreviewSelfMadeCakeStatelessScreen() {
             onCommentChange = {},
             onSend = { },
             topBar = { TopNameBar("Дизайн торта") { } },
-            onUpdateFillings = {}
+            onUpdateFillings = {},
+            onDateChange = {  }
         )
     }
 

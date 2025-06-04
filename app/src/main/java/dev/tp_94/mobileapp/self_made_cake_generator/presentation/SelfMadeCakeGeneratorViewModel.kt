@@ -20,6 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
+import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +38,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
         _state.value =
             _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(fillings = value))
     }
+
     fun setDiameter(diameter: Float) {
         _state.value =
             _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter))
@@ -48,6 +52,31 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
     fun updatePrompt(prompt: String) {
         _state.value =
             _state.value.copy(prompt = prompt)
+    }
+
+    fun updatePreparation(date: Date) {
+        val nowCal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val targetCal = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val diffMillis = targetCal.timeInMillis - nowCal.timeInMillis
+
+        _state.value = _state.value.copy(
+            cakeCustom = _state.value.cakeCustom.copy(
+                preparation = TimeUnit.MILLISECONDS.toDays(diffMillis).toInt()
+            )
+        )
     }
 
     fun generateImage() {
@@ -75,7 +104,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
                 _state.value.cakeCustom,
                 (session.value!!.user as Customer),
                 _state.value.restrictions
-                )
+            )
             if (result is SelfMadeCakeResult.Success) {
                 onSuccess()
                 _state.value = _state.value.copy(error = "")
@@ -92,7 +121,10 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
             if (result is RestrictionsResult.Success) {
                 _state.value = _state.value.copy(
                     restrictions = result.restrictions,
-                    cakeCustom = _state.value.cakeCustom.copy(diameter = result.restrictions.minDiameter.toFloat())
+                    cakeCustom = _state.value.cakeCustom.copy(
+                        diameter = result.restrictions.minDiameter.toFloat(),
+                        preparation = result.restrictions.minPreparationDays
+                    )
                 )
             }
             //TODO: add error handling

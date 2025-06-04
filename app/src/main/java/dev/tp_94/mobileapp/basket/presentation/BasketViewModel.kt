@@ -65,12 +65,14 @@ class BasketViewModel @Inject constructor(
         }
     }
 
+    fun update() {
+        getBasket()
+    }
+
     private val _state = MutableStateFlow(BasketState())
     val state = _state.asStateFlow()
 
     init {
         getBasket()
     }
-
-
 }
