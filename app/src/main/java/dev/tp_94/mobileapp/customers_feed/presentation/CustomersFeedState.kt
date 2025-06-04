@@ -9,11 +9,11 @@ data class CustomersFeedState (
     val isLoading: Boolean = false
 )
 
-enum class Sorting(val text: String) {
+enum class Sorting(val text: String, val ascending: Boolean = true) {
     NO_SORTING("По умолчанию"),
     /*BY_FILLINGS_UP("По начинкам (сначала больше)"),
     BY_FILLINGS_DOWN("По начинкам (сначала меньше)"),*/
-    BY_CAKES_UP("По товарам (сначала больше)"),
+    BY_CAKES_UP("По товарам (сначала больше)", false),
     BY_CAKES_DOWN("По товарам (сначала меньше)");
 
     override fun toString(): String {

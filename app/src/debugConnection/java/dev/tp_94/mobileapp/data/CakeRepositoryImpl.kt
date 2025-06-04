@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
+import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
+import dev.tp_94.mobileapp.cakes_feed.presentation.Sorting
 import dev.tp_94.mobileapp.core.api.CakeApi
 import dev.tp_94.mobileapp.core.compressImageToMaxSize
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeCustomRequestDTO
@@ -66,16 +68,43 @@ class CakeRepositoryImpl @Inject constructor(
         if (!response.isSuccessful) throw Exception(response.message())
     }
 
-    override suspend fun getAllByName(text: String): List<CakeResponseDTO> {
-        return getAllGeneral()
-        /* TODO: change after it'll be implemented in backend
-        val response = api.getAllByName(text)
+    override suspend fun getAllByName(nameBodeDTO: NameBodyDTO): List<CakeResponseDTO> {
+        val response = api.getAllByName(nameBodeDTO)
         if (response.isSuccessful) {
             return response.body()!!
         } else {
             throw Exception(response.message())
-        }*/
+        }
     }
+
+    override suspend fun getAllByNameSorted(
+        nameBodeDTO: NameBodyDTO,
+        sorting: Sorting
+    ): List<CakeResponseDTO> {
+        val response = when (sorting) {
+            Sorting.NO_SORTING -> {
+                api.getAllByName(nameBodeDTO)
+            }
+            Sorting.BY_PRICE_UP -> {
+                api.getAllByNameAndPrice(sorting.ascending, nameBodeDTO)
+            }
+            Sorting.BY_PRICE_DOWN -> {
+                api.getAllByNameAndPrice(sorting.ascending, nameBodeDTO)
+            }
+            Sorting.BY_WEIGHT_UP -> {
+                api.getAllByNameAndWeight(sorting.ascending, nameBodeDTO)
+            }
+            Sorting.BY_WEIGHT_DOWN -> {
+                api.getAllByNameAndWeight(sorting.ascending, nameBodeDTO)
+            }
+        }
+        if (response.isSuccessful) {
+            return response.body()!!
+        } else {
+            throw Exception(response.message())
+        }
+    }
+
 
     override suspend fun getAllGeneral(): List<CakeResponseDTO> {
         val response = api.getAll()

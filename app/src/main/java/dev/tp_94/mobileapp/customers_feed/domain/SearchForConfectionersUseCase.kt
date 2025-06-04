@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.customers_feed.domain
 
+import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.customers_feed.presentation.FeedResult
 import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
@@ -14,7 +15,7 @@ class SearchForConfectionersUseCase @Inject constructor(private val repository: 
             val result = if (text.isNullOrEmpty()) {
                 repository.getAll()
             } else {
-                repository.getAllByName(text)
+                repository.getAllByName(NameBodyDTO(text))
             }
             val confectioners = result.map { it.toConfectioner() }
             return FeedResult.Success(confectioners)

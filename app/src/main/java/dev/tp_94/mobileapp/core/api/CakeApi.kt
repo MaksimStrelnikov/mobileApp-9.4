@@ -1,6 +1,7 @@
 package dev.tp_94.mobileapp.core.api
 
 import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
+import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeGeneralRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeResponseDTO
 import okhttp3.MultipartBody
@@ -35,6 +36,15 @@ interface CakeApi {
 
     @GET("cakes")
     suspend fun getAll(): Response<List<CakeResponseDTO>>
+
+    @POST("cakes/search/name")
+    suspend fun getAllByName(@Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
+
+    @POST("cakes/sorted/weight={ascending}")
+    suspend fun getAllByNameAndWeight(@Part("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
+
+    @POST("cakes/sorted/price={ascending}")
+    suspend fun getAllByNameAndPrice(@Part("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
 
     @GET("cakes/confectioner/{confectionerId}")
     suspend fun getAllByConfectioner(@Path("confectionerId") confectionerId: Long): Response<List<CakeResponseDTO>>
