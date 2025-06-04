@@ -6,6 +6,8 @@
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:navigationBarColor">@color/light_background</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
     </style>
     <style name="Theme.Caker.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background</item>

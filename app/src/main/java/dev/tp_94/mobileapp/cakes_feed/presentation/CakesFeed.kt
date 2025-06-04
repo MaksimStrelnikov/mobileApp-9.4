@@ -38,7 +38,7 @@ import dev.tp_94.mobileapp.customers_feed.presentation.components.SortSelector
 @Composable
 fun CakesFeedStatefulScreen(
     viewModel: CakesFeedViewModel = hiltViewModel(),
-    onNavigate: (Cake) -> Unit,
+    onNavigate: (CakeGeneral) -> Unit,
     onBackClick: () -> Unit,
     onError: () -> Unit
 ) {
@@ -73,7 +73,7 @@ fun CakesFeedStatelessScreen(
     state: CakesFeedState,
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
-    onOpen: (Cake) -> Unit,
+    onOpen: (CakeGeneral) -> Unit,
     onBuyEnabled: Boolean = true,
     onBuy: (Cake) -> Unit,
     onSortSelected: (Sorting) -> Unit,

@@ -5,8 +5,11 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +26,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -92,7 +96,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
             !isAppInitialized.value
@@ -319,7 +324,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("confectionerpage/$encoded")
                 },
                 onNavigateToProduct = {
-                    val json = Json.encodeToString(it)
+                    val json = Json{ serializersModule = CakeSerializerModule.module }.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("productView/$encoded")
                 },
@@ -345,7 +350,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("confectionerOrders")
                 },
                 onNavigateToProductEdit = {
-                    val json = Json.encodeToString(it)
+                    val json = Json{ serializersModule = CakeSerializerModule.module }.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("addProduct/$encoded")
                 }
@@ -423,7 +428,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                     navController.navigate("makecake/$encoded")
                 },
                 onNavigateToProduct = {
-                    val json = Json.encodeToString(it)
+                    val json = Json{ serializersModule = CakeSerializerModule.module }.encodeToString(it)
                     val encoded = URLEncoder.encode(json, "UTF-8")
                     navController.navigate("productView/$encoded")
                 },
