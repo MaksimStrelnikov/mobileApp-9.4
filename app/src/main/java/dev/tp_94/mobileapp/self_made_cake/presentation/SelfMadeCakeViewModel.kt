@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.self_made_cake.presentation
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.util.fastRoundToInt
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -48,7 +49,7 @@ class SelfMadeCakeViewModel @Inject constructor(
 
     fun setDiameter(diameter: Float) {
         _state.value =
-            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter))
+            _state.value.copy(cakeCustom = _state.value.cakeCustom.copy(diameter = diameter.fastRoundToInt().toFloat()))
     }
 
     fun updateText(text: String) {
