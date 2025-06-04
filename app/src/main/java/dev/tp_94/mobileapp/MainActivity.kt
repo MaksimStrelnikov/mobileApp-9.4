@@ -103,6 +103,8 @@ class MainActivity : ComponentActivity() {
             !isAppInitialized.value
         }
 
+        actionBar?.hide()
+
         super.onCreate(savedInstanceState)
 
         setContent {
