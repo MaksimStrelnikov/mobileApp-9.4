@@ -328,46 +328,77 @@ fun CustomOrderViewStatelessScreen(
             ) {
                 Spacer(Modifier.height(8.dp))
                 //TODO: move to relative offset rather then absolute
-                Box(
-                    modifier = Modifier
-                        .width(360.dp)
-                        .height(460.dp)
-                        .background(
-                            (state.order.cake as CakeCustom).color.darken(),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if ((state.order.cake as CakeCustom).generated) {
+                    if (state.order.cake.imageUrl == null) {
                         Box(
                             modifier = Modifier
-                                .size(270.dp)
-                                .clip(CircleShape)
-                                .background(state.order.cake.color),
+                                .size(360.dp)
+                                .background(
+                                    color = colorResource(R.color.dark_background),
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
-                            state.order.cake.imageUrl?.let { uri ->
-                                val painter = rememberAsyncImagePainter(uri)
-                                Image(
-                                    painter = painter,
-                                    contentDescription = "Выбранное изображение",
-                                    modifier = Modifier
-                                        .size(200.dp)
-                                        .offset { state.order.cake.imageOffset.round() }
-                                )
-                            }
-                            Text(text = state.order.cake.text,
-                                style = TextStyles.header(colorResource(R.color.dark_text)),
+                            Icon(
+                                painter = painterResource(R.drawable.nocake),
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .offset { state.order.cake.textOffset.round() })
+                                    .size(100.dp),
+                                tint = colorResource(R.color.light_text)
+                            )
                         }
-                        Spacer(modifier = Modifier.height(30.dp))
-                        Box(
+                    } else {
+                        val painter = rememberAsyncImagePainter(state.order.cake.imageUrl)
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
                             modifier = Modifier
-                                .width(250.dp)
-                                .height(70.dp)
-                                .background(state.order.cake.color)
+                                .size(360.dp)
+                                .clip(shape = RoundedCornerShape(8.dp))
                         )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .width(360.dp)
+                            .height(460.dp)
+                            .background(
+                                (state.order.cake as CakeCustom).color.darken(),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Box(
+                                modifier = Modifier
+                                    .size(270.dp)
+                                    .clip(CircleShape)
+                                    .background(state.order.cake.color),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                state.order.cake.imageUrl?.let { uri ->
+                                    val painter = rememberAsyncImagePainter(uri)
+                                    Image(
+                                        painter = painter,
+                                        contentDescription = "Выбранное изображение",
+                                        modifier = Modifier
+                                            .size(200.dp)
+                                            .offset { state.order.cake.imageOffset.round() }
+                                    )
+                                }
+                                Text(text = state.order.cake.text,
+                                    style = TextStyles.header(colorResource(R.color.dark_text)),
+                                    modifier = Modifier
+                                        .offset { state.order.cake.textOffset.round() })
+                            }
+                            Spacer(modifier = Modifier.height(30.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(250.dp)
+                                    .height(70.dp)
+                                    .background(state.order.cake.color)
+                            )
+                        }
                     }
                 }
                 Spacer(Modifier.height(12.dp))
@@ -385,7 +416,10 @@ fun CustomOrderViewStatelessScreen(
                     if (state.order.price != 0) {
                         TextPartWithPairs(
                             "Параметры", listOf(
-                                Pair("Диаметр изделия", state.order.cake.diameter.toString() + " см"),
+                                Pair(
+                                    "Диаметр изделия",
+                                    state.order.cake.diameter.toString() + " см"
+                                ),
                                 Pair(
                                     "Срок изготовления",
                                     state.order.cake.preparation.toString() + " дней"
@@ -396,7 +430,10 @@ fun CustomOrderViewStatelessScreen(
                     } else {
                         TextPartWithPairs(
                             "Параметры", listOf(
-                                Pair("Диаметр изделия", state.order.cake.diameter.toString() + " см"),
+                                Pair(
+                                    "Диаметр изделия",
+                                    state.order.cake.diameter.toString() + " см"
+                                ),
                                 Pair(
                                     "Срок изготовления",
                                     state.order.cake.preparation.toString() + " дней"
@@ -502,7 +539,7 @@ fun PreviewCustomOrderViewStatelessScreen() {
                 color = Color.Cyan,
                 text = "TODO()",
                 textOffset = Offset.Zero,
-                imageUrl = null,
+                imageUrl = "",
                 imageOffset = Offset.Zero,
                 fillings = listOf("Шоколад", "Клубника", "Манго", "Маракуйа", "Ананас"),
                 confectioner = confectioner

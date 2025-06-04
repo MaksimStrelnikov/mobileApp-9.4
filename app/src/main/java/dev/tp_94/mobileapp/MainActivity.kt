@@ -806,7 +806,7 @@ fun MainNavGraph(isAppInitialized: MutableState<Boolean>) {
                 onSave = {
                     navController.navigateUp()
                 }, topBar = {
-                    TopNameBar(name = "Личные данные", onBackClick = { navController.navigateUp() })
+                    TopNameBar(name = "Кастомизация", onBackClick = { navController.navigateUp() })
                 })
         }
     }

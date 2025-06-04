@@ -32,6 +32,9 @@ class SendCustomCakeUseCase @Inject constructor(
             if (cake.preparation < restrictions.minPreparationDays) {
                 return SelfMadeCakeResult.Error("Время приготовления не соответствует минимальным требованиям кондитера")
             }
+            if (cake.generated && cake.imageUrl == null) {
+                return SelfMadeCakeResult.Error("Изображение не сгенерировано")
+            }
             val cakeResponseDTO = cakeRepository.addCustomCake(
                 cakeCustomRequestDTO = CakeCustomRequestDTO(
                     confectionerId = cake.confectioner.id,

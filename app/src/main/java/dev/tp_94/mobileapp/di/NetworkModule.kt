@@ -31,6 +31,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 
@@ -92,14 +93,20 @@ object NetworkModule {
         .build()
 
     @Provides
-    @StableHordeApi
+    @GenerateApi
     fun provideHordeOkHttpClient(
         @BodyLog bodyInterceptor: HttpLoggingInterceptor,
         @HeadersLog headersInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(bodyInterceptor)
         .addInterceptor(headersInterceptor)
-        // TODO: add apikey insertion through interceptor
+        .addInterceptor(authInterceptor)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(3, TimeUnit.MINUTES)
+        .writeTimeout(3, TimeUnit.MINUTES)
         .build()
 
     @Provides
@@ -160,18 +167,18 @@ object NetworkModule {
         retrofit.create(WithdrawalApi::class.java)
 
     @Provides
-    @StableHordeApi
+    @GenerateApi
     @Singleton
-    fun provideStableHordeRetrofit(@StableHordeApi client: OkHttpClient, gson: Gson): Retrofit =
+    fun provideStableHordeRetrofit(@GenerateApi client: OkHttpClient, gson: Gson): Retrofit =
         Retrofit.Builder()
-            .baseUrl(RetrofitInstance.HORDE_URL)
+            .baseUrl(RetrofitInstance.GENERATE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
     @Provides
     @Singleton
-    fun provideGenerationApi(@StableHordeApi retrofit: Retrofit): GenerationApi =
+    fun provideGenerationApi(@GenerateApi retrofit: Retrofit): GenerationApi =
         retrofit.create(GenerationApi::class.java)
 }
 

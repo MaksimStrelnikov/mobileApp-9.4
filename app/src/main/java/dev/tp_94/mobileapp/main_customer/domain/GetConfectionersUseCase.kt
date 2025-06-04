@@ -12,7 +12,7 @@ class GetConfectionersUseCase @Inject constructor(
         try {
             //TODO: force backend to add new api for getting specific amount of confectioners
             val result = repository.getAll()
-            val safeAmount = amount.coerceIn(0, result.size - 1)
+            val safeAmount = amount.coerceIn(0, result.size)
             return MainResult.Success.Confectioners(result.subList(0, safeAmount).map { it.toConfectioner() })
         } catch (e: Exception) {
             return MainResult.Error(e.message ?: "Возникла непредвиденная ошибка")

@@ -32,9 +32,10 @@ data class CakeResponseDTO(
         diameter = diameter,
         text = text ?: "",
         textOffset = Offset(textX, textY),
-        imageUrl = imageUrl?.let {RetrofitInstance.IMAGES_URL + it},
+        imageUrl = imageUrl,
         imageOffset = Offset(0f, 0f),
         fillings = fillings,
+        generated = imageUrl?.contains("AI") ?: false,
         preparation = requiredTime,
         description = description ?: "",
         confectioner = confectioner.toConfectioner()
@@ -44,7 +45,7 @@ data class CakeResponseDTO(
     fun toGeneral(): CakeGeneral = CakeGeneral(
         id = id,
         price = price,
-        imageUrl = imageUrl?.let {RetrofitInstance.IMAGES_URL + it},
+        imageUrl = imageUrl,
         name = name,
         description = description!!,
         diameter = diameter,

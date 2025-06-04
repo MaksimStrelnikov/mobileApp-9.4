@@ -165,7 +165,8 @@ fun AddProductStatelessScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    if (!state.isLoading) "Добавить" else "Добавляем..."
+                    if (!state.isLoading) "Добавить" else "Добавляем...",
+                    style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }
             Spacer(Modifier.height(8.dp))
@@ -178,7 +179,8 @@ fun AddProductStatelessScreen(
             )
             {
                 Text(
-                    "Отмена"
+                    "Отмена",
+                    style = TextStyles.button(colorResource(R.color.light_text))
                 )
             }
             Spacer(Modifier.height(32.dp))

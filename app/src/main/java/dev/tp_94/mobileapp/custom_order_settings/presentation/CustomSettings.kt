@@ -202,12 +202,13 @@ fun CustomSettingsStatefulScreen(
             ActiveButton(
                 onClick = { viewModel.saveCustomSettings(onSave) },
                 modifier = Modifier
-                    .height(48.dp)
+                    .height(64.dp)
                     .fillMaxWidth()
                     .padding(4.dp)
             ) {
                 Text(
-                    "Добавить"
+                    "Сохранить",
+                    style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }
         }

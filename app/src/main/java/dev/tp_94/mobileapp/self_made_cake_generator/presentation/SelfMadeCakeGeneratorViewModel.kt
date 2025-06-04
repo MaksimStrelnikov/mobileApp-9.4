@@ -149,7 +149,7 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         SelfMadeCakeGeneratorState(
-            cakeCustom = CakeCustom(Color.Unspecified, 10f, confectioner = confectioner),
+            cakeCustom = CakeCustom(Color.Unspecified, 10f, confectioner = confectioner, generated = true),
             confectioner = confectioner,
             restrictions = Restrictions()
         )

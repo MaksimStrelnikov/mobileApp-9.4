@@ -114,7 +114,8 @@ fun ProfileEditorStatelessCustomerScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    if (!state.isLoading) "Cохранить" else "Сохраняем..."
+                    if (!state.isLoading) "Cохранить" else "Сохраняем...",
+                    style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }
         }
@@ -231,7 +232,8 @@ fun ProfileEditorStatelessConfectionerScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    if (!state.isLoading) "Cохранить" else "Сохраняем..."
+                    if (!state.isLoading) "Cохранить" else "Сохраняем...",
+                    style = TextStyles.button(colorResource(R.color.light_background))
                 )
             }
         }

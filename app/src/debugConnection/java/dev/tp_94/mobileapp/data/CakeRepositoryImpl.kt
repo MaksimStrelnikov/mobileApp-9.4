@@ -29,7 +29,11 @@ class CakeRepositoryImpl @Inject constructor(
         val response =
             if (imageUrl == null) {
                 api.uploadCakeCustomWithoutImage(cakeCustomRequestDTO.toParts())
-            } else {
+            } else if (imageUrl.contains("https")) {
+                val temp = cakeCustomRequestDTO.copy(imagePath = imageUrl)
+                api.uploadCakeCustomWithoutImage(temp.toParts())
+            }
+            else {
                 val uri = Uri.parse(imageUrl)
 
                 val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)

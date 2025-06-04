@@ -26,6 +26,7 @@ data class CakeCustom(
     val imageUrl: String? = null,
     val imageOffset: Offset = Offset.Zero,
     val fillings: List<String> = arrayListOf(),
+    val generated: Boolean = false,
     override val preparation: Int = 3,
     override val description: String = "",
     override val name: String = "Индивидуальный торт",
@@ -58,6 +59,7 @@ data class CakeCustomSerializable(
     val fillings: List<String> = arrayListOf(),
     val preparation: Int = 3,
     val description: String = "",
+    val generated: Boolean = false,
     val confectioner: Confectioner
 )
 
@@ -73,6 +75,7 @@ fun CakeCustomSerializable.toOriginal(): CakeCustom {
         fillings = this.fillings,
         preparation = this.preparation,
         description = this.description,
+        generated = this.generated,
         confectioner = this.confectioner
     )
 }
@@ -87,6 +90,7 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
         imageUrl = this.imageUrl,
         imageOffset = this.imageOffset.toSerializable(),
         fillings = this.fillings,
+        generated = this.generated,
         preparation = this.preparation,
         description = this.description,
         confectioner = this.confectioner

@@ -1,11 +1,9 @@
 package dev.tp_94.mobileapp.core.api
 
-import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
 import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeGeneralRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeResponseDTO
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -15,7 +13,6 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 

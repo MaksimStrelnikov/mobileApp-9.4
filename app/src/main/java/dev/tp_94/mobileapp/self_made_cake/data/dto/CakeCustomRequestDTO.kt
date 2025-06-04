@@ -1,11 +1,7 @@
 package dev.tp_94.mobileapp.self_made_cake.data.dto
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 data class CakeCustomRequestDTO(
     @SerializedName("confectioner_id") val confectionerId: Long,
@@ -15,6 +11,7 @@ data class CakeCustomRequestDTO(
     @SerializedName("req_time") val reqTime: Int,
     @SerializedName("color") val color: String,
     @SerializedName("diameter") val diameter: Float,
+    @SerializedName("image_path") val imagePath: String = "",
     @SerializedName("text") val text: String,
     @SerializedName("text_size") val textSize: Int,
     @SerializedName("text_x") val textX: Float,
@@ -33,6 +30,7 @@ fun CakeCustomRequestDTO.toParts(): List<MultipartBody.Part> {
     parts += MultipartBody.Part.createFormData("required_time", reqTime.toString())
     parts += MultipartBody.Part.createFormData("color", color)
     parts += MultipartBody.Part.createFormData("diameter", diameter.toString())
+    parts += MultipartBody.Part.createFormData("image_path", imagePath)
     parts += MultipartBody.Part.createFormData("text", text)
     parts += MultipartBody.Part.createFormData("text_size", textSize.toString())
     parts += MultipartBody.Part.createFormData("text_x", textX.toString())

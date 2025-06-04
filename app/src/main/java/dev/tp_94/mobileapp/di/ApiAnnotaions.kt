@@ -4,7 +4,7 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class StableHordeApi
+annotation class GenerateApi
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

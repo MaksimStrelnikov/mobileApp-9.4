@@ -74,7 +74,7 @@ fun SelfMadeCakeGeneratorStatefulScreen(
             viewModel.exit()
         }
     }
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     SelfMadeCakeGeneratorStatelessScreen(
         state = state,
         onDiameterChange = { viewModel.setDiameter(it) },
@@ -168,7 +168,8 @@ fun SelfMadeCakeGeneratorStatelessScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = !state.isGenerating
                     )
                     {
                         if (state.isGenerating) Text("Подождите..." ,  style = TextStyles.button(colorResource(R.color.dark_text)))
