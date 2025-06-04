@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.core.models
 
+import androidx.annotation.Keep
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -7,6 +8,7 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 @Polymorphic
 sealed interface Cake {
@@ -16,6 +18,7 @@ sealed interface Cake {
     val description: String
     val confectioner: Confectioner
 }
+@Keep
 @Serializable(with=CakeCustomSerializer::class)
 @SerialName("custom")
 data class CakeCustom(
@@ -32,10 +35,11 @@ data class CakeCustom(
     override val name: String = "Индивидуальный торт",
     override val confectioner: Confectioner
 ) : Cake
-
+@Keep
 @Serializable
 data class SerializableColor(val value: Int)
 
+@Keep
 @Serializable
 data class SerializableOffset(val x: Float, val y: Float)
 
@@ -46,7 +50,7 @@ fun Offset.toSerializable() = SerializableOffset(x, y)
 fun SerializableOffset.toOffset() = Offset(x, y)
 
 
-
+@Keep
 @Serializable
 data class CakeCustomSerializable(
     val name: String,
@@ -97,7 +101,7 @@ fun CakeCustom.toSerializable(): CakeCustomSerializable {
     )
 }
 
-
+@Keep
 @Serializable
 @SerialName("general")
 data class CakeGeneral(

@@ -37,9 +37,15 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         create("debugConnection") {
             isDebuggable = true
@@ -51,12 +57,12 @@ android {
     productFlavors {
         create("dev") {
             dimension = "env"
-            versionCode = 8
+            versionCode = 9
             versionName = "1.1.7-dev"
         }
         create("prod") {
             dimension = "env"
-            versionCode = 1
+            versionCode = 9
             versionName = "1.0"
         }
     }

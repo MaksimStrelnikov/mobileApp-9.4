@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.core.models
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import dev.tp_94.mobileapp.login.data.dto.UserDTO
@@ -16,6 +17,7 @@ sealed interface User {
     val email: String
 }
 
+@Keep
 @JsonClass(generateAdapter = true)
 @Json(name = "confectioner")
 @Serializable
@@ -30,6 +32,7 @@ data class Confectioner(
     val inProcess: Int = 0
 ) : User
 
+@Keep
 @JsonClass(generateAdapter = true)
 @Json(name = "customer")
 @Serializable

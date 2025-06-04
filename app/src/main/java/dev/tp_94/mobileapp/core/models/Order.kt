@@ -1,9 +1,11 @@
 package dev.tp_94.mobileapp.core.models
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 data class Order(
     val id: Long = 0,
