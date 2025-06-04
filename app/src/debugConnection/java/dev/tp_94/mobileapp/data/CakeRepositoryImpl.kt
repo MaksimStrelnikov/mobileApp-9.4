@@ -3,6 +3,7 @@ package dev.tp_94.mobileapp.data
 import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
 import dev.tp_94.mobileapp.core.api.CakeApi
 import dev.tp_94.mobileapp.core.compressImageToMaxSize
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeCustomRequestDTO
@@ -96,10 +97,22 @@ class CakeRepositoryImpl @Inject constructor(
 
     override suspend fun updateGeneralCake(
         id: Long,
-        cakeGeneralRequestDTO: CakeGeneralRequestDTO,
+        cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO,
         imageUrl: String
     ) {
-        //TODO: make dependent on imageUrl (content or https)
-        //val response = api.updateCakeRegularWithoutImage()
+        var current = cakeGeneralUpdateRequestDTO
+        if (!imageUrl.contains("https")) {
+            val uri = Uri.parse(imageUrl)
+
+            val bytes = context.compressImageToMaxSize(uri, maxBytes = 8 * 1024 * 1024)
+            val requestBody = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
+
+            val response = api.updateCakeRegularImage(id, part)
+            if (!response.isSuccessful) throw Exception(response.message())
+            current = cakeGeneralUpdateRequestDTO.copy(image = response.body()!!.imageUrl ?: "")
+        }
+        val response = api.updateCakeRegularWithoutImage(id, current)
+        if (!response.isSuccessful) throw Exception(response.message())
     }
 }

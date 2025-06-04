@@ -6,9 +6,11 @@ import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeResponseDTO
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -28,11 +30,6 @@ interface CakeApi {
     @Multipart
     suspend fun uploadCakeRegular(@Part parts: List<MultipartBody.Part>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
-    //TODO: not yet implemented in backend
-    @PUT("cakes/regular/self")
-    @Multipart
-    suspend fun updateCakeRegularWithoutImage(cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO): Response<CakeResponseDTO>
-
     @DELETE("cakes/{id}")
     suspend fun deleteCake(@Path("id") id: Long): Response<Unit>
 
@@ -41,6 +38,13 @@ interface CakeApi {
 
     @GET("cakes/confectioner/{confectionerId}")
     suspend fun getAllByConfectioner(@Path("confectionerId") confectionerId: Long): Response<List<CakeResponseDTO>>
+
+    @PUT("cakes/{id}")
+    suspend fun updateCakeRegularWithoutImage(@Path("id") id: Long, @Body cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO): Response<CakeResponseDTO>
+
+    @PATCH("cakes/{id}/image")
+    @Multipart
+    suspend fun updateCakeRegularImage(@Path("id") id: Long, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
 
 }

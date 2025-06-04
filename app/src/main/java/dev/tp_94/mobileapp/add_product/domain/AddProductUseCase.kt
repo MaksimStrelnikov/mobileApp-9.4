@@ -1,5 +1,8 @@
 package dev.tp_94.mobileapp.add_product.domain
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
 import dev.tp_94.mobileapp.add_product.presentation.ProductResult
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeGeneral
@@ -45,14 +48,22 @@ class AddProductUseCase @Inject constructor(
             if (isUpdate) {
                 repository.updateGeneralCake(
                     cake.id,
-                    CakeGeneralRequestDTO(
+                    CakeGeneralUpdateRequestDTO(
+                        image = cake.imageUrl,
                         confectionerId = sessionCache.session.value!!.user.id,
                         name = cake.name,
                         description = cake.description,
+                        fillings = emptyList(),
+                        requiredTime = cake.preparation,
+                        color = Color.Unspecified.toArgb(),
+                        price = cake.price,
                         diameter = cake.diameter,
                         weight = cake.weight,
-                        reqTime = cake.preparation,
-                        price = cake.price
+                        text = "",
+                        textSize = 1,
+                        textX = 0f,
+                        textY = 0f,
+                        scale = 1f
                     ),
                     imageUrl = cake.imageUrl
                 )
