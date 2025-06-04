@@ -126,10 +126,9 @@ class CakeRepositoryImpl @Inject constructor(
 
     override suspend fun updateGeneralCake(
         id: Long,
-        cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO,
+        cakeGeneralRequestDTO: CakeGeneralRequestDTO,
         imageUrl: String
     ) {
-        var current = cakeGeneralUpdateRequestDTO
         if (!imageUrl.contains("https")) {
             val uri = Uri.parse(imageUrl)
 
@@ -139,9 +138,8 @@ class CakeRepositoryImpl @Inject constructor(
 
             val response = api.updateCakeRegularImage(id, part)
             if (!response.isSuccessful) throw Exception(response.message())
-            current = cakeGeneralUpdateRequestDTO.copy(image = response.body()!!.imageUrl ?: "")
         }
-        val response = api.updateCakeRegularWithoutImage(id, current)
+        val response = api.updateCakeRegularWithoutImage(id, cakeGeneralRequestDTO)
         if (!response.isSuccessful) throw Exception(response.message())
     }
 }

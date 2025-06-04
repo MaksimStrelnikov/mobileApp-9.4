@@ -1,5 +1,6 @@
 package dev.tp_94.mobileapp.customers_feed.domain
 
+import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.customers_feed.presentation.FeedResult
 import dev.tp_94.mobileapp.orders.data.dto.ConfectionerResponseDTO
 import javax.inject.Inject
@@ -12,7 +13,7 @@ class LoadMoreConfectionersUseCase @Inject constructor(private val repository: C
             val result = if (text.isNullOrEmpty()) {
                 repository.getAll()
             } else {
-                repository.getAllByName(text)
+                repository.getAllByName(NameBodyDTO(text))
             }
             val list = result.map { it.toConfectioner() }
             return FeedResult.Success(list)

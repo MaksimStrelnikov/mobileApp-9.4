@@ -48,22 +48,14 @@ class AddProductUseCase @Inject constructor(
             if (isUpdate) {
                 repository.updateGeneralCake(
                     cake.id,
-                    CakeGeneralUpdateRequestDTO(
-                        image = cake.imageUrl,
+                    CakeGeneralRequestDTO(
                         confectionerId = sessionCache.session.value!!.user.id,
                         name = cake.name,
                         description = cake.description,
-                        fillings = emptyList(),
-                        requiredTime = cake.preparation,
-                        color = Color.Unspecified.toArgb(),
                         price = cake.price,
                         diameter = cake.diameter,
                         weight = cake.weight,
-                        text = "",
-                        textSize = 1,
-                        textX = 0f,
-                        textY = 0f,
-                        scale = 1f
+                        reqTime = cake.preparation
                     ),
                     imageUrl = cake.imageUrl
                 )

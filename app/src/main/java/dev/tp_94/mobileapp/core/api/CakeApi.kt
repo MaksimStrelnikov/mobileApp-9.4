@@ -51,7 +51,7 @@ interface CakeApi {
     suspend fun getAllByConfectioner(@Path("confectionerId") confectionerId: Long): Response<List<CakeResponseDTO>>
 
     @PUT("cakes/{id}")
-    suspend fun updateCakeRegularWithoutImage(@Path("id") id: Long, @Body cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO): Response<CakeResponseDTO>
+    suspend fun updateCakeRegularWithoutImage(@Path("id") id: Long, @Body cakeGeneralRequestDTO: CakeGeneralRequestDTO): Response<CakeResponseDTO>
 
     @PATCH("cakes/{id}/image")
     @Multipart

@@ -1,6 +1,5 @@
 package dev.tp_94.mobileapp.self_made_cake.domain
 
-import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
 import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.cakes_feed.presentation.Sorting
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeCustomRequestDTO
@@ -28,5 +27,5 @@ interface CakeRepository {
 
     suspend fun getAllByConfectioner(confectionerId: Long): List<CakeResponseDTO>
 
-    suspend fun updateGeneralCake(id: Long, cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO, imageUrl: String)
+    suspend fun updateGeneralCake(id: Long, cakeGeneralRequestDTO: CakeGeneralRequestDTO, imageUrl: String)
 }
