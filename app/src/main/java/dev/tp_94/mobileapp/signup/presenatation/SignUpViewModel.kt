@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.signup.presenatation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.metrica.YandexMetrica
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.models.Confectioner
 import dev.tp_94.mobileapp.signup.domain.SignUpUseCase
@@ -51,6 +52,11 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
                 _state.value.copy(error = response.message)
             else if (response is SignUpResult.Success) {
                 _state.value = _state.value.copy(error = "")
+                YandexMetrica.reportEvent(
+                    "sign_up",
+                    "{\"screen\":\"sign_up\", \"action\":\"sign_up\", " +
+                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" }}\""
+                )
                 if (response.user is Confectioner) {
                     onSuccessConfectioner()
                 } else {

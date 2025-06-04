@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.login.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.metrica.YandexMetrica
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Confectioner
@@ -35,6 +36,12 @@ class LoginViewModel @Inject constructor(
                 _state.value.copy(error = response.message)
             else if (response is LoginResult.Success) {
                 _state.value = _state.value.copy(error = "")
+                YandexMetrica.reportEvent(
+                    "login",
+                    "{\"screen\":\"login\", \"action\":\"login\", " +
+                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" }}\""
+                )
+                YandexMetrica.sendEventsBuffer()
                 if (response.user is Confectioner) {
                     onSuccessConfectioner()
                 } else {

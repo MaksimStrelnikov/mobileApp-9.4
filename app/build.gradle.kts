@@ -145,5 +145,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.moshi.adapters)
 
+    implementation(libs.mobmetricalib)
+
     ksp(libs.moshi.kotlin.codegen)
 }
