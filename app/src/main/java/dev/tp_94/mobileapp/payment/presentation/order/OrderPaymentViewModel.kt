@@ -70,7 +70,7 @@ class OrderPaymentViewModel @Inject constructor(
             if (result is OrdersResult.Success) {
                 YandexMetrica.reportEvent(
                     "order_payment",
-                    "{\"screen\":\"order_payment\", \"action\":\"pay\", " +
+                    "{\"screen\":\"order_payment\", \"action\":\"pay\" " +
                             "\"amount\":\"${state.value.order.price},}\""
                 )
                 onSuccessfulPay()

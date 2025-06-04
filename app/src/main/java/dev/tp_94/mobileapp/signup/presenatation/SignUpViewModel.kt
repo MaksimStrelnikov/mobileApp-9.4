@@ -55,7 +55,7 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
                 YandexMetrica.reportEvent(
                     "sign_up",
                     "{\"screen\":\"sign_up\", \"action\":\"sign_up\", " +
-                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" },}\""
+                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" }}\""
                 )
                 if (response.user is Confectioner) {
                     onSuccessConfectioner()

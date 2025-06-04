@@ -39,8 +39,9 @@ class LoginViewModel @Inject constructor(
                 YandexMetrica.reportEvent(
                     "login",
                     "{\"screen\":\"login\", \"action\":\"login\", " +
-                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" },}\""
+                            "\"type\":\"${if( response.user is Confectioner) "confectioner" else "customer" }}\""
                 )
+                YandexMetrica.sendEventsBuffer()
                 if (response.user is Confectioner) {
                     onSuccessConfectioner()
                 } else {

@@ -80,7 +80,7 @@ class BasketPaymentViewModel @Inject constructor(
                 }
                 YandexMetrica.reportEvent(
                     "basket_payment",
-                    "{\"screen\":\"basket_payment\", \"action\":\"pay\", \"amount\":\"${totalAmount},}\""
+                    "{\"screen\":\"basket_payment\", \"action\":\"pay\", \"amount\":\"${totalAmount}}\""
                 )
                 getAllCards()
                 onSuccessfulPay()
