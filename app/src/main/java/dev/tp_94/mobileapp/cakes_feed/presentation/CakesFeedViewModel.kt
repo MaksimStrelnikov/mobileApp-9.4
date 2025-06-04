@@ -2,11 +2,9 @@ package dev.tp_94.mobileapp.cakes_feed.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.cakes_feed.domain.LoadMoreCakesUseCase
 import dev.tp_94.mobileapp.cakes_feed.domain.SearchForCakesUseCase
-import dev.tp_94.mobileapp.cakes_feed.domain.SortCakesUseCase
 import dev.tp_94.mobileapp.confectioner_page.domain.AddToBasketUseCase
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.Cake
@@ -21,8 +19,7 @@ class CakesFeedViewModel @Inject constructor(
     sessionCache: SessionCache,
     private val loadMoreCakesUseCase: LoadMoreCakesUseCase,
     private val searchForCakesUseCase: SearchForCakesUseCase,
-    private val addToBasketUseCase: AddToBasketUseCase,
-    private val sortCakesUseCase: SortCakesUseCase
+    private val addToBasketUseCase: AddToBasketUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow((CakesFeedState()))
     val state = _state.asStateFlow()
@@ -35,7 +32,7 @@ class CakesFeedViewModel @Inject constructor(
     fun search() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            val result = searchForCakesUseCase.execute(state.value.searchText)
+            val result = searchForCakesUseCase.execute(state.value.searchText, state.value.currentSorting)
             if (result is CakeFeedResult.Success) {
                 _state.value = _state.value.copy(feed = result.data)
             }
@@ -66,17 +63,8 @@ class CakesFeedViewModel @Inject constructor(
     }
 
     fun selectSort(sorting: Sorting) {
-        _state.value = _state.value.copy(currentSorting = sorting)
-        _state.value = _state.value.copy(feed = emptyList())
-        _state.value = _state.value.copy(isLoading = true)
-        viewModelScope.launch {
-            val result = sortCakesUseCase.execute(state.value.searchText, sorting)
-            if (result is CakeFeedResult.Success) {
-                _state.value = _state.value.copy(feed = result.data)
-            }
-            //TODO: add error message
-            _state.value = _state.value.copy(isLoading = false)
-        }
+        _state.value = _state.value.copy(currentSorting = sorting, feed = emptyList())
+        search()
     }
 
     init {

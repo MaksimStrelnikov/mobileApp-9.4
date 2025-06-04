@@ -17,6 +17,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CakeApi {
     @POST("cakes/custom")
@@ -40,11 +41,11 @@ interface CakeApi {
     @POST("cakes/search/name")
     suspend fun getAllByName(@Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
 
-    @POST("cakes/sorted/weight={ascending}")
-    suspend fun getAllByNameAndWeight(@Part("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
+    @POST("cakes/sorted/weight")
+    suspend fun getAllByNameAndWeight(@Query("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
 
-    @POST("cakes/sorted/price={ascending}")
-    suspend fun getAllByNameAndPrice(@Part("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
+    @POST("cakes/sorted/price")
+    suspend fun getAllByNameAndPrice(@Query("ascending") ascending: Boolean, @Body name: NameBodyDTO): Response<List<CakeResponseDTO>>
 
     @GET("cakes/confectioner/{confectionerId}")
     suspend fun getAllByConfectioner(@Path("confectionerId") confectionerId: Long): Response<List<CakeResponseDTO>>

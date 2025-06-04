@@ -1,21 +1,27 @@
 package dev.tp_94.mobileapp.cakes_feed.domain
 
+import dev.tp_94.mobileapp.cakes_feed.data.NameBodyDTO
 import dev.tp_94.mobileapp.cakes_feed.presentation.CakeFeedResult
+import dev.tp_94.mobileapp.cakes_feed.presentation.Sorting
 import dev.tp_94.mobileapp.self_made_cake.domain.CakeRepository
 import javax.inject.Inject
 
 class SearchForCakesUseCase @Inject constructor(
     private val repository: CakeRepository
-){
-    suspend fun execute(text: String?): CakeFeedResult {
+) {
+    suspend fun execute(text: String?, sorting: Sorting): CakeFeedResult {
         try {
-            val result = if (text.isNullOrEmpty()) {
-                repository.getAllGeneral()
+            if (sorting == Sorting.NO_SORTING) {
+                val result = if (text.isNullOrEmpty()) {
+                    repository.getAllGeneral()
+                } else {
+                    repository.getAllByName(NameBodyDTO(text))
+                }
+                return CakeFeedResult.Success(result.map { it.toGeneral() })
             } else {
-                repository.getAllByName(text)
+                val result = repository.getAllByNameSorted(NameBodyDTO(text ?: ""), sorting)
+                return CakeFeedResult.Success(result.map { it.toGeneral() })
             }
-            val list = result.map { it.toGeneral() }
-            return CakeFeedResult.Success(list)
         } catch (e: Exception) {
             return CakeFeedResult.Error(e.message ?: "Возникла непредвиденная ошибка")
         }
