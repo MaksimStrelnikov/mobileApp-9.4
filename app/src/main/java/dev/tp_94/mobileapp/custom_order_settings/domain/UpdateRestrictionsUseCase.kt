@@ -29,9 +29,9 @@ class UpdateRestrictionsUseCase @Inject constructor(
             }
 
             if (isCustomAcceptable) {
-                if (minDiameter < 0 || maxDiameter < 0)
+                if (minDiameter <= 0f || maxDiameter <= 0f)
                     return RestrictionsResult
-                        .Error("Диаметр не может быть отрицательным")
+                        .Error("Диаметр указан неверно")
                 if (minDiameter > maxDiameter)
                     return RestrictionsResult
                         .Error("Минимальный диаметр не может быть больше максимального")
