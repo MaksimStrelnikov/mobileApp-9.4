@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.metrica.YandexMetrica
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.models.CakeGeneral
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
@@ -74,6 +75,13 @@ class BasketPaymentViewModel @Inject constructor(
                 card = state.value.selected!!
             )
             if (result is OrdersResult.Success) {
+                val totalAmount = state.value.cakes.entries.sumOf { (cake, quantity) ->
+                    cake.price * quantity
+                }
+                YandexMetrica.reportEvent(
+                    "basket_payment",
+                    "{\"screen\":\"basket_payment\", \"action\":\"pay\", \"amount\":\"${totalAmount},}\""
+                )
                 getAllCards()
                 onSuccessfulPay()
             } else {

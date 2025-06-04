@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.metrica.YandexMetrica
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeSerializerModule
@@ -67,6 +68,11 @@ class OrderPaymentViewModel @Inject constructor(
         viewModelScope.launch {
             val result = payOrderUseCase.execute(order, _state.value.selected!!)
             if (result is OrdersResult.Success) {
+                YandexMetrica.reportEvent(
+                    "order_payment",
+                    "{\"screen\":\"order_payment\", \"action\":\"pay\", " +
+                            "\"amount\":\"${state.value.order.price},}\""
+                )
                 onSuccessfulPay()
             } else {
                 onErrorPay()
