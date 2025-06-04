@@ -41,6 +41,9 @@ class UpdateRestrictionsUseCase @Inject constructor(
                 if (minPreparationDays > maxPreparationDays)
                     return RestrictionsResult
                         .Error("Минимальное количество дней не может быть больше максимального")
+                if (fillings.isEmpty())
+                    return RestrictionsResult
+                        .Error("Нужно добавить хотя бы один вид начинки")
             }
 
             val restrictions = Restrictions(
