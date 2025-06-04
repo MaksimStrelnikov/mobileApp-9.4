@@ -127,6 +127,7 @@ fun CustomersFeedStatelessScreen(
                     items(state.feed) { item ->
                         ConfectionerFeedItem(
                             name = item.name,
+                            description = item.description,
                             onClick = { onNavigateToConfectioner(item) },
                         )
                     }
@@ -160,7 +161,9 @@ fun PreviewCustomersFeedStatelessScreen() {
                     name = "Кондитер",
                     phoneNumber = "",
                     email = "",
-                    description = "",
+                    description = "Это описание кондитера и здесь должно быть много символов. " +
+                            "Это описание кондитера и здесь должно быть много символов." +
+                            "Это описание кондитера и здесь должно быть много символов.",
                     address = ""
                 )
             ),

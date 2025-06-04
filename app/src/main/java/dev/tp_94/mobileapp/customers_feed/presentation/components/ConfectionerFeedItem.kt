@@ -30,6 +30,7 @@ import dev.tp_94.mobileapp.core.themes.TextStyles
 fun ConfectionerFeedItem(
     name: String,
     avatar: Painter? = null,
+    description: String? = null,
     imageFirst: Painter? = painterResource(R.drawable.mock_cake),
     imageSecond: Painter? = painterResource(R.drawable.mock_cake2),
     onClick: () -> Unit
@@ -44,7 +45,7 @@ fun ConfectionerFeedItem(
     ) {
         Column(
             modifier = Modifier
-                .padding(13.dp, 15.dp, 13.dp, 0.dp)
+                .padding(13.dp, 15.dp, 13.dp, 15.dp)
         ) {
             Row (
                 verticalAlignment = Alignment.CenterVertically
@@ -75,7 +76,22 @@ fun ConfectionerFeedItem(
                     style = TextStyles.secondHeader(colorResource(R.color.dark_text))
                 )
             }
-            Row(
+
+            if (!description.isNullOrEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = if (description.length > 90)
+                            description.substring(0, 90) + "..." else description,
+                        style = TextStyles.regular(colorResource(R.color.dark_text))
+                    )
+                }
+            }
+            /*Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 8.dp),
@@ -101,7 +117,7 @@ fun ConfectionerFeedItem(
                         contentScale = ContentScale.Crop
                     )
                 }
-            }
+            }*/
         }
     }
 }
