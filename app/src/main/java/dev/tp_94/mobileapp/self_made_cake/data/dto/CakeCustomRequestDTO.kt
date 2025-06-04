@@ -3,6 +3,7 @@ package dev.tp_94.mobileapp.self_made_cake.data.dto
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -21,20 +22,30 @@ data class CakeCustomRequestDTO(
     @SerializedName("price") val price: Int,
 )
 
-fun CakeCustomRequestDTO.toParts(): Map<String, RequestBody> {
-    return mapOf(
-        "confectioner_id" to confectionerId.toString().toRequestBody("text/plain".toMediaType()),
-        "name" to name.toRequestBody("text/plain".toMediaType()),
-        "description" to description.toRequestBody("text/plain".toMediaType()),
-        "fillings" to Gson().toJson(fillings).toRequestBody("application/json".toMediaType()), // если API не принимает массив напрямую
-        "required_time" to reqTime.toString().toRequestBody("text/plain".toMediaType()),
-        "color" to color.toRequestBody("text/plain".toMediaType()),
-        "diameter" to diameter.toString().toRequestBody("text/plain".toMediaType()),
-        "text" to text.toRequestBody("text/plain".toMediaType()),
-        "text_size" to textSize.toString().toRequestBody("text/plain".toMediaType()),
-        "text_x" to textX.toString().toRequestBody("text/plain".toMediaType()),
-        "text_y" to textY.toString().toRequestBody("text/plain".toMediaType()),
-        "price" to price.toString().toRequestBody("text/plain".toMediaType())
-    )
+
+fun CakeCustomRequestDTO.toParts(): List<MultipartBody.Part> {
+
+    val parts = mutableListOf<MultipartBody.Part>()
+
+    parts += MultipartBody.Part.createFormData("confectioner_id", confectionerId.toString())
+    parts += MultipartBody.Part.createFormData("name", name)
+    parts += MultipartBody.Part.createFormData("description", description)
+    parts += MultipartBody.Part.createFormData("required_time", reqTime.toString())
+    parts += MultipartBody.Part.createFormData("color", color)
+    parts += MultipartBody.Part.createFormData("diameter", diameter.toString())
+    parts += MultipartBody.Part.createFormData("text", text)
+    parts += MultipartBody.Part.createFormData("text_size", textSize.toString())
+    parts += MultipartBody.Part.createFormData("text_x", textX.toString())
+    parts += MultipartBody.Part.createFormData("text_y", textY.toString())
+    parts += MultipartBody.Part.createFormData("price", price.toString())
+
+    fillings.forEach { filling ->
+        parts += MultipartBody.Part.createFormData("fillings", filling)
+    }
+
+    return parts
 }
+
+
+
 

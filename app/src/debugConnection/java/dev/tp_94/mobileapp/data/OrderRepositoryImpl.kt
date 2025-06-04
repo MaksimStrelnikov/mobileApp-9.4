@@ -1,13 +1,16 @@
 package dev.tp_94.mobileapp.data
 
-import dev.tp_94.mobileapp.core.data.HttpStatus.*
-import dev.tp_94.mobileapp.orders.data.dto.OrderResponseDTO
 import dev.tp_94.mobileapp.core.api.OrderApi
+import dev.tp_94.mobileapp.core.data.HttpStatus.CREATED
+import dev.tp_94.mobileapp.core.data.HttpStatus.FORBIDDEN
+import dev.tp_94.mobileapp.core.data.HttpStatus.SERVER_ERROR
+import dev.tp_94.mobileapp.orders.data.dto.OrderResponseDTO
 import dev.tp_94.mobileapp.payment.data.CardDTO
 import dev.tp_94.mobileapp.payment.data.SeveralOrdersCreationPaymentRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderFullRequestDTO
-import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPatchRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderPricePatchRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.OrderStatusPatchRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.domain.OrderRepository
 import javax.inject.Inject
 
@@ -52,8 +55,15 @@ class OrderRepositoryImpl @Inject constructor(
         throw Exception(response.message())
     }
 
-    override suspend fun updateOrderStatus(orderId: Long, request: OrderPatchRequestDTO): OrderResponseDTO {
+    override suspend fun updateOrderStatus(orderId: Long, request: OrderStatusPatchRequestDTO): OrderResponseDTO {
         val response = api.updateStatusOrder(orderId, request)
+        if (!response.isSuccessful) throw Exception(response.message())
+        return response.body()!!
+    }
+
+
+    override suspend fun updateOrderPrice(orderId: Long, request: OrderPricePatchRequestDTO): OrderResponseDTO {
+        val response = api.updatePriceOrder(orderId, request)
         if (!response.isSuccessful) throw Exception(response.message())
         return response.body()!!
     }
@@ -64,8 +74,6 @@ class OrderRepositoryImpl @Inject constructor(
             throw Exception(response.message())
         }
     }
-
-
 
     override suspend fun payOrder(orderId: Long, cardDTO: CardDTO) {
         val response = api.payOrder(orderId, cardDTO)

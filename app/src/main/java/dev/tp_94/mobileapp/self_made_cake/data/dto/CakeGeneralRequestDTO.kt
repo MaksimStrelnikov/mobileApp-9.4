@@ -2,6 +2,7 @@ package dev.tp_94.mobileapp.self_made_cake.data.dto
 
 import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -15,14 +16,14 @@ data class CakeGeneralRequestDTO(
     @SerializedName("price") val price: Int
 )
 
-fun CakeGeneralRequestDTO.toParts(): Map<String, RequestBody> {
-    return mapOf(
-        "confectioner_id" to confectionerId.toString().toRequestBody("text/plain".toMediaType()),
-        "name" to name.toRequestBody("text/plain".toMediaType()),
-        "description" to description.toRequestBody("text/plain".toMediaType()),
-        "required_time" to reqTime.toString().toRequestBody("text/plain".toMediaType()),
-        "diameter" to diameter.toString().toRequestBody("text/plain".toMediaType()),
-        "weight" to weight.toString().toRequestBody("text/plain".toMediaType()),
-        "price" to price.toString().toRequestBody("text/plain".toMediaType())
+fun CakeGeneralRequestDTO.toParts(): List<MultipartBody.Part> {
+    return listOf(
+        MultipartBody.Part.createFormData("confectioner_id", confectionerId.toString()),
+        MultipartBody.Part.createFormData("name", name),
+        MultipartBody.Part.createFormData("description", description),
+        MultipartBody.Part.createFormData("required_time", reqTime.toString()),
+        MultipartBody.Part.createFormData("diameter", diameter.toString()),
+        MultipartBody.Part.createFormData("weight", weight.toString()),
+        MultipartBody.Part.createFormData("price", price.toString())
     )
 }

@@ -16,15 +16,15 @@ import retrofit2.http.Path
 interface CakeApi {
     @POST("cakes/custom")
     @Multipart
-    suspend fun uploadCakeCustom(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
+    suspend fun uploadCakeCustom(@Part parts: List<MultipartBody.Part>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
     @POST("cakes/custom")
     @Multipart
-    suspend fun uploadCakeCustomWithoutImage(@PartMap toParts: Map<String, @JvmSuppressWildcards RequestBody>): Response<CakeResponseDTO>
+    suspend fun uploadCakeCustomWithoutImage(@Part parts: List<MultipartBody.Part>): Response<CakeResponseDTO>
 
     @POST("cakes/regular/self")
     @Multipart
-    suspend fun uploadCakeRegular(@PartMap map: Map<String, @JvmSuppressWildcards RequestBody>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
+    suspend fun uploadCakeRegular(@Part parts: List<MultipartBody.Part>, @Part image: MultipartBody.Part): Response<CakeResponseDTO>
 
     //TODO: not yet implemented in backend
     @PUT("cakes/regular/self")
