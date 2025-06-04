@@ -33,6 +33,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.tp_94.mobileapp.R
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateValue
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import kotlinx.coroutines.delay
+
 @Composable
 fun ActiveButton(
     onClick: () -> Unit,
@@ -144,53 +163,96 @@ fun BuyButton(
     textColor: Color = colorResource(id = R.color.middle_text),
     text: String = "Цена не задана",
 ) {
-
     var isClicked by remember { mutableStateOf(false) }
+    var showPlusOne by remember { mutableStateOf(false) }
 
-    val currentBackgroundColor = if (isClicked) textColor else backgroundColor
-    val currentTextColor = if (isClicked) backgroundColor else textColor
+    LaunchedEffect(showPlusOne) {
+        if (showPlusOne) {
+            delay(300)
+            showPlusOne = false
+        }
+    }
 
-    Button(
-        onClick = {
-            onClick()
-            if (!isClicked) isClicked = true
-        },
-        modifier,
-        enabled,
-        shape,
-        colors = ButtonColors(
-            containerColor = currentBackgroundColor,
-            contentColor = currentTextColor,
-            disabledContainerColor = currentBackgroundColor,
-            disabledContentColor = currentTextColor
-        ),
-        elevation,
-        border,
-        contentPadding,
-        interactionSource
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    Box(modifier = modifier) {
+        Button(
+            onClick = {
+                onClick()
+                if (!isClicked) {
+                    isClicked = true
+                }
+                showPlusOne = true
+            },
+            modifier = Modifier,
+            enabled = enabled,
+            shape = shape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isClicked) textColor else backgroundColor,
+                contentColor = if (isClicked) backgroundColor else textColor,
+                disabledContainerColor = if (isClicked) textColor else backgroundColor,
+                disabledContentColor = if (isClicked) backgroundColor else textColor
+            ),
+            elevation = elevation,
+            border = border,
+            contentPadding = contentPadding,
+            interactionSource = interactionSource
         ) {
-            Icon(
-                painter = if (!isClicked) painterResource(R.drawable.busket) else painterResource(R.drawable.plus),
-                contentDescription = null,
-                tint = if (isClicked) backgroundColor else textColor,
-                modifier = Modifier.padding(start = 8.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = if (!isClicked) painterResource(R.drawable.busket) else painterResource(R.drawable.plus),
+                    contentDescription = null,
+                    tint = if (isClicked) backgroundColor else textColor,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isClicked) "В корзине" else text,
+                        color = if (isClicked) backgroundColor else textColor,
+                        textAlign = TextAlign.Center,
+                        style = TextStyles.button(color = colorResource(R.color.middle_text))
+                    )
+                }
+            }
+        }
+
+        if (showPlusOne) {
+            val infiniteTransition = rememberInfiniteTransition()
+            val alpha by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 0f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(3000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
             )
 
-            Box(
+            val offset by infiniteTransition.animateValue(
+                initialValue = 10.dp,
+                targetValue = (-30).dp,
+                typeConverter = Dp.VectorConverter,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(3000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+
+            Text(
+                text = "+1",
+                color = colorResource(R.color.light_accent),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = if (isClicked) "В корзине" else text,
-                    color = if (isClicked) backgroundColor else textColor,
-                    textAlign = TextAlign.Center,
-                    style = TextStyles.button(color = colorResource(R.color.middle_text)))
-            }
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-20).dp, y = offset)
+                    .alpha(alpha),
+                style = TextStyles.secondHeader(colorResource(R.color.dark_accent))
+            )
         }
     }
 }
