@@ -1,5 +1,7 @@
 package dev.tp_94.mobileapp.core.api
 
+import dev.tp_94.mobileapp.add_product.CakeGeneralUpdateRequestDTO
+import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeGeneralRequestDTO
 import dev.tp_94.mobileapp.self_made_cake.data.dto.CakeResponseDTO
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -29,7 +31,7 @@ interface CakeApi {
     //TODO: not yet implemented in backend
     @PUT("cakes/regular/self")
     @Multipart
-    suspend fun updateCakeRegular(): Response<CakeResponseDTO>
+    suspend fun updateCakeRegularWithoutImage(cakeGeneralUpdateRequestDTO: CakeGeneralUpdateRequestDTO): Response<CakeResponseDTO>
 
     @DELETE("cakes/{id}")
     suspend fun deleteCake(@Path("id") id: Long): Response<Unit>

@@ -3,6 +3,8 @@ package dev.tp_94.mobileapp.core
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -18,17 +20,9 @@ fun Color.darken(factor: Float = 0.75f): Color {
     )
 }
 
-fun Context.uriToRequestBody(uri: Uri, mimeType: String): RequestBody {
-    val inputStream = contentResolver.openInputStream(uri)
-        ?: throw IllegalArgumentException("Can't open input stream for URI: $uri")
-    return inputStream.readBytes().toRequestBody(mimeType.toMediaTypeOrNull())
-}
 
 fun Context.compressImageToMaxSize(uri: Uri, maxBytes: Int): ByteArray {
-    val inputStream = contentResolver.openInputStream(uri)
-        ?: throw IllegalArgumentException("Can't open stream for URI: $uri")
-
-    var bitmap = BitmapFactory.decodeStream(inputStream)
+    var bitmap = decodeAndFixOrientation(uri, this)
     var quality = 100
     var stream: ByteArrayOutputStream
     var result: ByteArray
@@ -40,7 +34,6 @@ fun Context.compressImageToMaxSize(uri: Uri, maxBytes: Int): ByteArray {
         quality -= 5
     } while (result.size > maxBytes && quality > 5)
 
-    // Дополнительно: уменьшаем размер изображения, если не помогает
     while (result.size > maxBytes) {
         bitmap = Bitmap.createScaledBitmap(
             bitmap,
@@ -55,4 +48,30 @@ fun Context.compressImageToMaxSize(uri: Uri, maxBytes: Int): ByteArray {
 
     return result
 }
+
+fun decodeAndFixOrientation(uri: Uri, context: Context): Bitmap {
+    val inputStream = context.contentResolver.openInputStream(uri)
+        ?: throw IllegalArgumentException("Can't open stream for URI: $uri")
+
+    val bitmap = BitmapFactory.decodeStream(inputStream)
+
+    val exifInputStream = context.contentResolver.openInputStream(uri)
+        ?: return bitmap
+
+    val exif = ExifInterface(exifInputStream)
+    val orientation = exif.getAttributeInt(
+        ExifInterface.TAG_ORIENTATION,
+        ExifInterface.ORIENTATION_NORMAL
+    )
+
+    val matrix = Matrix()
+    when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+    }
+
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+}
+
 

@@ -100,6 +100,6 @@ class CakeRepositoryImpl @Inject constructor(
         imageUrl: String
     ) {
         //TODO: make dependent on imageUrl (content or https)
-        val response = api.updateCakeRegular()
+        //val response = api.updateCakeRegularWithoutImage()
     }
 }
