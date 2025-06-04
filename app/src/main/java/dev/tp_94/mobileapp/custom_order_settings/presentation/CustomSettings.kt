@@ -74,11 +74,11 @@ private fun CustomSettingsStatelessScreen(
             )
             if (state.isCustomAcceptable) {
                 Spacer(Modifier.height(42.dp))
-                SectionHeader(text = "Диаметр")
+                SectionHeader(text = "Диаметр, см")
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
                         NumberEditor(
-                            value = state.minDiameter,
+                            value = if (state.minDiameter != "0") state.minDiameter else "",
                             onValueChange = onUpdateMinDiameter,
                             label = "Минимальный",
                             backgroundColor = colorResource(R.color.dark_background),
@@ -86,7 +86,8 @@ private fun CustomSettingsStatelessScreen(
                     }
                     Box(modifier = Modifier.weight(1f)) {
                         NumberEditor(
-                            value = state.maxDiameter,
+                            value = if (state.maxDiameter != "100"
+                                && state.maxDiameter != "0") state.maxDiameter else "",
                             onValueChange = onUpdateMaxDiameter,
                             label = "Максимальный",
                             backgroundColor = colorResource(R.color.dark_background),
@@ -94,11 +95,11 @@ private fun CustomSettingsStatelessScreen(
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                SectionHeader(text = "Срок выполнения заказа")
+                SectionHeader(text = "Срок выполнения заказа, дни")
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
                         NumberEditor(
-                            value = state.minWorkPeriod,
+                            value = if (state.minWorkPeriod != "0") state.minWorkPeriod else "",
                             onValueChange = onUpdateMinWorkPeriod,
                             label = "Минимальный",
                             backgroundColor = colorResource(R.color.dark_background)
@@ -106,7 +107,8 @@ private fun CustomSettingsStatelessScreen(
                     }
                     Box(modifier = Modifier.weight(1f)) {
                         NumberEditor(
-                            value = state.maxWorkPeriod,
+                            value = if (state.maxWorkPeriod != "2048"
+                                && state.maxWorkPeriod != "0") state.maxWorkPeriod else "",
                             onValueChange = onUpdateMaxWorkPeriod,
                             label = "Максимальный",
                             backgroundColor = colorResource(R.color.dark_background)
@@ -232,11 +234,11 @@ fun CustomSettingsPreview() {
                 isCustomAcceptable = true,
                 isImageAcceptable = false,
                 isShapeAcceptable = true,
-                minDiameter = "15",
-                maxDiameter = "30",
-                minWorkPeriod = "1",
-                maxWorkPeriod = "14",
                 newFilling = "Какао",
+                minDiameter = "1",
+                maxDiameter = "10",
+                minWorkPeriod = "0",
+                maxWorkPeriod = "20",
                 fillings = testFillings
             )
         )
