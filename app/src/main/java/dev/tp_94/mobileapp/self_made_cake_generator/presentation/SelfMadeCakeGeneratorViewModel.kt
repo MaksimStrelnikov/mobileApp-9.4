@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.metrica.YandexMetrica
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tp_94.mobileapp.core.SessionCache
 import dev.tp_94.mobileapp.core.models.CakeCustom
@@ -61,6 +62,10 @@ class SelfMadeCakeGeneratorViewModel @Inject constructor(
                     cakeCustom = _state.value.cakeCustom.copy(imageUrl = result.imageUrl)
                 )
                 _state.value = _state.value.copy(error = "")
+                YandexMetrica.reportEvent(
+                    "image_generation",
+                    "{\"screen\":\"self_made_cake_generator\", \"action\":\"generate\"}"
+                )
             } else if (result is SelfMadeCakeGeneratorResult.Error) {
                 _state.value = _state.value.copy(error = result.message)
             }
